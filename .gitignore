@@ -15,3 +15,7 @@ rel/example_project
 
 # gedit
 *~
+
+# misc
+twitterminer.config
+.gitignore
