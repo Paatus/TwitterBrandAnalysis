@@ -1,6 +1,6 @@
 -module(twitterminer_source).
 
--export([twitter_example/0, twitter_print_pipeline/2, twitter_producer/2, get_account_keys/1]).
+-export([twitter_example/0, twitter_example/1, twitter_print_pipeline/3, twitter_producer/3, get_account_keys/1]).
 
 -record(account_keys, {api_key, api_secret,
                        access_token, access_token_secret}).
@@ -19,14 +19,19 @@ get_account_keys(Name) ->
                 access_token_secret=keyfind(access_token_secret, Keys)}.
 
 %% @doc This example will download a sample of tweets and print it.
+
+% default search criteria is Apple-related things
 twitter_example() ->
+	twitter_example("iPhone,apple,iwatch,ipad,iMac,macbook,ios").
+
+twitter_example(SearchWords) ->
   %URL = "https://stream.twitter.com/1.1/statuses/sample.json",
   URL = "https://stream.twitter.com/1.1/statuses/filter.json",
   % We get our keys from the twitterminer.config configuration file.
   Keys = get_account_keys(account1),
 
   % Run our pipeline
-  P = twitterminer_pipeline:build_link(twitter_print_pipeline(URL, Keys)),
+  P = twitterminer_pipeline:build_link(twitter_print_pipeline(URL, Keys, SearchWords)),
 
   % If the pipeline does not terminate after 60 s, this process will
   % force it.
@@ -44,9 +49,9 @@ twitter_example() ->
 
 %% @doc Create a pipeline that connects to twitter and
 %% prints tweets.
-twitter_print_pipeline(URL, Keys) ->
+twitter_print_pipeline(URL, Keys, SearchWords) ->
 
-  Prod = twitter_producer(URL, Keys),
+  Prod = twitter_producer(URL, Keys, SearchWords),
 
   % Pipelines are constructed 'backwards' - consumer is first, producer is last.
   [
@@ -61,14 +66,14 @@ twitter_print_pipeline(URL, Keys) ->
 
 %% @doc Create a pipeline producer that opens a connection
 %% to a Twitter streaming API endpoint.
-twitter_producer(URL, Keys) ->
+twitter_producer(URL, Keys, SearchWords) ->
   twitterminer_pipeline:producer(
-    fun receive_tweets/1, {init, URL, Keys}).
+    fun receive_tweets/1, {init, URL, Keys, SearchWords}).
 
 % receive_tweets is used as the producer stage of the pipeline.
 % Return values match those expected by twitterminer_pipeline:producer_loop/3.
 % It also has to handle the 'terminate' message.
-receive_tweets({init, URL, Keys}) ->
+receive_tweets({init, URL, Keys, SearchWords}) ->
 
   % Twitter streaming API requires a persistent HTTP connection with an infinite stream. 
   % HTTP has not really been made for that, and the only way of cancelling your request
@@ -91,7 +96,7 @@ receive_tweets({init, URL, Keys}) ->
   % Our parsing of the stream later on depends on delimited=length.
   % I have never managed to receive a stall warning, but it would
   % be a good idea to handle them somehow (or at least log).
-  SignedParams = oauth:sign("GET", URL, [{delimited, length}, {stall_warnings, true}, {track, "iPhone,apple,iwatch,ipad,iMac,macbook,ios"}], Consumer, AccessToken, AccessTokenSecret),
+  SignedParams = oauth:sign("GET", URL, [{delimited, length}, {stall_warnings, true}, {track, SearchWords}], Consumer, AccessToken, AccessTokenSecret),
   % SignedParams = oauth:sign("GET", URL, [{delimited, length}, {stall_warnings, true}], Consumer, AccessToken, AccessTokenSecret),
 
   % We use stream_to self() to get the HTTP stream delivered to our process as individual messages.
