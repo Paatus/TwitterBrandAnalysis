@@ -54,7 +54,8 @@ loop(Req, _Broadcaster, false) ->
                         {ok, Keys} = tba_riakdb:query_date_range("gigabucket",web_functions:get_date_from(15),"9"),
                         {ok, Info} = mapred_tokenizer:mapred_tokens(Keys),
                         Req:ok({"application/json",[{"Cache-Control","no-cache"}],
-                                [mochijson2:encode({struct,[ {list_to_binary(A),B} || {A,B} <- lists:sort(fun({_,A},{_,B}) -> A >= B end, Info)]})]});
+                                [mochijson2:encode(Info)]});
+
                     "world" ->
                         {ok, Keys} = tba_riakdb:query_date_range("gigabucket",web_functions:get_date_from(30),"9"),
                         {ok,Info} = tba_riakdb:mapred_weight(Keys),

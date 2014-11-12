@@ -1,17 +1,19 @@
 -module(mapred_tokenizer).
 
--export([mapred_tokens/1 ,map_tokens/3, red_tokens/2]).
+-export([mapred_tokens/1 ,map_tokens/3, red_tokens/2, red_limit_tokens/2, red_sort_and_to_struct/2]).
 
 mapred_tokens(Keys) ->
     {ok, Pid} = tba_riakdb:start_link(),
-    {ok,[{1,[T]}]} = riakc_pb_socket:mapred(
+    {ok,[{_N,[T]}]} = riakc_pb_socket:mapred(
         Pid,
         Keys,
         [{map, {modfun, mapred_tokenizer, map_tokens}, none, false},
-         {reduce, {modfun, mapred_tokenizer, red_tokens}, none, true}]
+         {reduce, {modfun, mapred_tokenizer, red_tokens}, none, false},
+         {reduce, {modfun, mapred_tokenizer, red_limit_tokens}, none, false},
+         {reduce, {modfun, mapred_tokenizer, red_sort_and_to_struct}, none, true}]
         ),
     tba_riakdb:close_link(Pid),
-    {ok, dict:to_list(T)}.
+    {ok, T}.
 
 map_tokens(RiakObject, _, _) ->
     {tweet,{_,{text, Text},_,_}} = binary_to_term(riak_object:get_value(RiakObject)),
@@ -23,6 +25,12 @@ map_tokens(RiakObject, _, _) ->
 
 red_tokens(Input, _) ->
     [lists:foldl(fun(T,Acc) -> dict:merge( fun(_Key, Value1, Value2) -> Value1 + Value2 end, T, Acc)  end ,dict:new(),Input)].
+
+red_limit_tokens([Input], _) ->
+    [dict:filter(fun(_Key,Value) -> Value >= 5 end,Input)].
+
+red_sort_and_to_struct([Input], _) ->
+    [{struct,[{list_to_binary(A),B} || {A,B} <- lists:sort(fun({_,A},{_,B}) -> A >= B end, dict:to_list(Input))]}].
 
 prepare_string_tokenizing(Text) ->
     Text1 = binary_to_list(Text),
