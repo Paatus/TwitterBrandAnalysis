@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="utf-8"> 
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title> T B A | Name Pending </title>
+        <meta name="author" content="NamePending" />
+        <meta name="description" content="twitter ayalysis based on erlang." />
+        <meta name="keywords"  content="fullpage,jquery,demo,screen,fullscreen,normal scroll,autoscrolling,scroll,twitter,brand,analysis,happy,country" />
+        <meta name="Resource-type" content="Document" />
+        <!-- load stylesheet from fullpage plug-iin and webpage -->
+        <link rel="stylesheet" type="text/css" href="css/jquery.fullPage.css" />
+        <link rel="stylesheet" type="text/css" href="css/examples.css" />
+        <link rel="stylesheet" type="text/css" href="css/tba.css" />
+        <script src="js/data.js"></script>
+        <script src="js/new_countries.js"></script>
+        <!-- load D3js -->
+        <script src="http://www.d3plus.org/js/d3.js"></script>                   
+        <!-- load topojson library -->
+        <script src="http://www.d3plus.org/js/topojson.js"></script>                     
+        <!-- load D3plus after D3js -->
+        <script src="http://www.d3plus.org/js/d3plus.js"></script>
+        <!-- load country's boundry -->
+        <script src="js/country.js"></script>
+        <script src="js/data.js"></script>              
+        <!--[if IE]>
+        <script type="text/javascript">
+        var console = { log: function() {} };
+        </script>
+        <![endif]-->
+        <!-- load js for fullpage plug-in -->
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="js/jquery.slimscroll.min.js"></script>
+        <script type="text/javascript" src="js/jquery.fullPage.js"></script>
+        <script type="text/javascript" src="js/examples.js"></script>
+        <!-- load webpage's js -->
+        <script type="text/javascript" src="js/home.js"></script>
+    </head>
+    <body>
+        <ul id="menu">
+            <li data-menuanchor="home" class="active"><a href="#home">Home</a></li>
+            <li data-menuanchor="map"><a href="#map">Map</a></li>
+            <li data-menuanchor="3rdPage"><a href="#3rdPage">More Info</a></li>
+        </ul>
+        <span id="forkongithub"><a href="https://github.com/Galdiuz/TwitterBrandAnalysis">Fork me on GitHub</a></span>
+        <div id="fullpage"> 
+            <div class="section " id="section0">
+                <div class="intro">
+                    <img src="../imgs/twitter_logo.png"  alt="1"/>
+                    <h1>Twitter Brand Analysis</h1>
+                    <p>Name Pending</p>
+                </div>
+            </div>
+            <div class="section" id="section1">
+                <div class="map">
+                    <!-- create container element for visualization -->
+                    <div id="viz"></div>
+                </div>
+            </div>
+            <div class="section" id="section2">
+                <div class="3rdPage">
+                    <h1>TO Be Continue</h1>
+                    <p>more info:false</p>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+

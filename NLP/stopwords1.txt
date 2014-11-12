@@ -1,0 +1,13 @@
+<<<<<<< HEAD
+{"am": 0, "at": 0, "a": 0, "all": 0, "another": 0,"any": 0,"anybody": 0, "anything": 0, "both": 0, "each": 0, "either": 0, "everybody": 0, 
+"everyone": 0, "everything": 0, "few": 0, "he": 0, "her": 0, "hers": 0, "herself": 0, "his": 0, "him": 0, 
+"himself": 0, "i": 0, "it": 0, "it's": 0, "its": 0, "itself": 0, "many": 0, "me": 0,
+"mine": 0, "more": 0, "most": 0, "much": 0, "my": 0, "myself": 0, "neither": 0, "nobody": 0, "nothing": 0,
+"one": 0, "other": 0, "others": 0, "our": 0, "ours": 0, "ourselves": 0, "several": 0, "she": 0,
+"some": 0, "somebody": 0, "someone": 0, "something": 0, "that": 0, "their": 0, "theirs": 0, "them": 0, 
+"themselves": 0, "these": 0, "they": 0, "this": 0, "those": 0, "us": 0, "we": 0, "what": 0, "whatever": 0,
+"which": 0, "whichever": 0, "who": 0, "whoever": 0, "whom": 0, "whomever": 0, "whose": 0, "you": 0,
+"your": 0, "yours": 0, "yourself": 0, "yourselves": 0}
+=======
+{"the": 0}
+>>>>>>> origin/master

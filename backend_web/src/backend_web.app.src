@@ -1,0 +1,9 @@
+%% -*- erlang -*-
+{application, backend_web,
+ [{description, "backend_web"},
+  {vsn, "0.1"},
+  {modules, []},
+  {registered, []},
+  {mod, {'backend_web', []}},
+  {env, []},
+  {applications, [kernel, stdlib, crypto]}]}.

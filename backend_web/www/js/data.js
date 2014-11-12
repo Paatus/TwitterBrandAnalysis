@@ -1,0 +1,20 @@
+var sample_data = [
+{"value": 0.9, "id": "nausa", "country": "United States"},
+{"value": 0.5, "id": "aschn", "country": "China"},
+{"value": 0, "id": "euesp", "country": "Spain"},
+{"value": 1, "id": "sabra", "country": "Brazil"},							
+{"value": 0.2, "id": "nacan", "country": "Canada"},						
+{"value": 1, "id": "Algeria","country":"afdza"},
+{"value": 1, "id": "Azerbaijan","country":"asaze"},
+{"value": 1, "id": "Albania","country":"eualb"},
+{"value": 1, "id": "Armenia","country":"asarm"},
+{"value": 1, "id": "Angola","country":"afago"},
+{"value": 1, "id": "American Samoa","country":"ocasm"},
+{"value": 1, "id": "Argentina","country":"saarg"},
+{"value": 1, "id": "Australia","country":"ocaus"},
+{"value": 1, "id": "Barbados","country":"nabrb"},
+{"value": 1, "id": "Bermuda","country":"nabmu"},
+{"value": 1, "id": "Bahamas","country":"nabhs"},
+{"value": 1, "id": "Bangladesh","country":"asbgd"},
+{"value": 1, "id": "Bosnia and Herzegovina","country":"eubih"}
+];
