@@ -207,20 +207,6 @@ get_text(Tweet) ->
 		not_found -> null
 	end.
 
-
-get_coordinates(Tweet) -> 
-	case extract(<<"geo">>, Tweet) of
-		{found, null} -> null;
-		{found, Geo} ->
-			case extract(<<"coordinates">>, [Geo]) of
-				%{found, null} -> null;
-				{found, Coords} -> Coords;
-				not_found -> not_found
-			end;
-			%io:format("Geo: ~p~n", [Geo]);
-		not_found -> null
-	end.
-
 get_timezone(Tweet) ->
 	case extract(<<"user">>, Tweet) of
 		{found, {U}} ->
@@ -242,52 +228,6 @@ is_eng(Tweet) ->
 			end;
 		not_found -> false
 	end.
-
-my_print(T) ->
-  case T of
-    {parsed_tweet, L, B, _} ->
-	  %io:format("~s~n", L),
-      case extract(<<"warning">>, L) of
-        {found, _} -> io:format("~s~n", [B]);
-        not_found -> ok
-      end,
-	  case extract(<<"user">>, L) of
-		{found, {U}} ->
-			case extract(<<"time_zone">>, U) of
-				{found, null} -> null;
-				{found, TZ} ->
-					case whereis(node) of
-						undefined ->
-							io:format("no node spawned~n", []);
-						Pid ->
-							Pid ! {place, self(), TZ},
-							receive
-								R -> io:format("{timezone, ~p}~n", [R])
-							end
-					end
-				%not_found -> sadface
-			end;
-		not_found -> sadface
-	  end;
-      %case extract(<<"geo">>, L) of
-	%	{found, null} -> lul;
-	%	{found, {[{_,_},{<<"coordinates">>,CO}]}} ->
-	%	io:format("~p~n", [CO]);
-		%case extract(<<"coordinates">>, TT) of
-		%	{found, GEO} -> io:format("~s~n", [GEO]);
-		%	not_found -> 'no geo data';
-		%	L -> L
-		%end;
-        %{found, TT} -> io:format("~s~n", [TT]);
-     %   not_found -> ok;
-	%	_ -> ok
-          %case extract(<<"delete">>, L) of
-          %  {found, _} -> io:format("deleted: ~p~n", [L]);
-          %  not_found -> io:format("~s~n", [B])
-          %end
-%      end;
-    {invalid_tweet, B} -> io:format("failed to parse: ~s~n", [B])
-  end.
 
 print_headers(C) ->
   lists:append(lists:map(fun ({X, Y}) -> lists:append([X, ":", Y, ", "]) end, C)).
