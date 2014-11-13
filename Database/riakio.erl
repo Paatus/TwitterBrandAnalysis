@@ -1,4 +1,4 @@
--module(riak).
+-module(riakio).
 
 -export([put_tweet/3, fetch/2, query_date_range/3, query_location/2, intersect/2, concat/2]).
 
