@@ -58,7 +58,7 @@ processTweet(DirtyKeywords, {tweet,{{_, Tid},{text, TweetBody},{_, Timezone}}}) 
   %tba_riakdb:put_tweet("gigabucket", Tid, Wtweet),
   %io:fwrite("~p was sent to riak~n", [Wtweet]).                 %test print
 
-&---------Todo---------
+%---------Todo---------
 %Also send the tweet to the frontend
 
 
