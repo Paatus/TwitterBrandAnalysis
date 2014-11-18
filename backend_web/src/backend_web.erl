@@ -6,6 +6,10 @@
 %-export([broadcast_server/1]).
 -export([send_json/1]).
 
+-ifdef(debug).
+-define(DEBUG,true).
+-endif.
+
 start() ->
     spawn(
       fun () ->
@@ -51,14 +55,14 @@ loop(Req, _Broadcaster, false) ->
             Method when Method =:= 'GET'; Method =:= 'HEAD' ->
                 case Path of
                     "top_words" ->
-                        {ok, Keys} = tba_riakdb:query_date_range("gigabucket",web_functions:get_date_from(15),"9"),
+                        {ok, Keys} = tba_riakdb:query_date_range("gigabucket", web_functions:get_date_from(15),"9"),
                         {ok, Info} = mapred_tokenizer:mapred_tokens(Keys),
-                        Req:ok({"application/json",[{"Cache-Control","no-cache"}],
+                        Req:ok({"application/json",[{"Cache-Control", "no-cache"}],
                                 [mochijson2:encode(Info)]});
 
                     "world" ->
-                        {ok, Keys} = tba_riakdb:query_date_range("gigabucket",web_functions:get_date_from(30),"9"),
-                        {ok,Info} = tba_riakdb:mapred_weight(Keys),
+                        {ok, Keys} = tba_riakdb:query_date_range("gigabucket", web_functions:get_date_from(15),"9"),
+                        {ok, Info} = tba_riakdb:mapred_weight(Keys),
                         Req:ok({"application/json",[],
                                 [mochijson2:encode({struct,[{A,web_functions:fix_double_number(B)} || {A,B} <- Info]})]});
                     _ ->
