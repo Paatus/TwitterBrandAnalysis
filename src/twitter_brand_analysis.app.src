@@ -1,5 +1,5 @@
 %% -*- erlang -*-                                                  
-{application, TwitterBrandAnalysis,
+{application, twitter_brand_analysis,
 	[{description, "Project for analysing brand health according to tweets"},
    {vsn, "0.1"},
    {modules, []},
