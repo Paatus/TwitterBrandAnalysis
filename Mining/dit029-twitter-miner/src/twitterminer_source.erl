@@ -56,7 +56,7 @@ twitter_print_pipeline(URL, Keys, SearchWords) ->
   % Pipelines are constructed 'backwards' - consumer is first, producer is last.
   [
     twitterminer_pipeline:consumer(
-      fun(Msg, N) -> get_stuff(Msg), N+1 end, 0),
+      fun(Msg, N) -> get_stuff(Msg, SearchWords), N+1 end, 0),
       %fun(Msg, N) -> my_print(Msg), N+1 end, 0),
     twitterminer_pipeline:map(
       fun decorate_with_id/1),
@@ -166,7 +166,7 @@ decorate_with_id(B) ->
   end.
 
 
-get_stuff(Tweet) ->
+get_stuff(Tweet, SearchWords) ->
 	case Tweet of
 		{invalid_tweet, B} -> io:format("failed to parse: ~s~n", [B]);
 		{parsed_tweet, L, _B, _} ->
@@ -177,10 +177,9 @@ get_stuff(Tweet) ->
 					case whereis(mRelay) of
 						undefined -> io:format("No message relay started~n", []);
 						Pid ->
-							Pid ! {self(), {tweet, {
+							Pid ! {self(), SearchWords, {tweet, {
 									{id,get_id(L)},
 									{text, get_text(L)},
-									{weight, null},
 									{timezone, get_timezone(L)}
 								  }}},
 						receive
