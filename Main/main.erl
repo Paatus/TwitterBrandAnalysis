@@ -7,6 +7,7 @@ init() ->
 
 run() ->
 	init(),
+	spawn(concat, start, ["tweetbucket"]),
 	twitterminer_source:twitter_example().
 
 run(SearchWords) ->
