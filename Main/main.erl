@@ -10,6 +10,7 @@ run() ->
 	spawn(concat, start, ["tweetbucket"]),
 	twitterminer_source:twitter_example().
 
-run(SearchWords) ->
-	init(),
+run(User, SearchWords) ->
+	init(), %Pass User to message_relay
+	[spawn(concat, start, [{User, Token}]) || Token <- string:tokens(SearchWords,",")],
 	twitterminer_source:twitter_example(SearchWords).

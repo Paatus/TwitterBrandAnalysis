@@ -17,13 +17,13 @@ mapred_concat_weight(Keys) ->
 	).
 
 mapred(Keys, Phases) ->
-	{ok, Pid} = riak:start_link(),
+	{ok, Pid} = riakio:start_link(),
 	{ok, [{_, [R]}]} = riakc_pb_socket:mapred(
                 Pid,
                 Keys,
                 Phases
         ),
-        riak:close_link(Pid),
+        riakio:close_link(Pid),
         {ok, dict:to_list(R)}.
 
 map_weight(RiakObject, _, _) ->
