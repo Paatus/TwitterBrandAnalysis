@@ -1,16 +1,16 @@
 -module(main).
--export([run/0, run/1]).
+-export([run/0, run/2]).
 
-init() ->
+init(User, SearchWords) ->
 	application:ensure_all_started(twitterminer),
-	message_relay:start().	
+	message_relay:start(User, SearchWords).	
 
 run() ->
-	init(),
+	init("Faget", "iPhone,apple,iwatch,ipad,iMac,macbook,ios"),
 	spawn(concat, start, ["tweetbucket"]),
-	twitterminer_source:twitter_example().
+	twitterminer_source:twitter_example("iPhone,apple,iwatch,ipad,iMac,macbook,ios").
 
 run(User, SearchWords) ->
-	init(), %Pass User to message_relay
+	init(User, SearchWords), %Pass User to message_relay
 	[spawn(concat, start, [{User, Token}]) || Token <- string:tokens(SearchWords,",")],
 	twitterminer_source:twitter_example(SearchWords).

@@ -177,7 +177,7 @@ get_stuff(Tweet, SearchWords) ->
 					case whereis(mRelay) of
 						undefined -> io:format("No message relay started~n", []);
 						Pid ->
-							Pid ! {self(), SearchWords, {tweet, {
+							Pid ! {self(), {tweet, {
 									{id,get_id(L)},
 									{text, get_text(L)},
 									{timezone, get_timezone(L)}

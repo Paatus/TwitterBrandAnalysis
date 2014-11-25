@@ -1,62 +1,56 @@
 -module(message_relay).
 -import(pyerlTest,[pyProcess/1]).
 -import(tba_riakdb,[put/3]).
--export([start/0, testTweet/0, tweetToJson/1]).
+-export([start/2, testTweet/0, tweetToJson/1]).
 
 %starting mrelay loop, or if it exists returns its ID
-start() ->
+start(User, SearchWords) ->
   case whereis(mRelay) of
     undefined ->
       {ok, spawn(fun() ->
         register(mRelay, self()),
-        loop()
+        loop(User, SearchWords)
       end)};
     Pid ->
       {ok, Pid}
   end.
 
 %loop waits for messages
-loop() ->
+loop(User, SearchWords) ->
   receive
-    {From, Keywords,{tweet, Tweet}} ->
+    {From,{tweet, Tweet}} ->
       From ! {self(), message_get},                             %message was received, let sender know
       spawn(fun() ->                                            %spawn a process for the tweet
         %mRelay ! {self(), processTweet({tweet, Tweet})} end),  %that processes the tweet and sends it back to mrelay
-        processTweet(Keywords, {tweet, Tweet}) end),            %that processes the tweet and sends it back to mrelay
-      loop();
+        processTweet(User, SearchWords, {tweet, Tweet}) end),            %that processes the tweet and sends it back to mrelay
+      loop(User, SearchWords);
     {From, stop} ->
       From ! {self(), stopped}
-  %{From, Json} ->                                            %tweets parsed to Json
-  %  %From ! json_get,
-  %  riak ! {self(), Json},                                   %Are sent to the database
-  %  loop()
   end.
 
 %Test function to quickly check if things are working
 testTweet() ->
-  processTweet("Iphone,phone,apple",{tweet,{
+  processTweet("Faget","Iphone,phone,apple,uphone",{tweet,{
     {id, "666"},
-    {text, "I bought me a new mobile Phone but it was bad, I am now sadness. (´•ω•̥`)"},
+    {text, "I bought me a new mobile apple Phone but it was bad, I am now sadness. (´•ω•̥`)"},
     {timezone, "Irkutsk"}}
   }).
 
-processTweet(DirtyKeywords, {tweet,{{_, Tid},{text, TweetBody},{_, Timezone}}}) ->
+processTweet(User, SearchWords, {tweet,{{_, Tid},{text, TweetBody},{_, Timezone}}}) ->
   %io:fwrite("~p~n", [TweetBody]),
 
-  Keywords = string:tokens(DirtyKeywords, ","),
+  Keywords = string:tokens(SearchWords, ","),
   %io:fwrite("keywords: ~p~n", [Keywords]),
 
-  UsedKeywords = findTweetBrand(string:tokens(Keywords, ","), TweetBody),  %
+  UsedKeywords = findTweetBrand(Keywords, TweetBody),  %
   %io:fwrite("Used keywords: ~p~n", [UsedKeywords]),
 
   NlpWeight = pyerlTest:pyProcess(TweetBody),                   %test value replace 1 with function
+  %NlpWeight = 1,                   %test value replace 1 with function
   Wtweet = {tweet,{{text, TweetBody},{weight, NlpWeight},{timezone, Timezone}}},
 
-  [riakio:put_tweet(X, Tid, Wtweet) || X <- UsedKeywords].
-
-
-  %tba_riakdb:put_tweet("gigabucket", Tid, Wtweet),
-  %io:fwrite("~p was sent to riak~n", [Wtweet]).                 %test print
+  [riakio:put_tweet({User, X}, Tid, Wtweet) || X <- UsedKeywords].
+  %[io:format("Sent to Riak: ~p, ~p, ~p~n",[{User, X}, Tid, Wtweet]) || X <- UsedKeywords].
 
 %---------Todo---------
 %Also send the tweet to the frontend
