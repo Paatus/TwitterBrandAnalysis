@@ -87,21 +87,22 @@ concat(Bucket, StartDate, EndDate) ->
 	End = format_date(EndDate),
 	{ok, Keys} = query_date_range(Bucket, Start, End),
 	{ok, Result} = mapred_weight:mapred_weight(Keys),
-
+	{User, Keyword} = Bucket,
+	Concatbucket = {User, Keyword, concat},
 	{ok, Pid} = start_link(),
-        put_concat(Pid, End, Result),
+        put_concat(Pid, Concatbucket, End, Result),
 	delete_list(Pid, Keys),
         close_link(Pid).
 
-put_concat(_, _, []) -> ok;
-put_concat(Pid, DateTime, [Value|Tail]) ->
+put_concat(_, _,  _, []) -> ok;
+put_concat(Pid, Bucket, DateTime, [Value|Tail]) ->
 	{Location, Weight} = Value,
-	put(Pid, "concat", {DateTime, Location}, Weight, [
+	put(Pid, Bucket, {DateTime, Location}, Weight, [
 		{{binary_index,"datetime"},[to_binary(DateTime)]},
 		{{binary_index,"location"},[to_binary(Location)]}
 	]),
 
-	put_concat(Pid, DateTime, Tail).
+	put_concat(Pid, Bucket, DateTime, Tail).
 
 delete_list(_, []) -> ok;
 delete_list(Pid, [BKPair|Tail]) ->

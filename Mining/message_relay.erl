@@ -41,8 +41,8 @@ processTweet(User, SearchWords, {tweet,{{_, Tid},{text, TweetBody},{_, Timezone}
 
   Keywords = string:tokens(SearchWords, ","),
   %io:fwrite("keywords: ~p~n", [Keywords]),
-
-  UsedKeywords = findTweetBrand(Keywords, TweetBody),  %
+  
+  UsedKeywords = findTweetBrand(Keywords, binary_to_list(TweetBody)),  %
   %io:fwrite("Used keywords: ~p~n", [UsedKeywords]),
 
   NlpWeight = pyerlTest:pyProcess(TweetBody),                   %test value replace 1 with function
