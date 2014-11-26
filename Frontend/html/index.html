@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>TBA - Homepage</title>
+    <meta name="author" content="Alvaro Trigo Lopez" />
+    <meta name="description" content="twitter opt erlang riak mapreduce d3." />
+    <meta name="keywords" content="fullpage,jquery,demo,screen,fixed, header,footer, absolute, positioned,css" />
+    <meta name="Resource-type" content="Document" />
+    <!-- add fullpage plugin'css -->
+    <link rel="stylesheet" type="text/css" href="../css/jquery.fullPage.css" />
+    <!-- Bootstrap Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.css" />
+    <!-- happymap  -->
+    <link rel="stylesheet" type="text/css" href="http://cloud.github.com/downloads/lafeber/world-flags-sprite/flags32.css" />
+    <!-- add own css -->
+    <link rel="stylesheet" type="text/css" href="../css/stylesheet.css" />
+
+
+
+
+
+
+    <!-- add fullpage plugin'js -->
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+
+    <script type="text/javascript" src="../js/jquery.slimscroll.min.js"></script>
+    <script type="text/javascript" src="../js/jquery.fullPage.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    <!-- add happness map -->
+    <script src="../js/highcharts.js"></script>
+    <script src="../js/map.js"></script>
+    <script src="http://code.highcharts.com/mapdata/custom/world.js"></script>
+    <!-- happymap's theme -->
+    <script src="../js/dark-unica.js"></script>
+    <!-- add own js -->
+    <script type="text/javascript" src="../js/index.js"></script>
+    <!-- add happymap js for homepage -->
+    <script type="text/javascript" src="../js/happymap.js"></script>
+
+
+
+</head>
+
+<body>
+
+    <div id="header">
+        <div class="container-fluid">
+            <div class="col-md-1">
+                <h4>Home</h4>
+            </div>
+            <div class="col-md-1">
+                <h4>Product</h4>
+            </div>
+            <div class="col-md-1">
+                <h4>About Us</h4>
+            </div>
+            <div class="col-md-4 col-md-offset-1">
+                <h4>Logo</h4>
+            </div>
+            <div class="col-md-1 col-md-offset-2">
+                <h4>Log In</h4>
+            </div>
+            <div class="col-md-1">
+                <h4>Sign Up</h4>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="fullpage">
+        <div class="section" id="section0">
+            <!-- <video autoplay loop muted controls="false" id="myVideo"> -->
+            <div class="container-fluid videoContainer">
+                <div class="row" id="videoWrap">
+                    <div class="col-md-3">
+                        <video autoplay loop muted controls="false" id="myVideo">
+                            <source src="../imgs/flowers.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="col-md-3">
+                        <video autoplay loop muted controls="false" id="myVideo">
+                            <source src="../imgs/flowers.mp4" type="video/mp4">
+                        </video>
+                    </div>
+
+                    <div class="col-md-6">
+                        <video autoplay loop muted controls="false" id="myVideo">
+                            <source src="../imgs/flowers.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="section" id="section1">
+
+            <div class="row" id="happymapWrap">
+                <div class="container-fluid">
+                    <div id="container"></div>
+                    <div id="info">
+                        <span class="f32">
+                            <span id="flag"></span>
+                        </span>
+                        <h2></h2>
+                        <div class="subheader">Click countries to view history</div>
+                        <div id="country-chart"></div>
+                    </div>
+
+                </div>
+            </div>
+            <div id="footer">
+                <div class="container">
+                    <h4>footer</h4>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</body>
+
+</html>

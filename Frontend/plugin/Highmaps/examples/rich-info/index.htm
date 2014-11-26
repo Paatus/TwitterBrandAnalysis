@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Highmaps Example</title>
+
+
+    <style type="text/css">
+    #wrapper {
+        height: 500px;
+        width: 1000px;
+        margin: 0 auto;
+        padding: 0;
+    }
+    #container {
+        float: left;
+        height: 500px;
+        width: 700px;
+        margin: 0;
+    }
+    #info {
+        float: left;
+        width: 270px;
+        padding-left: 20px;
+        margin: 100px 0 0 0;
+        border-left: 1px solid silver;
+    }
+    #info h2 {
+        display: inline;
+    }
+    #info .f32 .flag {
+        vertical-align: bottom !important;
+    }
+    #info h4 {
+        margin: 1em 0 0 0;
+    }
+    </head> <body> <script src="../../js/highcharts.js"></script> <script src="../../js/modules/map.js"></script> <script src="http://code.highcharts.com/mapdata/custom/world.js"></script> <!-- Flag sprites service provided by Martijn Lafeber,
+    https: //github.com/lafeber/world-flags-sprite/blob/master/LICENSE -->
+    <link rel="stylesheet" type="text/css" href="http://cloud.github.com/downloads/lafeber/world-flags-sprite/flags32.css" /> <div id="wrapper"> <div id="container"></div> <div id="info"> <span class="f32"> <span id="flag"></span> </span> <h2></h2> <div class="subheader">Click countries to view history</div> <div id="country-chart"></div> </div> </div> </body> </html>

@@ -1,5 +1,5 @@
 /**
- * fullPage 2.4.3
+ * fullPage 2.4.6
  * https://github.com/alvarotrigo/fullPage.js
  * MIT licensed
  *
@@ -19,9 +19,10 @@
 			'navigationTooltips': [],
 			'slidesNavigation': false,
 			'slidesNavPosition': 'bottom',
+			'scrollBar': false,
 
 			//scrolling
-			'css3': false,
+			'css3': true,
 			'scrollingSpeed': 700,
 			'autoScrolling': true,
 			'easing': 'easeInQuart',
@@ -30,7 +31,6 @@
 			'loopTop': false,
 			'loopHorizontal': true,
 			'continuousVertical': false,
-			'fitSection': false,
 			'normalScrollElements': null,
 			'scrollOverflow': false,
 			'touchSensitivity': 5,
@@ -65,12 +65,7 @@
 			'onSlideLeave': null
 		}, options);
 
-	    // Disable mutually exclusive settings
-		if (options.continuousVertical &&
-			(options.loopTop || options.loopBottom)) {
-		    options.continuousVertical = false;
-		    console && console.log && console.log("Option loopTop/loopBottom is mutually exclusive with continuousVertical; continuousVertical disabled");
-		}
+	    displayWarnings();
 
 		//Defines the delay to take place before being able to scroll to the next section
 		//BE CAREFUL! Not recommened to change it under 400 for a good behavior in laptops and
@@ -82,7 +77,7 @@
 
 			var element = $('.fp-section.active');
 
-			if(options.autoScrolling){
+			if(options.autoScrolling && !options.scrollBar){
 				$('html, body').css({
 					'overflow' : 'hidden',
 					'height' : '100%'
@@ -476,17 +471,23 @@
 			nav.css('color', options.navigationColor);
 			nav.addClass(options.navigationPosition);
 
-			for(var cont = 0; cont < $('.fp-section').length; cont++){
+			for (var i = 0; i < $('.fp-section').length; i++) {
 				var link = '';
-				if(options.anchors.length){
-					link = options.anchors[cont];
-				}
-				var tooltip = options.navigationTooltips[cont];
-				if(typeof tooltip === 'undefined'){
-					tooltip = '';
+				if (options.anchors.length) {
+					link = options.anchors[i];
 				}
 
-				nav.find('ul').append('<li data-tooltip="' + tooltip + '"><a href="#' + link + '"><span></span></a></li>');
+				var li = '<li><a href="#' + link + '"><span></span></a>';
+
+				// Only add tooltip if needed (defined by user)
+				var tooltip = options.navigationTooltips[i];
+				if (tooltip != undefined && tooltip != '') {
+					li += '<div class="fp-tooltip ' + options.navigationPosition + '">' + tooltip + '</div>';
+				}
+
+				li += '</li>';
+
+				nav.find('ul').append(li);
 			}
 		}
 
@@ -506,14 +507,6 @@
 			$.isFunction( options.afterRender ) && options.afterRender.call( this);
 		}
 
-		//stop autoScrolling when the user scrolls
-		$("html, body").bind("scroll mousedown DOMMouseScroll mousewheel keyup", function(){
-			if(!options.autoScrolling && options.fitSection){
-		    	$('html, body').stop();
-		    	isMoving = false;
-		    }
-		});
-
 		var scrollId;
 		var scrollId2;
 		var isScrolling = false;
@@ -522,7 +515,7 @@
 		$(window).on('scroll', scrollHandler);
 
 		function scrollHandler(){
-			if(!options.autoScrolling){
+			if(!options.autoScrolling || options.scrollBar){
 				var currentScroll = $(window).scrollTop();
 				var visibleSectionIndex = 0;
 				var initial = Math.abs(currentScroll - $('.fp-section').first().offset().top);
@@ -539,7 +532,9 @@
 
 				//geting the last one, the current one on the screen
 				var currentSection = $('.fp-section').eq(visibleSectionIndex);
+			}
 
+			if(!options.autoScrolling){
 				//executing only once the first time we reach the section
 				if(!currentSection.hasClass('active')){
 					isScrolling = true;
@@ -571,16 +566,16 @@
 						isScrolling = false;
 					}, 100);
 				}
+			}
 
-				if(options.fitSection){
-					//for the auto adjust of the viewport to fit a whole section
-					clearTimeout(scrollId2);
-					scrollId2 = setTimeout(function(){
-						if(!isMoving){
-							scrollPage(currentSection);
-						}
-					}, 1000);
-				}
+			if(options.scrollBar){
+				//for the auto adjust of the viewport to fit a whole section
+				clearTimeout(scrollId2);
+				scrollId2 = setTimeout(function(){
+					if(!isMoving){
+						scrollPage(currentSection);
+					}
+				}, 1000);
 			}
 		}
 
@@ -728,6 +723,12 @@
 				var delta = Math.max(-1, Math.min(1,
 						(e.wheelDelta || -e.deltaY || -e.detail)));
 
+				//preventing to scroll the site on mouse wheel when scrollbar is present
+				if(options.scrollBar){
+					e.preventDefault ? e.preventDefault() : e.returnValue = false;
+
+				}
+
 				var activeSection = $('.fp-section.active');
 				var scrollable = isScrollable(activeSection);
 
@@ -817,8 +818,8 @@
 				localIsResizing: isResizing
 			};
 
-			//quiting when activeSection is the target element
-			if(v.activeSection.is(element) && !isResizing){ return; }
+			//quiting when destination scroll is the same as the current one
+			if((v.activeSection.is(element) && !isResizing) || (options.scrollBar && $(window).scrollTop() === v.dtop)){ return; }
 
 			if(v.activeSlide.length){
 				var slideAnchorLink = v.activeSlide.data('anchor');
@@ -862,7 +863,7 @@
 		*/
 		function performMovement(v){
 			// using CSS3 translate functionality
-			if (options.css3 && options.autoScrolling) {
+			if (options.css3 && options.autoScrolling && !options.scrollBar) {
 
 				var translate3d = 'translate3d(0px, -' + v.dtop + 'px, 0px)';
 				transformContainer(translate3d, true);
@@ -873,7 +874,7 @@
 			}
 
 			// using jQuery animate
-			else {
+			else{
 				var scrollSettings = getScrollSettings(v);
 
 				$(scrollSettings.element).animate(
@@ -890,7 +891,7 @@
 		function getScrollSettings(v){
 			var scroll = {};
 
-			if(options.autoScrolling){
+			if(options.autoScrolling && !options.scrollBar){
 				scroll.options = { 'top': -v.dtop};
 				scroll.element = '.'+wrapperSelector;
 			}else{
@@ -1015,8 +1016,9 @@
 		 * Sliding with arrow keys, both, vertical and horizontal
 		 */
 		$(document).keydown(function(e) {
+
 			//Moving the main page with the keyboard arrows if keyboard scrolling is enabled
-			if (options.keyboardScrolling && !isMoving) {
+			if (options.keyboardScrolling && !isMoving && options.autoScrolling) {
 				switch (e.which) {
 					//up
 					case 38:
@@ -1075,21 +1077,6 @@
 
 			landscapeScroll(slides, destiny);
 		});
-
-
-		//navigation tooltips
-		$(document).on({
-			mouseenter: function(){
-				var tooltip = $(this).data('tooltip');
-				$('<div class="fp-tooltip ' + options.navigationPosition +'">' + tooltip + '</div>').hide().appendTo($(this)).fadeIn(200);
-			},
-			mouseleave: function(){
-				$(this).find('.fp-tooltip').fadeOut(200, function() {
-					$(this).remove();
-				});
-			}
-		}, '#fp-nav li');
-
 
 		if(options.normalScrollElements){
 			$(document).on('mouseenter', options.normalScrollElements, function () {
@@ -1329,7 +1316,9 @@
 		function getYmovement(destiny){
 			var fromIndex = $('.fp-section.active').index('.fp-section');
 			var toIndex = destiny.index('.fp-section');
-
+			if( fromIndex == toIndex){
+				return 'none'
+			}
 			if(fromIndex > toIndex){
 				return 'up';
 			}
@@ -1672,7 +1661,10 @@
 		}
 
 		function silentScroll(top){
-			if (options.css3) {
+			if(options.scrollBar){
+				container.scrollTop(top);
+			}
+			else if (options.css3) {
 				var translate3d = 'translate3d(0px, -' + top + 'px, 0px)';
 				transformContainer(translate3d, false);
 			}
@@ -1753,7 +1745,7 @@
 			$('.fp-section, .fp-slide').each(function(){
 				removeSlimScroll($(this));
 				$(this).removeClass('fp-table active');
-			})
+			});
 
 			removeAnimation(container);
 			removeAnimation(container.find('.fp-easing'));
@@ -1768,6 +1760,21 @@
 			$('html, body').scrollTop(0);
 		}
 
-	};
+		/**
+		* Displays warnings
+		*/
+		function displayWarnings(){
+			// Disable mutually exclusive settings
+			if (options.continuousVertical &&
+				(options.loopTop || options.loopBottom)) {
+			    options.continuousVertical = false;
+			    console && console.warn && console.warn("Option `loopTop/loopBottom` is mutually exclusive with `continuousVertical`; `continuousVertical` disabled");
+			}
+			if(options.continuousVertical && options.scrollBar){
+				options.continuousVertical = false;
+				console && console.warn && console.warn("Option `scrollBar` is mutually exclusive with `continuousVertical`; `continuousVertical` disabled");
+			}
+		}
 
+	};
 })(jQuery);
