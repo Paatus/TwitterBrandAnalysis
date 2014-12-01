@@ -1,6 +1,6 @@
 -module(riakio).
 
--export([start_link/0, close_link/1, put_tweet/3, fetch/2, query_date_range/3, query_date_range/4, query_location/2, intersect/2, concat/3, delete_list/2]).
+-export([start_link/0, close_link/1, put_tweet/3, put/4, fetch/2, query_date_range/3, query_date_range/4, query_location/2, intersect/2, concat/3, delete_list/2]).
 
 start_link() -> start_link("127.0.0.1", 8087).
 start_link(Ip, Port) -> riakc_pb_socket:start_link(Ip, Port).
