@@ -90,8 +90,16 @@
             labels: {
                 overflow: "justify"
             },
-            minColor: "#EFEFFF",
-            maxColor: "#003875",
+            // herherher
+            // herherher
+            // herherher
+            // herherher
+            // herherher
+            // herherher
+            // herherher
+            // herherher
+            minColor: "#F5B349",
+            maxColor: "#FC3A51",
             tickLength: 5
         },
         init: function(a, b) {

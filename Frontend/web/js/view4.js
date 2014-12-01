@@ -1,13 +1,14 @@
 var fill = d3.scale.category20();
 
-console.log(d3);
+
 
 var w = 520,
     h = 250;
 
 var canvas = d3.select("#container4").append("svg")
             .attr("width", w)
-            .attr("height", h);
+            .attr("height", h)
+
 
 var wordArray = ["Hello", "world", "normally", "you", "want", "more", "words",
         "than", "this","that","Hello", "world", "normally", "you", "want", "more", "words",

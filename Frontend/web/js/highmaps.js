@@ -6277,9 +6277,9 @@
             labels: {
                 overflow: "justify"
             },
-            minColor: "#EFEFFF",
-            maxColor: "#003875",
-            tickLength: 5
+            minColor: "#A4FFFF",
+            maxColor: "#011622",
+            tickLength: 1
         },
         init: function(a, b) {
             var c = a.options.legend.layout !== "vertical",

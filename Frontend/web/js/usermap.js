@@ -11,12 +11,12 @@ $(function() {
         $('#container').highcharts('Map', {
 
             title: {
-                text: 'Fixed tooltip with HTML'
+                text: 'Map by total amount number of tweets'
             },
 
             legend: {
                 title: {
-                    text: 'Population density per km²',
+                    text: 'Tweets density per country',
                     style: {
                         color: (Highcharts.theme && Highcharts.theme.textColor) || 'black'
                     }
