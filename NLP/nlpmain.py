@@ -33,7 +33,7 @@ def stopwords(tweet):
     tokens = []
     
     tweet = nltk.word_tokenize(tweet)
-    stopwords = json.load(open("stopwords1.txt",'r'))
+    stopwords = json.load(open("NLP/stopwords1.txt",'r'))
     
     '''Append list y elimaitaing StopWords in tweet - StopWords e.g. [I,am,the,of...]'''
     for word in tweet:
@@ -44,7 +44,7 @@ def stopwords(tweet):
 
 #start
 def extract_features(document):
-    wordlist = pickle.load(open("wordlist.p", "rb"))
+    wordlist = pickle.load(open("NLP/wordlist.p", "rb"))
     document_words = set(document)
     features = {}
     for word in wordlist:
@@ -59,7 +59,9 @@ def extract_features(document):
 #start
 def getWeight(tweet):
     #features = pickle.load(open("features.p", "rb"))
-    model = pickle.load(open("model.p", "rb"))
+    tweet = tweet.decode('utf-8')
+    tweet = processTweet(tweet)
+    model = pickle.load(open("NLP/model.p", "rb"))
     '''call processTweet function'''
     tweet = stopwords(tweet)
     document = tweet

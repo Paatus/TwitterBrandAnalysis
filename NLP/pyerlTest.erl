@@ -10,7 +10,7 @@
 pyProcess(Arg)->
 	pyStart(),
 	PyMsg= pyCall(Arg),
-	pyStop(),
+	%pyStop(),
 	PyMsg.
 
 
@@ -41,7 +41,7 @@ pyCall(Arg) ->
 
 	%%{id, 5},{tweet, "fklsdjflskdjgslkdgnskldjfsjkefdsfn"},{weight, null},{time_zone, "England"},{longlat, "0.0,0.0"}
 	%% Call the f function in Ian's nlpmain.py with argument ArgS.
-    python:call(pyIns, nlpmain, getWeight, [ArgS]).
+    python:call(pyIns, 'NLP.nlpmain', getWeight, [ArgS]).
 
 	% Can send message from python to Erlang if needed. 
 	% python:call(pyIns, 'erlport.erlang', cast, [self(), Pymsg]).
