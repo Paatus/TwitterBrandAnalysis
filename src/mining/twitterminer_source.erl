@@ -11,7 +11,7 @@ keyfind(Key, L) ->
 
 %% @doc Get Twitter account keys from a configuration file.
 get_account_keys(Name) ->
-  {ok, Accounts} = application:get_env(twitterminer, twitter_accounts),
+  {ok, Accounts} = application:get_env(tba, twitter_accounts),
   {Name, Keys} = lists:keyfind(Name, 1, Accounts),
   #account_keys{api_key=keyfind(api_key, Keys),
                 api_secret=keyfind(api_secret, Keys),

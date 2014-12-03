@@ -2,7 +2,7 @@
 -export([run/0, run/2]).
 
 init(User, SearchWords) ->
-	application:ensure_all_started(twitterminer),
+	application:ensure_all_started(tba),
 	message_relay:start(User, SearchWords).	
 
 run() ->

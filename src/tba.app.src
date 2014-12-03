@@ -1,9 +1,10 @@
 %% -*- erlang -*-                                                  
-{application, twitter_brand_analysis,
+{application, tba,
 	[{description, "Project for analysing brand health according to tweets"},
-   {vsn, "0.1"},
-   {modules, []},
-   {registered, []},
-   {mod, {'TwitterBrandAnalysis', []}},
-   {env, []},
-   {applications, [kernel, stdlib, crypto]}]}.
+	{vsn, "0.1"},
+	{modules, []},
+	{registered, []},
+	%{mod, {'TwitterBrandAnalysis', []}},
+	{env, []},
+	{applications, [kernel, stdlib, crypto, ibrowse, ssl]}]
+}.
