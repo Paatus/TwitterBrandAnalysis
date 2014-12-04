@@ -1,9 +1,31 @@
 -module(twitterminer_source).
 
+-behaviour(gen_server).
 -export([twitter_example/0, twitter_example/1, twitter_print_pipeline/3, twitter_producer/3, get_account_keys/1]).
+
+-export([init/1,
+         handle_call/3, 
+         handle_cast/2,
+         handle_info/2, 
+         terminate/2, 
+         code_change/3]).
 
 -record(account_keys, {api_key, api_secret,
                        access_token, access_token_secret}).
+
+handle_call(_,_,_) -> ok.
+handle_cast(_,_) -> ok.
+handle_info(_,_) -> ok.
+code_change(_,_,_) -> ok.
+
+start(Params) ->
+	gen_server:start_link({local, ?MODULE}, ?MODULE, [Params], []).
+
+init(Params) ->
+	twitter_example(Params).	
+
+terminate(_Reason, _State) ->
+	twitterminer_pipeline:terminate(p_name).
 
 keyfind(Key, L) ->
   {Key, V} = lists:keyfind(Key, 1, L),
@@ -32,6 +54,7 @@ twitter_example(SearchWords) ->
 
   % Run our pipeline
   P = twitterminer_pipeline:build_link(twitter_print_pipeline(URL, Keys, SearchWords)),
+  register(p_name, P),
 
   % If the pipeline does not terminate after 60 s, this process will
   % force it.
@@ -166,7 +189,7 @@ decorate_with_id(B) ->
   end.
 
 
-get_stuff(Tweet, SearchWords) ->
+get_stuff(Tweet, _SearchWords) ->
 	case Tweet of
 		{invalid_tweet, B} -> io:format("failed to parse: ~s~n", [B]);
 		{parsed_tweet, L, _B, _} ->
