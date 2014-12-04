@@ -322,16 +322,17 @@ img{
     margin-right: 5px;
     margin-top: 5px;
 }
-.dropdown{
+.dropdown,
+#toggle_message{
     height: auto;
+    right: 5px;
+    position: absolute;
 }
 #container4,svg{
      z-index: -1;
      top: 0;
 }
-li{
-    background-color: black;
-}
+
 p{
     color: black;
 }

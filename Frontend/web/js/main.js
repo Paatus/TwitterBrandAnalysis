@@ -36,7 +36,7 @@ $(function() {
     $("body").on("click", 'li', function() {
         $(this).remove();
     });
-     $('#toggle_message').(function(){
+     $('#toggle_message').click(function(){
         $('#container4').toggle('fast');
 
         // if(value =='Positive'){
