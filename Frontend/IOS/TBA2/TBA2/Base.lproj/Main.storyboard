@@ -9,7 +9,7 @@
         <!--View Controller-->
         <scene sceneID="ufC-wZ-h7g">
             <objects>
-                <viewController id="vXZ-lx-hvc" customClass="ViewController" customModule="TBA2" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="vXZ-lx-hvc" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="jyV-Pf-zRb"/>
                         <viewControllerLayoutGuide type="bottom" id="2fi-mo-0CV"/>
@@ -169,6 +169,9 @@
                                         <variation key="heightClass=regular-widthClass=regular">
                                             <fontDescription key="fontDescription" type="system" pointSize="45"/>
                                         </variation>
+                                        <connections>
+                                            <segue destination="Dfn-kX-LLM" kind="modal" id="VkE-Kh-h9a"/>
+                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3xh-AB-sh1">
                                         <rect key="frame" x="0.0" y="124" width="568" height="36"/>
@@ -241,6 +244,50 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="246" y="1451"/>
+        </scene>
+        <!--Controller-->
+        <scene sceneID="jqu-JV-ict">
+            <objects>
+                <viewController storyboardIdentifier="ViewController1" id="EbI-8y-dWe" customClass="controller" customModule="TBA2" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="4gX-ea-qFo"/>
+                        <viewControllerLayoutGuide type="bottom" id="7tI-se-Qdz"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="MsK-0c-YRw">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="YgH-IB-050">
+                        <barButtonItem key="leftBarButtonItem" title="Item" id="ytW-p4-Udg">
+                            <connections>
+                                <action selector="searchKey:" destination="EbI-8y-dWe" id="Pkz-Vo-eFz"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="mA7-fo-jWx" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="928" y="2255"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="AgG-H7-3XV">
+            <objects>
+                <viewController storyboardIdentifier="2page" id="BSd-YH-LVD" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="pkd-19-cxt"/>
+                        <viewControllerLayoutGuide type="bottom" id="DK0-je-r24"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="g3W-1g-6eL">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Xwo-0V-HbA" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1715" y="1925"/>
         </scene>
         <!--Login Page-->
         <scene sceneID="GiV-ee-VQK">
@@ -264,7 +311,7 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Kfo-yw-lIs">
                                 <rect key="frame" x="16" y="391" width="568" height="209"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Oyh-cz-hpE">
+                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Oyh-cz-hpE">
                                         <rect key="frame" x="243" y="70" width="82" height="48"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="30"/>
                                         <state key="normal" title="Log In">
@@ -290,7 +337,7 @@
                                             <segue destination="vXZ-lx-hvc" kind="modal" id="b4Z-DP-2hG"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="e7V-50-kuf">
+                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="e7V-50-kuf">
                                         <rect key="frame" x="249" y="153" width="71" height="36"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                         <state key="normal" title="Sign Up">
@@ -384,7 +431,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Sfz-MN-8YH" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="140" y="1119"/>
+            <point key="canvasLocation" x="14" y="592"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="Lxd-SX-vqY">
@@ -748,12 +795,30 @@
             </objects>
             <point key="canvasLocation" x="1303.5" y="766.5"/>
         </scene>
+        <!--Nav Controller-->
+        <scene sceneID="w5p-Eu-9uW">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Dfn-kX-LLM" customClass="navController" customModule="TBA2" customModuleProvider="target" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="nWZ-se-DKi">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="EbI-8y-dWe" kind="relationship" relationship="rootViewController" id="D6p-nR-3Ar"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="e0Y-uH-lcj" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="246" y="2255"/>
+        </scene>
     </scenes>
     <resources>
         <image name="TBAlogo1.png" width="128" height="128"/>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="b4Z-DP-2hG"/>
-        <segue reference="eIx-2d-ZjH"/>
+        <segue reference="DgL-zS-bvf"/>
     </inferredMetricsTieBreakers>
 </document>
