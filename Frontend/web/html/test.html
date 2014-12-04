@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>test</title>
+    <script src="jquery.js"></script>
+    <script src="../js/main.js"></script>
+
+    <link type="text/css" rel="stylesheet" href="jquery.dropdown.css" />
+    <script type="text/javascript" src="jquery.dropdown.js"></script>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+
+
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+
+        <h3>A demonstration of how to access a Password Field</h3>
+
+        Password: <input type="password" id="myPsw" value="psw123">
+
+        <p>Click the button to get the password of the password field.</p>
+
+        <button onclick="myFunction()">Try it</button>
+
+        <p id="demo"></p>
+
+        <script>
+        function myFunction() {
+            var x = document.getElementById("myPsw").value;
+            document.getElementById("demo").innerHTML = x;
+        }
+        </script>
+
+</body>
+</html>

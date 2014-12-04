@@ -10,13 +10,13 @@
     <meta name="Resource-type" content="Document" />
     <!-- add fullpage plugin'css -->
     <link rel="stylesheet" type="text/css" href="../css/jquery.fullPage.css" />
-    <!-- Bootstrap Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
-    <link rel="stylesheet" type="text/css" href="../css/bootstrap.css" />
+
     <!-- happymap  -->
     <link rel="stylesheet" type="text/css" href="http://cloud.github.com/downloads/lafeber/world-flags-sprite/flags32.css" />
     <!-- add font style -->
     <link href='http://fonts.googleapis.com/css?family=Poiret+One' rel='stylesheet' type='text/css'>
+        <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
     <!-- add own css -->
     <link rel="stylesheet" type="text/css" href="../css/stylesheet.css" />
 
@@ -25,23 +25,26 @@
 
 
 
+
     <!-- add fullpage plugin'js -->
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+     <script src="jquery.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
 
     <script type="text/javascript" src="../js/jquery.slimscroll.min.js"></script>
     <script type="text/javascript" src="../js/jquery.fullPage.js"></script>
     <!-- Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+
     <!-- add happness map -->
     <script src="../js/highcharts.js"></script>
     <script src="../js/map.js"></script>
     <script src="http://code.highcharts.com/mapdata/custom/world.js"></script>
-    <!-- happymap's theme -->
-    <script src="../js/dark-unica.js"></script>
+            <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
     <!-- add own js -->
     <script type="text/javascript" src="../js/index.js"></script>
     <!-- add happymap js for homepage -->
+    <script type="text/javascript" src="../js/happymap.js"></script>
+    <!-- add own js file -->
     <script type="text/javascript" src="../js/happymap.js"></script>
 
 
@@ -65,10 +68,39 @@
                 <img src="../imgs/logo.png" alt="TBA logo" >
             </div>
             <div class="col-md-1 col-md-offset-2">
-                <a href="userhome.html">
-                    <h4>Log In</h4>
-                </a>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Log in</button>
             </div>
+
+
+            <!-- login form -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="exampleModalLabel">Log In</h4>
+                  </div>
+                  <div class="modal-body">
+                    <form role="form">
+                      <div class="form-group">
+                        <label for="recipient-name" class="control-label">UserName:</label>
+                        <input type="text"  id="recipient-name">
+                      </div>
+                      <div class="form-group">
+                        <label for="message-text" class="control-label">Passwords:</label>
+                        <input type="password" id="myPsw" ></textarea>
+                      </div>
+                    </form>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="getPassword()">Log In</button>
+                    <p id="demo"></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div class="col-md-1">
                 <a href="userhome.html">
                     <h4>Sign Up</h4>

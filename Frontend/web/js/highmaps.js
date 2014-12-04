@@ -1,3 +1,75 @@
+$(function() {
+
+    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function(data) {
+
+        // Add lower case codes to the data set for inclusion in the tooltip.pointFormat
+        $.each(data, function() {
+            this.flag = this.code.replace('UK', 'GB').toLowerCase();
+        });
+
+        // Initiate the chart
+        $('#container').highcharts('Map', {
+
+            title: {
+                text: 'Map by total amount number of tweets'
+            },
+
+            legend: {
+                title: {
+                    text: 'Tweets density per country',
+                    style: {
+                        color: (Highcharts.theme && Highcharts.theme.textColor) || 'black'
+                    }
+                }
+            },
+
+            mapNavigation: {
+                enabled: true,
+                buttonOptions: {
+                    verticalAlign: 'bottom'
+                }
+            },
+
+            tooltip: {
+                backgroundColor: 'none',
+                borderWidth: 0,
+                shadow: false,
+                useHTML: true,
+                padding: 0,
+                pointFormat: '<span class="f32"><span class="flag {point.flag}"></span></span>' + ' {point.name}: <b>{point.value}</b>/km²',
+                positioner: function() {
+                    return {
+                        x: 0,
+                        y: 250
+                    };
+                }
+            },
+
+            colorAxis: {
+                min: 1,
+                max: 1000,
+                type: 'logarithmic'
+            },
+
+            series: [{
+                data: data,
+                mapData: Highcharts.maps['custom/world'],
+                joinBy: ['iso-a2', 'code'],
+                name: 'Population density',
+                states: {
+                    hover: {
+                        color: '#BADA55'
+                    }
+                }
+            }]
+        });
+    });
+});
+
+
+
+
+
 /*
  Highmaps JS v1.0.4 (2014-09-02)
 
@@ -7785,3 +7857,727 @@
         version: "1.0.4"
     })
 })();
+
+
+
+
+/*
+ Data plugin for Highcharts
+
+ (c) 2012-2014 Torstein Honsi
+
+ License: www.highcharts.com/license
+*/
+(function(g) {
+    var j = g.each,
+        q = HighchartsAdapter.inArray,
+        s = g.splat,
+        l, n = function(a, b) {
+            this.init(a, b)
+        };
+    g.extend(n.prototype, {
+        init: function(a, b) {
+            this.options = a;
+            this.chartOptions = b;
+            this.columns = a.columns || this.rowsToColumns(a.rows) || [];
+            this.rawColumns = [];
+            this.columns.length ? this.dataFound() : (this.parseCSV(), this.parseTable(), this.parseGoogleSpreadsheet())
+        },
+        getColumnDistribution: function() {
+            var a = this.chartOptions,
+                b = this.options,
+                c = [],
+                f = function(a) {
+                    return (g.seriesTypes[a || "line"].prototype.pointArrayMap || [0]).length
+                },
+                e = a && a.chart && a.chart.type,
+                d = [],
+                i = [],
+                p, h;
+            j(a && a.series || [], function(a) {
+                d.push(f(a.type || e))
+            });
+            j(b && b.seriesMapping || [], function(a) {
+                c.push(a.x || 0)
+            });
+            c.length === 0 && c.push(0);
+            j(b && b.seriesMapping || [], function(b) {
+                var c = new l,
+                    m, j = d[p] || f(e),
+                    o = g.seriesTypes[((a && a.series || [])[p] || {}).type || e || "line"].prototype.pointArrayMap || ["y"];
+                c.addColumnReader(b.x, "x");
+                for (m in b) b.hasOwnProperty(m) && m !== "x" && c.addColumnReader(b[m], m);
+                for (h = 0; h < j; h++) c.hasReader(o[h]) || c.addColumnReader(void 0, o[h]);
+                i.push(c);
+                p++
+            });
+            b = g.seriesTypes[e || "line"].prototype.pointArrayMap;
+            b === void 0 && (b = ["y"]);
+            this.valueCount = {
+                global: f(e),
+                xColumns: c,
+                individual: d,
+                seriesBuilders: i,
+                globalPointArrayMap: b
+            }
+        },
+        dataFound: function() {
+            if (this.options.switchRowsAndColumns) this.columns = this.rowsToColumns(this.columns);
+            this.getColumnDistribution();
+            this.parseTypes();
+            this.findHeaderRow();
+            this.parsed() !== !1 && this.complete()
+        },
+        parseCSV: function() {
+            var a = this,
+                b = this.options,
+                c = b.csv,
+                f = this.columns,
+                e = b.startRow || 0,
+                d = b.endRow || Number.MAX_VALUE,
+                i = b.startColumn ||
+                0,
+                p = b.endColumn || Number.MAX_VALUE,
+                h, g, r = 0;
+            c && (g = c.replace(/\r\n/g, "\n").replace(/\r/g, "\n").split(b.lineDelimiter || "\n"), h = b.itemDelimiter || (c.indexOf("\t") !== -1 ? "\t" : ","), j(g, function(b, c) {
+                var g = a.trim(b),
+                    t = g.indexOf("#") === 0;
+                c >= e && c <= d && !t && g !== "" && (g = b.split(h), j(g, function(a, b) {
+                    b >= i && b <= p && (f[b - i] || (f[b - i] = []), f[b - i][r] = a)
+                }), r += 1)
+            }), this.dataFound())
+        },
+        parseTable: function() {
+            var a = this.options,
+                b = a.table,
+                c = this.columns,
+                f = a.startRow || 0,
+                e = a.endRow || Number.MAX_VALUE,
+                d = a.startColumn || 0,
+                i = a.endColumn ||
+                Number.MAX_VALUE;
+            b && (typeof b === "string" && (b = document.getElementById(b)), j(b.getElementsByTagName("tr"), function(a, b) {
+                b >= f && b <= e && j(a.children, function(a, e) {
+                    if ((a.tagName === "TD" || a.tagName === "TH") && e >= d && e <= i) c[e - d] || (c[e - d] = []), c[e - d][b - f] = a.innerHTML
+                })
+            }), this.dataFound())
+        },
+        parseGoogleSpreadsheet: function() {
+            var a = this,
+                b = this.options,
+                c = b.googleSpreadsheetKey,
+                f = this.columns,
+                e = b.startRow || 0,
+                d = b.endRow || Number.MAX_VALUE,
+                i = b.startColumn || 0,
+                g = b.endColumn || Number.MAX_VALUE,
+                h, j;
+            c && jQuery.ajax({
+                dataType: "json",
+                url: "https://spreadsheets.google.com/feeds/cells/" + c + "/" + (b.googleSpreadsheetWorksheet || "od6") + "/public/values?alt=json-in-script&callback=?",
+                error: b.error,
+                success: function(b) {
+                    var b = b.feed.entry,
+                        c, l = b.length,
+                        o = 0,
+                        n = 0,
+                        k;
+                    for (k = 0; k < l; k++) c = b[k], o = Math.max(o, c.gs$cell.col), n = Math.max(n, c.gs$cell.row);
+                    for (k = 0; k < o; k++)
+                        if (k >= i && k <= g) f[k - i] = [], f[k - i].length = Math.min(n, d - e);
+                    for (k = 0; k < l; k++)
+                        if (c = b[k], h = c.gs$cell.row - 1, j = c.gs$cell.col - 1, j >= i && j <= g && h >= e && h <= d) f[j - i][h - e] = c.content.$t;
+                    a.dataFound()
+                }
+            })
+        },
+        findHeaderRow: function() {
+            var a =
+                0;
+            j(this.columns, function(b) {
+                b.isNumeric && typeof b[0] !== "string" && (a = null)
+            });
+            this.headerRow = a
+        },
+        trim: function(a) {
+            return typeof a === "string" ? a.replace(/^\s+|\s+$/g, "") : a
+        },
+        parseTypes: function() {
+            for (var a = this.columns, b = this.rawColumns, c = a.length, f, e, d, i, g, h, j = [], l, m = this.chartOptions; c--;) {
+                f = a[c].length;
+                b[c] = [];
+                for (l = (g = q(c, this.valueCount.xColumns) !== -1) && m && m.xAxis && s(m.xAxis)[0].type === "category"; f--;)
+                    if (e = j[f] || a[c][f], d = parseFloat(e), i = b[c][f] = this.trim(e), l) a[c][f] = i;
+                    else if (i == d) a[c][f] = d, d > 31536E6 ?
+                    a[c].isDatetime = !0 : a[c].isNumeric = !0;
+                else if (d = this.parseDate(e), g && typeof d === "number" && !isNaN(d)) {
+                    if (j[f] = e, a[c][f] = d, a[c].isDatetime = !0, a[c][f + 1] !== void 0) {
+                        e = d > a[c][f + 1];
+                        if (e !== h && h !== void 0) this.alternativeFormat ? (this.dateFormat = this.alternativeFormat, f = a[c].length, this.alternativeFormat = this.dateFormats[this.dateFormat].alternative) : a[c].unsorted = !0;
+                        h = e
+                    }
+                } else if (a[c][f] = i === "" ? null : i, f !== 0 && (a[c].isDatetime || a[c].isNumeric)) a[c].mixed = !0;
+                g && a[c].mixed && (a[c] = b[c])
+            }
+            if (a[0].isDatetime && h) {
+                b = typeof a[0][0] !==
+                    "number";
+                for (c = 0; c < a.length; c++) a[c].reverse(), b && a[c].unshift(a[c].pop())
+            }
+        },
+        dateFormats: {
+            "YYYY-mm-dd": {
+                regex: /^([0-9]{4})[\-\/\.]([0-9]{2})[\-\/\.]([0-9]{2})$/,
+                parser: function(a) {
+                    return Date.UTC(+a[1], a[2] - 1, +a[3])
+                }
+            },
+            "dd/mm/YYYY": {
+                regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{4})$/,
+                parser: function(a) {
+                    return Date.UTC(+a[3], a[2] - 1, +a[1])
+                },
+                alternative: "mm/dd/YYYY"
+            },
+            "mm/dd/YYYY": {
+                regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{4})$/,
+                parser: function(a) {
+                    return Date.UTC(+a[3], a[1] - 1, +a[2])
+                }
+            },
+            "dd/mm/YY": {
+                regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{2})$/,
+                parser: function(a) {
+                    return Date.UTC(+a[3] + 2E3, a[2] - 1, +a[1])
+                },
+                alternative: "mm/dd/YY"
+            },
+            "mm/dd/YY": {
+                regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{2})$/,
+                parser: function(a) {
+                    console.log(a);
+                    return Date.UTC(+a[3] + 2E3, a[1] - 1, +a[2])
+                }
+            }
+        },
+        parseDate: function(a) {
+            var b = this.options.parseDate,
+                c, f, e = this.options.dateFormat || this.dateFormat,
+                d;
+            b && (c = b(a));
+            if (typeof a === "string") {
+                if (e) b = this.dateFormats[e], (d = a.match(b.regex)) && (c = b.parser(d));
+                else
+                    for (f in this.dateFormats)
+                        if (b = this.dateFormats[f], d = a.match(b.regex)) {
+                            this.dateFormat = f;
+                            this.alternativeFormat = b.alternative;
+                            c = b.parser(d);
+                            break
+                        }
+                d || (d = Date.parse(a), typeof d === "object" && d !== null && d.getTime ? c = d.getTime() - d.getTimezoneOffset() * 6E4 : typeof d === "number" && !isNaN(d) && (c = d - (new Date(d)).getTimezoneOffset() * 6E4))
+            }
+            return c
+        },
+        rowsToColumns: function(a) {
+            var b, c, f, e, d;
+            if (a) {
+                d = [];
+                c = a.length;
+                for (b = 0; b < c; b++) {
+                    e = a[b].length;
+                    for (f = 0; f < e; f++) d[f] || (d[f] = []), d[f][b] = a[b][f]
+                }
+            }
+            return d
+        },
+        parsed: function() {
+            if (this.options.parsed) return this.options.parsed.call(this,
+                this.columns)
+        },
+        getFreeIndexes: function(a, b) {
+            var c, f, e = [],
+                d = [],
+                i;
+            for (f = 0; f < a; f += 1) e.push(!0);
+            for (c = 0; c < b.length; c += 1) {
+                i = b[c].getReferencedColumnIndexes();
+                for (f = 0; f < i.length; f += 1) e[i[f]] = !1
+            }
+            for (f = 0; f < e.length; f += 1) e[f] && d.push(f);
+            return d
+        },
+        complete: function() {
+            var a = this.columns,
+                b, c = this.options,
+                f, e, d, i, g = [],
+                h;
+            if (c.complete || c.afterComplete) {
+                for (d = 0; d < a.length; d++)
+                    if (this.headerRow === 0) a[d].name = a[d].shift();
+                f = [];
+                e = this.getFreeIndexes(a.length, this.valueCount.seriesBuilders);
+                for (d = 0; d < this.valueCount.seriesBuilders.length; d++) h =
+                    this.valueCount.seriesBuilders[d], h.populateColumns(e) && g.push(h);
+                for (; e.length > 0;) {
+                    h = new l;
+                    h.addColumnReader(0, "x");
+                    d = q(0, e);
+                    d !== -1 && e.splice(d, 1);
+                    for (d = 0; d < this.valueCount.global; d++) h.addColumnReader(void 0, this.valueCount.globalPointArrayMap[d]);
+                    h.populateColumns(e) && g.push(h)
+                }
+                g.length > 0 && g[0].readers.length > 0 && (h = a[g[0].readers[0].columnIndex], h !== void 0 && (h.isDatetime ? b = "datetime" : h.isNumeric || (b = "category")));
+                if (b === "category")
+                    for (d = 0; d < g.length; d++) {
+                        h = g[d];
+                        for (e = 0; e < h.readers.length; e++)
+                            if (h.readers[e].configName ===
+                                "x") h.readers[e].configName = "name"
+                    }
+                for (d = 0; d < g.length; d++) {
+                    h = g[d];
+                    e = [];
+                    for (i = 0; i < a[0].length; i++) e[i] = h.read(a, i);
+                    f[d] = {
+                        data: e
+                    };
+                    if (h.name) f[d].name = h.name
+                }
+                a = {
+                    xAxis: {
+                        type: b
+                    },
+                    series: f
+                };
+                c.complete && c.complete(a);
+                c.afterComplete && c.afterComplete(a)
+            }
+        }
+    });
+    g.Data = n;
+    g.data = function(a, b) {
+        return new n(a, b)
+    };
+    g.wrap(g.Chart.prototype, "init", function(a, b, c) {
+        var f = this;
+        b && b.data ? g.data(g.extend(b.data, {
+            afterComplete: function(e) {
+                var d, i;
+                if (b.hasOwnProperty("series"))
+                    if (typeof b.series === "object")
+                        for (d = Math.max(b.series.length,
+                                e.series.length); d--;) i = b.series[d] || {}, b.series[d] = g.merge(i, e.series[d]);
+                    else delete b.series;
+                b = g.merge(e, b);
+                a.call(f, b, c)
+            }
+        }), b) : a.call(f, b, c)
+    });
+    l = function() {
+        this.readers = [];
+        this.pointIsArray = !0
+    };
+    l.prototype.populateColumns = function(a) {
+        var b = !0;
+        j(this.readers, function(b) {
+            if (b.columnIndex === void 0) b.columnIndex = a.shift()
+        });
+        j(this.readers, function(a) {
+            a.columnIndex === void 0 && (b = !1)
+        });
+        return b
+    };
+    l.prototype.read = function(a, b) {
+        var c = this.pointIsArray,
+            f = c ? [] : {},
+            e;
+        j(this.readers, function(d) {
+            var e = a[d.columnIndex][b];
+            c ? f.push(e) : f[d.configName] = e
+        });
+        if (this.name === void 0 && this.readers.length >= 2 && (e = this.getReferencedColumnIndexes(), e.length >= 2)) e.shift(), e.sort(), this.name = a[e.shift()].name;
+        return f
+    };
+    l.prototype.addColumnReader = function(a, b) {
+        this.readers.push({
+            columnIndex: a,
+            configName: b
+        });
+        if (!(b === "x" || b === "y" || b === void 0)) this.pointIsArray = !1
+    };
+    l.prototype.getReferencedColumnIndexes = function() {
+        var a, b = [],
+            c;
+        for (a = 0; a < this.readers.length; a += 1) c = this.readers[a], c.columnIndex !== void 0 && b.push(c.columnIndex);
+        return b
+    };
+    l.prototype.hasReader = function(a) {
+        var b, c;
+        for (b = 0; b < this.readers.length; b += 1)
+            if (c = this.readers[b], c.configName === a) return !0
+    }
+})(Highcharts);
+
+
+/*
+ Highmaps JS v1.0.4 (2014-09-02)
+ Exporting module
+
+ (c) 2010-2014 Torstein Honsi
+
+ License: www.highcharts.com/license
+*/
+(function(f) {
+    var A = f.Chart,
+        t = f.addEvent,
+        B = f.removeEvent,
+        l = f.createElement,
+        o = f.discardElement,
+        v = f.css,
+        k = f.merge,
+        r = f.each,
+        p = f.extend,
+        D = Math.max,
+        j = document,
+        C = window,
+        E = f.isTouchDevice,
+        F = f.Renderer.prototype.symbols,
+        s = f.getOptions(),
+        y;
+    p(s.lang, {
+        printChart: "Print chart",
+        downloadPNG: "Download PNG image",
+        downloadJPEG: "Download JPEG image",
+        downloadPDF: "Download PDF document",
+        downloadSVG: "Download SVG vector image",
+        contextButtonTitle: "Chart context menu"
+    });
+    s.navigation = {
+        menuStyle: {
+            border: "1px solid #A0A0A0",
+            background: "#FFFFFF",
+            padding: "5px 0"
+        },
+        menuItemStyle: {
+            padding: "0 10px",
+            background: "none",
+            color: "#303030",
+            fontSize: E ? "14px" : "11px"
+        },
+        menuItemHoverStyle: {
+            background: "#4572A5",
+            color: "#FFFFFF"
+        },
+        buttonOptions: {
+            symbolFill: "#E0E0E0",
+            symbolSize: 14,
+            symbolStroke: "#666",
+            symbolStrokeWidth: 3,
+            symbolX: 12.5,
+            symbolY: 10.5,
+            align: "right",
+            buttonSpacing: 3,
+            height: 22,
+            theme: {
+                fill: "white",
+                stroke: "none"
+            },
+            verticalAlign: "top",
+            width: 24
+        }
+    };
+    s.exporting = {
+        type: "image/png",
+        url: "http://export.highcharts.com/",
+        buttons: {
+            contextButton: {
+                menuClassName: "highcharts-contextmenu",
+                symbol: "menu",
+                _titleKey: "contextButtonTitle",
+                menuItems: [{
+                    textKey: "printChart",
+                    onclick: function() {
+                        this.print()
+                    }
+                }, {
+                    separator: !0
+                }, {
+                    textKey: "downloadPNG",
+                    onclick: function() {
+                        this.exportChart()
+                    }
+                }, {
+                    textKey: "downloadJPEG",
+                    onclick: function() {
+                        this.exportChart({
+                            type: "image/jpeg"
+                        })
+                    }
+                }, {
+                    textKey: "downloadPDF",
+                    onclick: function() {
+                        this.exportChart({
+                            type: "application/pdf"
+                        })
+                    }
+                }, {
+                    textKey: "downloadSVG",
+                    onclick: function() {
+                        this.exportChart({
+                            type: "image/svg+xml"
+                        })
+                    }
+                }]
+            }
+        }
+    };
+    f.post = function(b, a, d) {
+        var c, b = l("form", k({
+            method: "post",
+            action: b,
+            enctype: "multipart/form-data"
+        }, d), {
+            display: "none"
+        }, j.body);
+        for (c in a) l("input", {
+            type: "hidden",
+            name: c,
+            value: a[c]
+        }, null, b);
+        b.submit();
+        o(b)
+    };
+    p(A.prototype, {
+        getSVG: function(b) {
+            var a = this,
+                d, c, z, h, g = k(a.options, b);
+            if (!j.createElementNS) j.createElementNS = function(a, b) {
+                return j.createElement(b)
+            };
+            b = l("div", null, {
+                position: "absolute",
+                top: "-9999em",
+                width: a.chartWidth + "px",
+                height: a.chartHeight + "px"
+            }, j.body);
+            c = a.renderTo.style.width;
+            h = a.renderTo.style.height;
+            c = g.exporting.sourceWidth || g.chart.width ||
+                /px$/.test(c) && parseInt(c, 10) || 600;
+            h = g.exporting.sourceHeight || g.chart.height || /px$/.test(h) && parseInt(h, 10) || 400;
+            p(g.chart, {
+                animation: !1,
+                renderTo: b,
+                forExport: !0,
+                width: c,
+                height: h
+            });
+            g.exporting.enabled = !1;
+            g.series = [];
+            r(a.series, function(a) {
+                z = k(a.options, {
+                    animation: !1,
+                    enableMouseTracking: !1,
+                    showCheckbox: !1,
+                    visible: a.visible
+                });
+                z.isInternal || g.series.push(z)
+            });
+            d = new f.Chart(g, a.callback);
+            r(["xAxis", "yAxis"], function(b) {
+                r(a[b], function(a, c) {
+                    var g = d[b][c],
+                        f = a.getExtremes(),
+                        h = f.userMin,
+                        f = f.userMax;
+                    g && (h !==
+                        void 0 || f !== void 0) && g.setExtremes(h, f, !0, !1)
+                })
+            });
+            c = d.container.innerHTML;
+            g = null;
+            d.destroy();
+            o(b);
+            c = c.replace(/zIndex="[^"]+"/g, "").replace(/isShadow="[^"]+"/g, "").replace(/symbolName="[^"]+"/g, "").replace(/jQuery[0-9]+="[^"]+"/g, "").replace(/url\([^#]+#/g, "url(#").replace(/<svg /, '<svg xmlns:xlink="http://www.w3.org/1999/xlink" ').replace(/ href=/g, " xlink:href=").replace(/\n/, " ").replace(/<\/svg>.*?$/, "</svg>").replace(/(fill|stroke)="rgba\(([ 0-9]+,[ 0-9]+,[ 0-9]+),([ 0-9\.]+)\)"/g, '$1="rgb($2)" $1-opacity="$3"').replace(/&nbsp;/g,
+                " ").replace(/&shy;/g, "­").replace(/<IMG /g, "<image ").replace(/height=([^" ]+)/g, 'height="$1"').replace(/width=([^" ]+)/g, 'width="$1"').replace(/hc-svg-href="([^"]+)">/g, 'xlink:href="$1"/>').replace(/id=([^" >]+)/g, 'id="$1"').replace(/class=([^" >]+)/g, 'class="$1"').replace(/ transform /g, " ").replace(/:(path|rect)/g, "$1").replace(/style="([^"]+)"/g, function(a) {
+                return a.toLowerCase()
+            });
+            return c = c.replace(/(url\(#highcharts-[0-9]+)&quot;/g, "$1").replace(/&quot;/g, "'")
+        },
+        exportChart: function(b, a) {
+            var b =
+                b || {},
+                d = this.options.exporting,
+                d = this.getSVG(k({
+                    chart: {
+                        borderRadius: 0
+                    }
+                }, d.chartOptions, a, {
+                    exporting: {
+                        sourceWidth: b.sourceWidth || d.sourceWidth,
+                        sourceHeight: b.sourceHeight || d.sourceHeight
+                    }
+                })),
+                b = k(this.options.exporting, b);
+            f.post(b.url, {
+                filename: b.filename || "chart",
+                type: b.type,
+                width: b.width || 0,
+                scale: b.scale || 2,
+                svg: d
+            }, b.formAttributes)
+        },
+        print: function() {
+            var b = this,
+                a = b.container,
+                d = [],
+                c = a.parentNode,
+                f = j.body,
+                h = f.childNodes;
+            if (!b.isPrinting) b.isPrinting = !0, r(h, function(a, b) {
+                if (a.nodeType === 1) d[b] = a.style.display,
+                    a.style.display = "none"
+            }), f.appendChild(a), C.focus(), C.print(), setTimeout(function() {
+                c.appendChild(a);
+                r(h, function(a, b) {
+                    if (a.nodeType === 1) a.style.display = d[b]
+                });
+                b.isPrinting = !1
+            }, 1E3)
+        },
+        contextMenu: function(b, a, d, c, f, h, g) {
+            var e = this,
+                k = e.options.navigation,
+                q = k.menuItemStyle,
+                m = e.chartWidth,
+                n = e.chartHeight,
+                j = "cache-" + b,
+                i = e[j],
+                u = D(f, h),
+                w, x, o, s = function(a) {
+                    e.pointer.inClass(a.target, b) || x()
+                };
+            if (!i) e[j] = i = l("div", {
+                className: b
+            }, {
+                position: "absolute",
+                zIndex: 1E3,
+                padding: u + "px"
+            }, e.container), w = l("div", null, p({
+                MozBoxShadow: "3px 3px 10px #888",
+                WebkitBoxShadow: "3px 3px 10px #888",
+                boxShadow: "3px 3px 10px #888"
+            }, k.menuStyle), i), x = function() {
+                v(i, {
+                    display: "none"
+                });
+                g && g.setState(0);
+                e.openMenu = !1
+            }, t(i, "mouseleave", function() {
+                o = setTimeout(x, 500)
+            }), t(i, "mouseenter", function() {
+                clearTimeout(o)
+            }), t(document, "mouseup", s), t(e, "destroy", function() {
+                B(document, "mouseup", s)
+            }), r(a, function(a) {
+                if (a) {
+                    var b = a.separator ? l("hr", null, null, w) : l("div", {
+                        onmouseover: function() {
+                            v(this, k.menuItemHoverStyle)
+                        },
+                        onmouseout: function() {
+                            v(this, q)
+                        },
+                        onclick: function() {
+                            x();
+                            a.onclick.apply(e,
+                                arguments)
+                        },
+                        innerHTML: a.text || e.options.lang[a.textKey]
+                    }, p({
+                        cursor: "pointer"
+                    }, q), w);
+                    e.exportDivElements.push(b)
+                }
+            }), e.exportDivElements.push(w, i), e.exportMenuWidth = i.offsetWidth, e.exportMenuHeight = i.offsetHeight;
+            a = {
+                display: "block"
+            };
+            d + e.exportMenuWidth > m ? a.right = m - d - f - u + "px" : a.left = d - u + "px";
+            c + h + e.exportMenuHeight > n && g.alignOptions.verticalAlign !== "top" ? a.bottom = n - c - u + "px" : a.top = c + h - u + "px";
+            v(i, a);
+            e.openMenu = !0
+        },
+        addButton: function(b) {
+            var a = this,
+                d = a.renderer,
+                c = k(a.options.navigation.buttonOptions, b),
+                j =
+                c.onclick,
+                h = c.menuItems,
+                g, e, l = {
+                    stroke: c.symbolStroke,
+                    fill: c.symbolFill
+                },
+                q = c.symbolSize || 12;
+            if (!a.btnCount) a.btnCount = 0;
+            if (!a.exportDivElements) a.exportDivElements = [], a.exportSVGElements = [];
+            if (c.enabled !== !1) {
+                var m = c.theme,
+                    n = m.states,
+                    o = n && n.hover,
+                    n = n && n.select,
+                    i;
+                delete m.states;
+                j ? i = function() {
+                    j.apply(a, arguments)
+                } : h && (i = function() {
+                    a.contextMenu(e.menuClassName, h, e.translateX, e.translateY, e.width, e.height, e);
+                    e.setState(2)
+                });
+                c.text && c.symbol ? m.paddingLeft = f.pick(m.paddingLeft, 25) : c.text || p(m, {
+                    width: c.width,
+                    height: c.height,
+                    padding: 0
+                });
+                e = d.button(c.text, 0, 0, i, m, o, n).attr({
+                    title: a.options.lang[c._titleKey],
+                    "stroke-linecap": "round"
+                });
+                e.menuClassName = b.menuClassName || "highcharts-menu-" + a.btnCount++;
+                c.symbol && (g = d.symbol(c.symbol, c.symbolX - q / 2, c.symbolY - q / 2, q, q).attr(p(l, {
+                    "stroke-width": c.symbolStrokeWidth || 1,
+                    zIndex: 1
+                })).add(e));
+                e.add().align(p(c, {
+                    width: e.width,
+                    x: f.pick(c.x, y)
+                }), !0, "spacingBox");
+                y += (e.width + c.buttonSpacing) * (c.align === "right" ? -1 : 1);
+                a.exportSVGElements.push(e, g)
+            }
+        },
+        destroyExport: function(b) {
+            var b =
+                b.target,
+                a, d;
+            for (a = 0; a < b.exportSVGElements.length; a++)
+                if (d = b.exportSVGElements[a]) d.onclick = d.ontouchstart = null, b.exportSVGElements[a] = d.destroy();
+            for (a = 0; a < b.exportDivElements.length; a++) d = b.exportDivElements[a], B(d, "mouseleave"), b.exportDivElements[a] = d.onmouseout = d.onmouseover = d.ontouchstart = d.onclick = null, o(d)
+        }
+    });
+    F.menu = function(b, a, d, c) {
+        return ["M", b, a + 2.5, "L", b + d, a + 2.5, "M", b, a + c / 2 + 0.5, "L", b + d, a + c / 2 + 0.5, "M", b, a + c - 1.5, "L", b + d, a + c - 1.5]
+    };
+    A.prototype.callbacks.push(function(b) {
+        var a, d = b.options.exporting,
+            c = d.buttons;
+        y = 0;
+        if (d.enabled !== !1) {
+            for (a in c) b.addButton(c[a]);
+            t(b, "destroy", b.destroyExport)
+        }
+    })
+})(Highcharts);
+

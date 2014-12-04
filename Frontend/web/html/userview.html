@@ -23,21 +23,19 @@
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
     <!-- add customized Java script -->
     <script src="../js/main.js"></script>
-    <!--     first view -->
-    <script src="../js/view1.js"></script>
+    <!--     add view -->
+    <script src="../js/diagram.js"></script>
     <!--     second view -->
-    <script src="../js/view2.js"></script>
     <script src="../js/highstock.js"></script>
     <!--     third view -->
-    <script src="../js/view3.js"></script>
     <script src="../js/highcharts.js"></script>
-    <!-- export for three views-->
     <script src="../js/exporting.js"></script>
     <!--     forth view -->
     <script src="../js/d3.js"></script>
     <script src="../js/d3.layout.cloud.js"></script>
-
         <!-- happymap's theme -->
+
+<!--     <script src="jquery.js"></script> -->
 
 
 
@@ -80,15 +78,18 @@
                 <div class="row" id="userWrap">
 
                     <div class="col-md-2">
-                        <form class="navbar-form" role="search">
-                            <div class="form-group">
-                                <input type="text" class="form-control" id="searchInput" placeholder="Search">
-                            </div>
-                            <button type="submit" id="searchButton"class="btn btn-default">Submit</button>
-                         </form>
-                         <div>
-                             <ul class="search-history"></ul>
-                         </div>
+                        <div class="input-group">
+                            <form id="search-the-world">
+                                <input type="text" class="form-control" />
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="submit">Search</button>
+                                </span>
+                            </form>
+                        </div><!-- /input-group -->
+                        <div>
+                            <ul class="search-history">
+                            </ul>
+                        </div>
                     </div>
                     <div class="col-md-10">
                         <div class="container-fluid viewContainer">
@@ -105,9 +106,34 @@
                                     <div id="container3"></div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div id="container4">
-                                        <script src="../js/view4.js"></script>
+                                    <div class="dropdown">
+                                      <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+                                        Dropdown
+                                        <span class="caret"></span>
+                                      </button>
+                                      <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Action</a></li>
+                                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Another action</a></li>
+                                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Something else here</a></li>
+                                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Separated link</a></li>
+                                      </ul>
                                     </div>
+                                    <!-- <select id="selectbar" >
+                                        <option value="Positive" id="toggle_message">Positive</option>
+                                        <option value="negative">Negative</option>
+                                        <option value="all">All</option>
+                                    </select> -->
+
+
+<!--                                     <input type="button" value="Positive" id="toggle_message"/>
+                                    <p style="display: none">Good Bye</p> -->
+                                   <!--  <div id="container4"></div> -->
+                                    <!-- <div id="container4" class="container41"></div> -->
+
+
+
+
+
                                 </div>
                             </div>
                         </div>
