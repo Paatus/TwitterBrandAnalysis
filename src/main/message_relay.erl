@@ -1,33 +1,29 @@
 -module(message_relay).
 -behaviour(gen_server).
--export([start_link/1, testTweet/0]).
+-export([start/1, testTweet/0]).
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 
-start_link(Args) ->
-	gen_server:start_link({local, relay}, message_relay, Args, []).
+start(Params) ->
+	gen_server:start_link({local, relay}, message_relay, Params, []).
 
-init(Args) ->
-	io:format("Init with state ~p~n", [Args]),
-	{ok, Args}.
+init(Params) ->
+	{ok, Params}.
 
 handle_call(_Request, _From, State) ->
 	{reply, ok, State}.
 
-handle_cast(stop, State) ->
-	io:format("Received stop~n"),
-	{stop, normal, State};
 handle_cast({tweet, Tweet}, State) ->
 	io:format("Received tweet~n"),
         processTweet(State, Tweet),
 	{noreply, State};
 handle_cast(Message, State) ->
-	io:format("Receive '~p' with state '~p'~n", [Message, State]),
+	io:format("Received '~p' with state '~p'~n", [Message, State]),
 	{noreply, State}.
 
 handle_info(_Info, State) ->
 	{noreply, State}.
 
-terminate(_, _) ->
+terminate(_Reason, _State) ->
 	ok.
 
 code_change(_OldVsn, State, _) ->

@@ -1,6 +1,6 @@
 -module(main).
 -behaviour(supervisor).
--export([start/0, stop/0, start_user/2, stop_user/1]).
+-export([start/0, stop/0, start_user/0, start_user/2, stop_user/1]).
 -export([init/1]).
 
 start() ->
@@ -19,6 +19,7 @@ init([]) ->
 	MaxTime = 3600,
 	{ok, {{one_for_one, MaxRestart, MaxTime}, []}}.
 
+start_user() -> start_user("Derp","iPhone,apple,iwatch,ipad,iMac,macbook,ios").
 start_user(Name, SearchWords) ->
 	ChildSpec = {
 		Name, 

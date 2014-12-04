@@ -12,7 +12,7 @@ init({User, SearchWords}) ->
 		[
 		{
 			relay,
-			{message_relay, start_link, [{User, SearchWords}]},
+			{message_relay, start, [{User, SearchWords}]},
 			permanent,
 			5000,
 			worker,

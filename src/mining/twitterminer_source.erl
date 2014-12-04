@@ -1,7 +1,7 @@
 -module(twitterminer_source).
 
 -behaviour(gen_server).
--export([start/1, twitter_example/0, twitter_example/1, twitter_print_pipeline/3, twitter_producer/3, get_account_keys/1]).
+-export([start/1, run/1, twitter_print_pipeline/3, twitter_producer/3, get_account_keys/1]).
 
 -export([init/1,
          handle_call/3, 
@@ -13,24 +13,29 @@
 -record(account_keys, {api_key, api_secret,
                        access_token, access_token_secret}).
 
-handle_call(_,_,_) -> ok.
-handle_cast(stop,State) ->
-	exit(State, ok),
-	{stop, normal, State};
-handle_cast(_,State) ->
-	{noreply, State}.
-handle_info(_,_) -> ok.
-code_change(_,_,_) -> ok.
-
 start(Params) ->
 	gen_server:start_link({local, miner}, ?MODULE, Params, []).
 
 init(Params) ->
-	P = spawn(fun() -> twitter_example(Params) end),
+	P = run(Params),
 	{ok, P}.	
 
-terminate(_Reason, _State) ->
-	twitterminer_pipeline:terminate(p_name).
+handle_call(_Request, _From, State) ->
+	{reply, ok, State}.
+
+handle_cast(_Message, State) ->
+	{noreply, State}.
+
+handle_info(_Info, State) ->
+	{noreply, State}.
+
+terminate(_Reason, State) ->
+	twitterminer_pipeline:terminate(State),
+	ok.
+
+code_change(_OldVsn, State, _) ->
+	{ok, State}.
+
 
 keyfind(Key, L) ->
   {Key, V} = lists:keyfind(Key, 1, L),
@@ -45,36 +50,14 @@ get_account_keys(Name) ->
                 access_token=keyfind(access_token, Keys),
                 access_token_secret=keyfind(access_token_secret, Keys)}.
 
-%% @doc This example will download a sample of tweets and print it.
-
-% default search criteria is Apple-related things
-twitter_example() ->
-	twitter_example("iPhone,apple,iwatch,ipad,iMac,macbook,ios").
-
-twitter_example(SearchWords) ->
+run(SearchWords) ->
   %URL = "https://stream.twitter.com/1.1/statuses/sample.json",
   URL = "https://stream.twitter.com/1.1/statuses/filter.json",
-  % We get our keys from the twitterminer.config configuration file.
+  % We get our keys from the tba.config configuration file.
   Keys = get_account_keys(account1),
 
   % Run our pipeline
-  P = twitterminer_pipeline:build_link(twitter_print_pipeline(URL, Keys, SearchWords)),
-  {Pid, _, _} = P,
-  register(p_name, Pid),
-
-  % If the pipeline does not terminate after 60 s, this process will
-  % force it.
-  T = spawn_link(fun () ->
-        receive
-          cancel -> ok
-        %after 60000 -> % Sleep fo 60 s
-        %    twitterminer_pipeline:terminate(P)
-        end
-    end),
-
-  Res = twitterminer_pipeline:join(P),
-  T ! cancel,
-  Res.
+  twitterminer_pipeline:build_link(twitter_print_pipeline(URL, Keys, SearchWords)).
 
 %% @doc Create a pipeline that connects to twitter and
 %% prints tweets.
@@ -85,7 +68,7 @@ twitter_print_pipeline(URL, Keys, SearchWords) ->
   % Pipelines are constructed 'backwards' - consumer is first, producer is last.
   [
     twitterminer_pipeline:consumer(
-      fun(Msg, N) -> get_stuff(Msg, SearchWords), N+1 end, 0),
+      fun(Msg, N) -> get_stuff(Msg), N+1 end, 0),
       %fun(Msg, N) -> my_print(Msg), N+1 end, 0),
     twitterminer_pipeline:map(
       fun decorate_with_id/1),
@@ -195,28 +178,15 @@ decorate_with_id(B) ->
   end.
 
 
-get_stuff(Tweet, _SearchWords) ->
+get_stuff(Tweet) ->
 	case Tweet of
 		{invalid_tweet, B} -> io:format("failed to parse: ~s~n", [B]);
 		{parsed_tweet, L, _B, _} ->
-			%io:format("Tweet: ~n"),
-			%io:format("~p~n", [L]),
+			%io:format("Tweet:~n~p~n", [L]),
+			%io:format("Tweet parsed: ~p~n", [get_id(L)]),
 			case is_eng(L) of
 				true ->
 					gen_server:cast(relay, {tweet, {{id,get_id(L)},{text, get_text(L)}, {timezone, get_timezone(L)}}});
-					%case whereis(mRelay) of
-					%	undefined -> io:format("No message relay started~n", []);
-					%	Pid ->
-					%		Pid ! {self(), {tweet, {
-					%				{id,get_id(L)},
-					%				{text, get_text(L)},
-					%				{timezone, get_timezone(L)}
-					%			  }}},
-					%	receive
-					%		{_I,_T,_W,_TZ,{coordinates, C}} -> io:format("~p~n", [C]);
-					%		T -> io:format("~p~n", [T])
-					%	end
-					%end;
 				false -> not_eng
 			end
 	end.
