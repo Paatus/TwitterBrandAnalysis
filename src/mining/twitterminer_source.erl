@@ -1,7 +1,7 @@
 -module(twitterminer_source).
 
 -behaviour(gen_server).
--export([twitter_example/0, twitter_example/1, twitter_print_pipeline/3, twitter_producer/3, get_account_keys/1]).
+-export([start/1, twitter_example/0, twitter_example/1, twitter_print_pipeline/3, twitter_producer/3, get_account_keys/1]).
 
 -export([init/1,
          handle_call/3, 
@@ -14,15 +14,20 @@
                        access_token, access_token_secret}).
 
 handle_call(_,_,_) -> ok.
-handle_cast(_,_) -> ok.
+handle_cast(stop,State) ->
+	exit(State, ok),
+	{stop, normal, State};
+handle_cast(_,State) ->
+	{noreply, State}.
 handle_info(_,_) -> ok.
 code_change(_,_,_) -> ok.
 
 start(Params) ->
-	gen_server:start_link({local, ?MODULE}, ?MODULE, [Params], []).
+	gen_server:start_link({local, miner}, ?MODULE, Params, []).
 
 init(Params) ->
-	twitter_example(Params).	
+	P = spawn(fun() -> twitter_example(Params) end),
+	{ok, P}.	
 
 terminate(_Reason, _State) ->
 	twitterminer_pipeline:terminate(p_name).
@@ -54,7 +59,8 @@ twitter_example(SearchWords) ->
 
   % Run our pipeline
   P = twitterminer_pipeline:build_link(twitter_print_pipeline(URL, Keys, SearchWords)),
-  register(p_name, P),
+  {Pid, _, _} = P,
+  register(p_name, Pid),
 
   % If the pipeline does not terminate after 60 s, this process will
   % force it.
@@ -197,20 +203,20 @@ get_stuff(Tweet, _SearchWords) ->
 			%io:format("~p~n", [L]),
 			case is_eng(L) of
 				true ->
-					case whereis(mRelay) of
-						undefined -> io:format("No message relay started~n", []);
-						Pid ->
-							Pid ! {self(), {tweet, {
-									{id,get_id(L)},
-									{text, get_text(L)},
-									{timezone, get_timezone(L)}
-								  }}},
-						receive
-							{_I,_T,_W,_TZ,{coordinates, C}} -> io:format("~p~n", [C]);
-							T -> io:format("~p~n", [T])
-
-						end
-					end;
+					gen_server:cast(relay, {tweet, {{id,get_id(L)},{text, get_text(L)}, {timezone, get_timezone(L)}}});
+					%case whereis(mRelay) of
+					%	undefined -> io:format("No message relay started~n", []);
+					%	Pid ->
+					%		Pid ! {self(), {tweet, {
+					%				{id,get_id(L)},
+					%				{text, get_text(L)},
+					%				{timezone, get_timezone(L)}
+					%			  }}},
+					%	receive
+					%		{_I,_T,_W,_TZ,{coordinates, C}} -> io:format("~p~n", [C]);
+					%		T -> io:format("~p~n", [T])
+					%	end
+					%end;
 				false -> not_eng
 			end
 	end.

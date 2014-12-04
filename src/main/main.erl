@@ -1,14 +1,32 @@
 -module(main).
--export([run/0, run/2]).
+-behaviour(supervisor).
+-export([start/0, stop/0, start_user/2, stop_user/1]).
+-export([init/1]).
 
-init(User, SearchWords) ->
+start() ->
 	application:ensure_all_started(tba),
-	message_relay:start(User, SearchWords).	
+	supervisor:start_link({local, main}, ?MODULE, []).
 
-run() ->
-	run("Faget", "iPhone,apple,iwatch,ipad,iMac,macbook,ios").
+stop() ->
+	case whereis(main) of
+		P when is_pid(P) ->
+			exit(P, kill);
+		_ -> ok
+	end.
 
-run(User, SearchWords) ->
-	init(User, SearchWords), %Pass User to message_relay
-	[spawn(concat, start, [{User, Token}]) || Token <- string:tokens(SearchWords,",")],
-	twitterminer_source:twitter_example(SearchWords).
+init([]) ->
+	MaxRestart = 6,
+	MaxTime = 3600,
+	{ok, {{one_for_one, MaxRestart, MaxTime}, []}}.
+
+start_user(Name, SearchWords) ->
+	ChildSpec = {
+		Name, 
+		{user, start, [Name, SearchWords]},
+		permanent, 10500, supervisor, [user]
+	},
+	supervisor:start_child(main, ChildSpec).
+
+stop_user(Name) ->
+	supervisor:terminate_child(main, Name),
+	supervisor:delete_child(main, Name).
