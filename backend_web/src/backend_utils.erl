@@ -6,7 +6,7 @@
 -include("backend_config.hrl").
 
 create_login(Username, Password) ->
-    backend_db:put("Login", Username, web_functions:hash_input(Password),[]).
+    backend_db:put("Login", Username, hash_input(Password),[]).
 
 redirect(Req, Location, Message) ->
     Req:respond({302,
