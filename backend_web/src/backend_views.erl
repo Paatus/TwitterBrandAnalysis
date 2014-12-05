@@ -1,14 +1,14 @@
 -module(backend_views).
 
--export([urls/0, get_world_view/2, login/2, add_user_keyword/3]).
+-export([urls/0, get_world_view/2, login/2, add_user_keyword/3, get_user_keywords/2]).
 
 -include("backend_config.hrl").
 
 urls() -> [
            {"^world/?$", get_world_view},
            {"^login/?$", login},
-           {"^api/keywords/add/(.{3,64})$", add_user_keyword}
-           {"^api/keywords/get$", add_user_keyword}
+           {"^api/keywords/add/(.{3,64})$", add_user_keyword},
+           {"^api/keywords/get$", get_user_keywords}
           ].
 
 get_world_view('GET', Req) ->
@@ -48,7 +48,7 @@ add_user_keyword('GET', Req, [Keyword]) ->
     backend_user:add_user_keywords(Req, Keyword),
     Req:ok({"application/json",[],[Keyword]}).
 
-get_user_keyword('GET', Req) ->
+get_user_keywords('GET', Req) ->
     Keys = backend_user:get_user_keywords(Req),
     Keywords = lists:foldr(fun (X,Y) -> lists:append(X, lists:append(" ", Y)) end, [], Keys),
     Req:ok({"application/json",[],[Keywords]}).
