@@ -14,6 +14,9 @@ label,
 #footer h3{
     color:#9CC4E4;
 }
+#header{
+    opacity: 1;
+}
 
 #info h2,#info h4,#info text{
     color: #0E2430;
@@ -79,7 +82,7 @@ h1 {
 #exampleModal,
 .modal-dialog{
     height: 100%;
-    padding-top: 5%;
+    padding-top: 80px;
 }
 #header > .container-fluid>.col-md-1>h4,
 #header > .container-fluid>.col-md-1>a>h4{
@@ -102,6 +105,7 @@ h1 {
 #header>.container-fluid>.col-md-1>button{
     position: absolute;
     top:30%;
+    right: 10%;
 }
 #exampleModalLabel{
     font-size: 20px;
@@ -149,9 +153,9 @@ img{
 /*second home page*/
 
 #videoWrap, #happymapWrap, #userWrap, #viwoneWrap, #viwtwoWrap {
-    margin: 80px 0 10px 0;
+    margin: 80px 0 5px 0;
     position: absolute;
-    bottom: 0;
+
     top: 0;
     width: 100%;
     z-index: 10;

@@ -1,0 +1,45 @@
+ul
+{
+padding:0px;
+margin:0px;
+list-style:none;
+}
+li
+{
+padding:5px;
+display:none;
+}
+label
+{
+font-size:14px;
+font-weight:bold;
+}
+input[type="text"], input[type="password"]
+{
+border:solid 2px #009900;
+font-size:14px;
+padding:4px;
+width:180px;
+-moz-border-radius:6px;-webkit-border-radius:6px;
+}
+input[type="submit"]
+{
+border:solid 1px #ff6600;
+background-color:#FF6600;
+color:#fff;
+font-size:14px;
+padding:4px;
+-moz-border-radius:6px;-webkit-border-radius:6px;
+}
+.error
+{
+font-size:11px;
+color:#cc0000;
+padding:4px;
+}
+#form
+{
+width:350px;
+margin:0 auto;
+margin-top:30px;
+}

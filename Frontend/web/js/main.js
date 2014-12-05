@@ -46,6 +46,37 @@ $(function() {
         // }
     });
 
+     // start signup function
+    var ck_username = /^[A-Za-z0-9_]{3,20}$/;
+    var ck_password = /^[A-Za-z0-9!@#$%^&*()_]{6,20}$/;
+    // Username validation
+    $('#signup-name').keyup(function(){
+        var username=$(this).val();
+        if (!ck_username.test(username)){
+            $(this).next().show().html("Min 3 charts no space");
+        }else{
+            $(this).next().hide();
+        }
+    });
+    // Password validation
+    $('#signup-password').keyup(function(){
+        var password=$(this).val();
+        if (!ck_password.test(password)){
+            $(this).next().show().html("Min 6 Charts");
+        }else{
+            $(this).next().hide();
+        }
+    });
+    // Submit button action
+    $('#signup').click(function(){
+        var username=$("#username").val();
+        var password=$("#password").val();
+        if(ck_username.test(username) && ck_password.test(password)){
+            $("#signup-body").show().html("<h1>Thank you!</h1>");
+        }
+        return false;
+    });
+
 });
 
 

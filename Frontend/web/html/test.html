@@ -2,39 +2,46 @@
 <html>
 <head>
     <title>test</title>
-    <script src="jquery.js"></script>
-    <script src="../js/main.js"></script>
 
-    <link type="text/css" rel="stylesheet" href="jquery.dropdown.css" />
-    <script type="text/javascript" src="jquery.dropdown.js"></script>
 
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-
+    <link rel="stylesheet" type="text/css" href="../css/test.css" />
 
 
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    <script src="jquery.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+    <script type="text/javascript" src="jquery.easing.1.3.js.js"></script>
+    <script src="../js/test.js"></script>
 
 </head>
 <body>
 
-        <h3>A demonstration of how to access a Password Field</h3>
+<form method="post" >
+<ul>
+<li class="email">
+<label>Email: </label><br/>
+<input type="text" name="email" id="email" />
+<span class="error"></span>
+</li>
+<li class="username">
+<label>Username: </label><br/>
+<input type="text" name="username" id="username" />
+<span class="error"></span>
+</li>
+<li class="password">
+<label>Password: </label><br/>
+<input type="password" name="password" id="password" />
+<span class="error"></span>
+</li>
+<li class="submit">
+<input type="submit" value=" Register " id='submit'/>
+</li>
+</ul>
+</form>
 
-        Password: <input type="password" id="myPsw" value="psw123">
-
-        <p>Click the button to get the password of the password field.</p>
-
-        <button onclick="myFunction()">Try it</button>
-
-        <p id="demo"></p>
-
-        <script>
-        function myFunction() {
-            var x = document.getElementById("myPsw").value;
-            document.getElementById("demo").innerHTML = x;
-        }
-        </script>
 
 </body>
 </html>
