@@ -47,25 +47,20 @@ login('GET', Req) ->
 add_user_keyword('GET', Req, [Keyword]) ->
     case backend_login:check_cookie(Req) of
         undefined ->
-            Req:respond({302,
-                [{"Location", "/login.html"},
-                {"Content-Type", "text/html; charset=UTF-8"}],
-                "BAD USER! U STOOPID!"});
-            _ -> backend_user:add_user_keywords(Req, Keyword),
-                 Req:ok({"application/json",[],[Keyword]})
+                backend_utils:illegal_access(Req, "Bad user!");
+           _ -> 
+                backend_user:add_user_keywords(Req, Keyword),
+                Req:ok({"application/json",[],[mochijson2:encode({struct,[{status,<<"ok">>}]})]})
     end.
 
 get_user_keywords('GET', Req) ->
     case backend_login:check_cookie(Req) of
         undefined ->
-            Req:respond({302,
-                [{"Location", "/login.html"},
-                {"Content-Type", "text/html; charset=UTF-8"}],
-                "BAD USER! U STOOPID!"});
+                backend_utils:illegal_access(Req, "Bad user!");
             _ ->
                 Keys = backend_user:get_user_keywords(Req),
-                Keywords = lists:foldr(fun (X,Y) -> lists:append(X, lists:append(" ", Y)) end, [], Keys),
-                Req:ok({"application/json",[],[Keywords]})
+                Keywords = lists:map(fun (X) -> list_to_binary(X) end, Keys),
+                Req:ok({"application/json",[], [mochijson2:encode({struct,[{"keywords",Keywords}]})]})
     end.
 
     %Req:respond({302,

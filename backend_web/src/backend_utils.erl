@@ -1,6 +1,6 @@
 -module(backend_utils).
 
--export([redirect/3, redirect/4, get_ip/1, print_hostinfo/1]).
+-export([redirect/3, redirect/4, get_ip/1, print_hostinfo/1, illegal_access/2]).
 -export([generate_uuid/0, uuid_to_string/1, hash_input/1]).
 
 -include("backend_config.hrl").
@@ -15,6 +15,13 @@ redirect(Req, Location, Message, Cookie) ->
                  [{"Location", Location},
                   {"Content-Type", "text/html; charset=UTF-8"},
                   Cookie],
+                 Message}).
+
+illegal_access(Req,Message) ->
+    Req:respond({403,
+                 [
+                  {"Content-Type", "text/html; charset=UTF-8"}
+                 ],
                  Message}).
 
 hash_input(Input) -> crypto:hash(sha512,lists:append(Input,?SALT_VALUE)).
