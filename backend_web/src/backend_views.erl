@@ -45,13 +45,28 @@ login('GET', Req) ->
         "BAD USER! U STOOPID!"}).
 
 add_user_keyword('GET', Req, [Keyword]) ->
-    backend_user:add_user_keywords(Req, Keyword),
-    Req:ok({"application/json",[],[Keyword]}).
+    case backend_login:check_cookie(Req) of
+        undefined ->
+            Req:respond({302,
+                [{"Location", "/login.html"},
+                {"Content-Type", "text/html; charset=UTF-8"}],
+                "BAD USER! U STOOPID!"});
+            _ -> backend_user:add_user_keywords(Req, Keyword),
+                 Req:ok({"application/json",[],[Keyword]})
+    end.
 
 get_user_keywords('GET', Req) ->
-    Keys = backend_user:get_user_keywords(Req),
-    Keywords = lists:foldr(fun (X,Y) -> lists:append(X, lists:append(" ", Y)) end, [], Keys),
-    Req:ok({"application/json",[],[Keywords]}).
+    case backend_login:check_cookie(Req) of
+        undefined ->
+            Req:respond({302,
+                [{"Location", "/login.html"},
+                {"Content-Type", "text/html; charset=UTF-8"}],
+                "BAD USER! U STOOPID!"});
+            _ ->
+                Keys = backend_user:get_user_keywords(Req),
+                Keywords = lists:foldr(fun (X,Y) -> lists:append(X, lists:append(" ", Y)) end, [], Keys),
+                Req:ok({"application/json",[],[Keywords]})
+    end.
 
     %Req:respond({302,
     %    [{"Location", "/"},
