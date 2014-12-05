@@ -2,3 +2,7 @@
 
 -define(SESSION_BUCKET,"SessionID").
 -define(SESSION_COOKIE,"SESSION_ID").
+
+-define(ACCOUNT_BUCKET, "AccountInfo").
+
+-define(LOGIN_BUCKET, "Login").

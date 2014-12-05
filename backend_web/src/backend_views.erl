@@ -23,16 +23,16 @@ login('POST', Req) ->
     Password = proplists:get_value("pwd",Post,""),
     case length(Password) of
         0 -> 
-            backend_utils:redirect(Req, "/login.html",
+            backend_utils:redirect(Req, "/",
                 "Something went wrong!");
         N when N > 0 ->
             case backend_login:authenticate(Username,Password) of
                 true ->
                     Cookie = backend_login:create_cookie(Username, backend_utils:get_ip(Req)),
-                    backend_utils:redirect(Req, "/login.html?l=success",
+                    backend_utils:redirect(Req, "/",
                         "Login Successfull!", Cookie);
                 _ -> 
-                    backend_utils:redirect(Req, "/login.html?l=failed",
+                    backend_utils:redirect(Req, "/",
                         "Login failed!", mochiweb_cookies:cookie(?SESSION_COOKIE,""))
             end
     end;

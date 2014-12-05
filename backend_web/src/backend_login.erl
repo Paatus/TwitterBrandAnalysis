@@ -1,11 +1,11 @@
 -module(backend_login).
 
--export([authenticate/2,create_cookie/2,create_session/2,check_cookie/1,check_session/1]).
+-export([authenticate/2,create_cookie/2,create_session/2,check_cookie/1,check_session/1,get_username/1]).
 
 -include("backend_config.hrl").
 
 authenticate(Username, Password) ->
-    case backend_db:fetch("Login",Username) of
+    case backend_db:fetch(?LOGIN_BUCKET,Username) of
         {ok, Result} -> Result == backend_utils:hash_input(Password);
         _ -> false
     end.
@@ -22,7 +22,7 @@ check_cookie(Req) ->
     case Req:get_cookie_value(?SESSION_COOKIE) of
         undefined -> undefined;
         SessionID when length(SessionID) > 0 -> case check_session(SessionID) of
-                         {Username, ClientIp} -> Username;
+                         {Username, ClientIp} -> {Username, ClientIp};
                          _ -> undefined
                      end;
         _ -> undefined
@@ -38,4 +38,15 @@ check_session(SessionID) ->
     case backend_db:fetch(?SESSION_BUCKET,SessionID) of
         {ok, Result} -> Result;
         _ -> error
+    end.
+
+get_username(Req) ->
+    ClientIp = backend_utils:get_ip(Req),
+    case Req:get_cookie_value(?SESSION_COOKIE) of
+        undefined -> undefined;
+        SessionID when length(SessionID) > 0 -> case check_session(SessionID) of
+                         {Username, ClientIp} -> Username;
+                         _ -> undefined
+                     end;
+        _ -> undefined
     end.

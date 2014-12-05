@@ -1,12 +1,9 @@
 -module(backend_utils).
 
--export([create_login/2, redirect/3, redirect/4, get_ip/1, print_hostinfo/1]).
+-export([redirect/3, redirect/4, get_ip/1, print_hostinfo/1]).
 -export([generate_uuid/0, uuid_to_string/1, hash_input/1]).
 
 -include("backend_config.hrl").
-
-create_login(Username, Password) ->
-    backend_db:put("Login", Username, hash_input(Password),[]).
 
 redirect(Req, Location, Message) ->
     Req:respond({302,

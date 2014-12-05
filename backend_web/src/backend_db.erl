@@ -50,4 +50,3 @@ to_binary(Input) -> term_to_binary(Input).
 
 format_date({{Year,Month,Day},{Hour,Minute,Second}}) -> 
         io_lib:format("~4.10.0B-~2.10.0B-~2.10.0B ~2.10.0B:~2.10.0B:~2.10.0B", [Year,Month,Day,Hour,Minute,Second]).
-
