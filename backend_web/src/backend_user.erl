@@ -13,7 +13,7 @@ get_user_keywords(Req) ->
 
 add_user_keywords(Req, Key) ->
     Username = backend_login:get_username(Req),
-    Keywords = lists:append(get_user_keywords(Req), Key),
+    Keywords = lists:append(get_user_keywords(Req), [Key]),
     backend_db:put(?ACCOUNT_BUCKET, Username, Keywords, []).
 
 del_user_keywords(Req, Key) ->
