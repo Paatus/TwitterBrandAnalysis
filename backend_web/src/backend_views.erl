@@ -7,7 +7,8 @@
 urls() -> [
            {"^world/?$", get_world_view},
            {"^login/?$", login},
-           {"^api/add_keyword/(.{3,64})$", add_user_keyword}
+           {"^api/keywords/add/(.{3,64})$", add_user_keyword}
+           {"^api/keywords/get$", add_user_keyword}
           ].
 
 get_world_view('GET', Req) ->
@@ -46,6 +47,12 @@ login('GET', Req) ->
 add_user_keyword('GET', Req, [Keyword]) ->
     backend_user:add_user_keywords(Req, Keyword),
     Req:ok({"application/json",[],[Keyword]}).
+
+get_user_keyword('GET', Req) ->
+    Keys = backend_user:get_user_keywords(Req),
+    Keywords = lists:foldr(fun (X,Y) -> lists:append(X, lists:append(" ", Y)) end, [], Keys),
+    Req:ok({"application/json",[],[Keywords]}).
+
     %Req:respond({302,
     %    [{"Location", "/"},
     %    {"Content-Type", "text/html; charset=UTF-8"}],
