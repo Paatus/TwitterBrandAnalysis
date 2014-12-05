@@ -1,12 +1,13 @@
 -module(backend_views).
 
--export([urls/0, get_world_view/2, login/2]).
+-export([urls/0, get_world_view/2, login/2, add_user_keyword/3]).
 
 -include("backend_config.hrl").
 
 urls() -> [
-           {"world/?$", get_world_view},
-           {"login/?$", login}
+           {"^world/?$", get_world_view},
+           {"^login/?$", login},
+           {"^api/add_keyword/(.{3,64})$", add_user_keyword}
           ].
 
 get_world_view('GET', Req) ->
@@ -41,6 +42,14 @@ login('GET', Req) ->
         [{"Location", "/login.html"},
         {"Content-Type", "text/html; charset=UTF-8"}],
         "BAD USER! U STOOPID!"}).
+
+add_user_keyword('GET', Req, [Keyword]) ->
+    backend_user:add_user_keywords(Req, Keyword),
+    Req:ok({"application/json",[],[Keyword]}).
+    %Req:respond({302,
+    %    [{"Location", "/"},
+    %    {"Content-Type", "text/html; charset=UTF-8"}],
+    %    "Added keyword"}).
 
 %get_random_number('GET', Req) ->
 %            %Req:ok({"application/json",[],[float_to_list(random:uniform())]}).
