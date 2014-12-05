@@ -29,7 +29,7 @@ check_cookie(Req) ->
     end.
 
 create_session(Username,Ip) ->
-    UUID = backend_utils:generate_uuid(),
+    UUID = backend_utils:uuid_to_string(backend_utils:generate_uuid()),
 	BinDate = list_to_binary(backend_db:format_date(calendar:universal_time())),
     backend_db:put(?SESSION_BUCKET, UUID, {Username, Ip}, [{{binary_index,"datetime"}, [BinDate]}]),
     UUID.

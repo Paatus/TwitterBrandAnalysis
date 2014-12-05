@@ -57,7 +57,7 @@ loop(Req, _Broadcaster, false, DocRoot) ->
                     true -> 
                         case backend_login:check_cookie(Req) of
                             undefined ->
-                                Req:serve_file(Path, lists:append(DocRoot,"/priv"));
+                                Req:serve_file(Path, lists:append(DocRoot,"/priv"), [{"Cache-Control", "no-cache"}]);
                             _ -> Req:serve_file(Path, DocRoot)
                         end;
                     false ->
