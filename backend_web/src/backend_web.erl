@@ -56,7 +56,8 @@ loop(Req, _Broadcaster, false, DocRoot) ->
                 case filelib:is_file(filename:join([DocRoot, Path])) of
                     true -> 
                         case backend_login:check_cookie(Req) of
-                            undefined -> Req:serve_file(Path, lists:merge(DocRoot,"/Priv"));
+                            undefined ->
+                                Req:serve_file(Path, lists:append(DocRoot,"/priv"));
                             _ -> Req:serve_file(Path, DocRoot)
                         end;
                     false ->

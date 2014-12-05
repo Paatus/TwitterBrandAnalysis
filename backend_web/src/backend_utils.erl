@@ -20,7 +20,7 @@ redirect(Req, Location, Message, Cookie) ->
                   Cookie],
                  Message}).
 
-hash_input(Input) -> crypto:hash(sha512,lists:merge(Input,?SALT_VALUE)).
+hash_input(Input) -> crypto:hash(sha512,lists:append(Input,?SALT_VALUE)).
 
 generate_uuid() ->
     generate_uuid(uuid_rand(math:pow(2, 48)) - 1, uuid_rand(math:pow(2, 12)) - 1, uuid_rand(math:pow(2, 32)) - 1, uuid_rand(math:pow(2, 30)) - 1).

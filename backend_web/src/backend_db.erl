@@ -14,10 +14,14 @@ fetch(Bucket, Key) ->
     {ok, Pid} = start_link(),
 	B = to_binary(Bucket),
 	K = to_binary(Key),
-	{ok, Fetch} = riakc_pb_socket:get(Pid, B, K),
-	Value = riakc_obj:get_value(Fetch),
-	close_link(Pid),
-	{ok, binary_to_term(Value)}.
+    case riakc_pb_socket:get(Pid, B, K) of
+	    {ok, Fetch} -> Value = riakc_obj:get_value(Fetch),
+                       close_link(Pid),
+                       {ok, binary_to_term(Value)};
+        _ ->
+                       close_link(Pid),
+                       error
+    end.        
 
 put(Bucket, Key, Value, Indices) ->
 	{ok, Pid} = start_link(),
