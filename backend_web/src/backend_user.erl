@@ -23,5 +23,5 @@ del_user_keywords(Req, Key) ->
 
 create_account(Username, Password) ->
     backend_db:put(?LOGIN_BUCKET, Username, backend_utils:hash_input(Password),[]),
-    backend_db:put(?ACCOUNT_BUCKET, Username, []).
+    backend_db:put(?ACCOUNT_BUCKET, Username, [], []).
 
