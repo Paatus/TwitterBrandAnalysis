@@ -2,7 +2,6 @@
 
 -export([get_directory/0, fix_qs/1, fix_string/1, fix_double_number/1, get_date_from/1]).
 -export([fix_single_digit/1,subtract_minutes/2]).
- 
 
 get_directory() ->
     {file, Here} = code:is_loaded(?MODULE),

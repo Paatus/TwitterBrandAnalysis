@@ -2,7 +2,7 @@
 
 %% To run: erlc *.erl && erl -pa ../../ebin -s backend_web
 
--export([start/0, start_link/0, ws_loop/3, loop/2]).
+-export([start/0, start_link/0, ws_loop/3, loop/3]).
 %-export([broadcast_server/1]).
 -export([send_json/1]).
 
@@ -11,6 +11,7 @@
 -endif.
 
 start() ->
+    random:seed(now()),
     spawn(
       fun () ->
               application:start(sasl),
@@ -25,9 +26,10 @@ start_link() ->
     io:format("Listening at http://127.0.0.1:8080/~n"),
     Broadcaster = spawn_link(web_broadcaster, start, [dict:new()]),
     %spawn_link(?MODULE, send_json, [Broadcaster]),
+    DocRoot = web_functions:get_directory(),
     mochiweb_http:start_link([
                               {name, client_access},
-                              {loop, {?MODULE, loop, [Broadcaster]}},
+                              {loop, {?MODULE, loop, [Broadcaster, DocRoot]}},
                               {port, 8080}
                              ]).
 
@@ -37,43 +39,30 @@ ws_loop(Payload, Broadcaster, _ReplyChannel) ->
     Broadcaster ! {broadcast, self(), Received},
     Broadcaster.
 
-loop(Req, Broadcaster) ->
+loop(Req, Broadcaster, DocRoot) ->
     H = mochiweb_request:get_header_value("Upgrade", Req),
-    %io:format("~p~n",[Req:parse_qs()]),
     "/" ++ _Path = Req:get(path),
     loop(Req,
          Broadcaster,
-         H =/= undefined andalso string:to_lower(H) =:= "websocket").
+         H =/= undefined andalso string:to_lower(H) =:= "websocket", DocRoot).
 
-loop(Req, _Broadcaster, false) ->
+loop(Req, _Broadcaster, false, DocRoot) ->
     "/" ++ Path = Req:get(path),
-    {ok, {hostent, Hostname,_,_,_,[Ip]}} = inet:gethostbyaddr(Req:get(peer)),
-    io:format("Connection from: ~s (~s)~n",[Hostname,inet:ntoa(Ip)]),
+    backend_utils:print_hostinfo(Req),
     io:format("~p~n",[Req]),
     try
-        case Req:get(method) of
-            Method when Method =:= 'GET'; Method =:= 'HEAD' ->
-                case Path of
-                    "top_words" ->
-                        {ok, Keys} = tba_riakdb:query_date_range("gigabucket", web_functions:get_date_from(15),"9"),
-                        {ok, Info} = mapred_tokenizer:mapred_tokens(Keys),
-                        Req:ok({"application/json",[{"Cache-Control", "no-cache"}],
-                                [mochijson2:encode(Info)]});
-
-                    "world" ->
-                        {ok, Keys} = tba_riakdb:query_date_range("gigabucket", web_functions:get_date_from(15),"9"),
-                        {ok, Info} = tba_riakdb:mapred_weight(Keys),
-                        Req:ok({"application/json",[],
-                                [mochijson2:encode({struct,[{A,web_functions:fix_double_number(B)} || {A,B} <- Info]})]});
-                    _ ->
-                        mochiweb_request:serve_file(Path, web_functions:get_directory(), Req)
+        case dispatch(Req, backend_views:urls()) of
+            none ->
+                case filelib:is_file(filename:join([DocRoot, Path])) of
+                    true -> 
+                        case backend_login:check_cookie(Req) of
+                            undefined -> Req:serve_file(Path, lists:merge(DocRoot,"/Priv"));
+                            _ -> Req:serve_file(Path, DocRoot)
+                        end;
+                    false ->
+                        Req:not_found()
                 end;
-            Method when Method =:= 'POST' ->
-                case Path of
-                    _ -> Req:not_found()
-                end;
-            _ ->
-                Req:respond({501, [], []})
+            Response -> Response
         end
     catch
         Type:What ->
@@ -86,7 +75,7 @@ loop(Req, _Broadcaster, false) ->
                          "request failed, sorry\n"})
     end;
  
-loop(Req, Broadcaster, true) ->
+loop(Req, Broadcaster, true, _) ->
     "/" ++ Path = Req:get(path),
     try
         case Req:get(method) of
@@ -119,6 +108,23 @@ loop(Req, Broadcaster, true) ->
                          "request failed, sorry\n"})
     end.
 
+dispatch(_, []) ->
+    none;
+dispatch(Req, [{Regex, F}|Xs]) ->
+    "/" ++ Path = Req:get(path),
+    Method = Req:get(method),
+    Match = re:run(Path, Regex, [global, {capture, all_but_first, list}]),
+    case Match of
+        {match, [MatchList]} ->
+           case length(MatchList) of
+              0 ->
+                  io:format("~p~n",[Match]),
+                  backend_views:F(Method, Req); 
+              L when L > 0 ->
+                  backend_views:F(Method, Req, MatchList)
+           end;
+        _ -> dispatch(Req, Xs)
+    end.
 
 %% This server keeps track of connected pids
 %%broadcast_server(Pids) ->
