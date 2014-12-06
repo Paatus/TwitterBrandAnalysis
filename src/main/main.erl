@@ -24,7 +24,7 @@ start_user(Name, SearchWords) ->
 	ChildSpec = {
 		Name, 
 		{user, start, [Name, SearchWords]},
-		permanent, 10500, supervisor, [user]
+		permanent, infinity, supervisor, [user]
 	},
 	supervisor:start_child(main, ChildSpec).
 

@@ -2,31 +2,31 @@
 -behaviour(supervisor).
 -export([start/2, init/1]).
 
-start(Name, SearchWords) ->
-	supervisor:start_link(?MODULE, {Name, SearchWords}).
+start(User, SearchWords) ->
+	{ok, Pid} = supervisor:start_link(?MODULE, {User, SearchWords}),
+	{ok, Relay} = supervisor:start_child(Pid, {
+		relay,
+		{message_relay, start, [{User, SearchWords}]},
+		permanent,
+		5000,
+		worker,
+		[message_relay]
+	}),
+	supervisor:start_child(Pid, {
+		miner,
+		{twitterminer_source, start, [{SearchWords, Relay}]},
+		permanent,
+		5000,
+		worker,
+		[twitterminer_source]
+	}),
+	{ok, Pid}.
 
 init({User, SearchWords}) ->
-	MaxRestart = 1,
+	MaxRestart = 2,
 	MaxTime = 3600,
 	{ok, {{one_for_all, MaxRestart, MaxTime},
 		[
-		{
-			relay,
-			{message_relay, start, [{User, SearchWords}]},
-			permanent,
-			5000,
-			worker,
-			[message_relay]
-		},
-		{
-			miner,
-			{twitterminer_source, start, [SearchWords]},
-			permanent,
-			5000,
-			worker,
-			[twitterminer_source]
-		}
 			%Start concat process
 		]
 	}}.
-

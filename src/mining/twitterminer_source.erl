@@ -1,7 +1,7 @@
 -module(twitterminer_source).
 
 -behaviour(gen_server).
--export([start/1, run/1, twitter_print_pipeline/3, twitter_producer/3, get_account_keys/1]).
+-export([start/1]).
 
 -export([init/1,
          handle_call/3, 
@@ -14,11 +14,11 @@
                        access_token, access_token_secret}).
 
 start(Params) ->
-	gen_server:start_link({local, miner}, ?MODULE, Params, []).
+	gen_server:start_link(?MODULE, Params, []).
 
-init(Params) ->
-	P = run(Params),
-	{ok, P}.	
+init({SearchWords, RelayPid}) ->
+	PipelineP = run(SearchWords, RelayPid),
+	{ok, PipelineP}.
 
 handle_call(_Request, _From, State) ->
 	{reply, ok, State}.
@@ -29,8 +29,8 @@ handle_cast(_Message, State) ->
 handle_info(_Info, State) ->
 	{noreply, State}.
 
-terminate(_Reason, State) ->
-	twitterminer_pipeline:terminate(State),
+terminate(_Reason, PipelineP) ->
+	twitterminer_pipeline:terminate(PipelineP),
 	ok.
 
 code_change(_OldVsn, State, _) ->
@@ -50,25 +50,25 @@ get_account_keys(Name) ->
                 access_token=keyfind(access_token, Keys),
                 access_token_secret=keyfind(access_token_secret, Keys)}.
 
-run(SearchWords) ->
+run(SearchWords, RelayPid) ->
   %URL = "https://stream.twitter.com/1.1/statuses/sample.json",
   URL = "https://stream.twitter.com/1.1/statuses/filter.json",
   % We get our keys from the tba.config configuration file.
   Keys = get_account_keys(account1),
 
   % Run our pipeline
-  twitterminer_pipeline:build_link(twitter_print_pipeline(URL, Keys, SearchWords)).
+  twitterminer_pipeline:build_link(twitter_print_pipeline(URL, Keys, SearchWords, RelayPid)).
 
 %% @doc Create a pipeline that connects to twitter and
 %% prints tweets.
-twitter_print_pipeline(URL, Keys, SearchWords) ->
+twitter_print_pipeline(URL, Keys, SearchWords, RelayPid) ->
 
   Prod = twitter_producer(URL, Keys, SearchWords),
 
   % Pipelines are constructed 'backwards' - consumer is first, producer is last.
   [
     twitterminer_pipeline:consumer(
-      fun(Msg, N) -> get_stuff(Msg), N+1 end, 0),
+      fun(Msg, N) -> get_stuff(Msg, RelayPid), N+1 end, 0),
       %fun(Msg, N) -> my_print(Msg), N+1 end, 0),
     twitterminer_pipeline:map(
       fun decorate_with_id/1),
@@ -178,7 +178,7 @@ decorate_with_id(B) ->
   end.
 
 
-get_stuff(Tweet) ->
+get_stuff(Tweet, RelayPid) ->
 	case Tweet of
 		{invalid_tweet, B} -> io:format("failed to parse: ~s~n", [B]);
 		{parsed_tweet, L, _B, _} ->
@@ -186,7 +186,7 @@ get_stuff(Tweet) ->
 			%io:format("Tweet parsed: ~p~n", [get_id(L)]),
 			case is_eng(L) of
 				true ->
-					gen_server:cast(relay, {tweet, {{id,get_id(L)},{text, get_text(L)}, {timezone, get_timezone(L)}}});
+					gen_server:cast(RelayPid, {tweet, {{id,get_id(L)},{text, get_text(L)}, {timezone, get_timezone(L)}}});
 				false -> not_eng
 			end
 	end.

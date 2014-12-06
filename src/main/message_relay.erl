@@ -4,7 +4,7 @@
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 
 start(Params) ->
-	gen_server:start_link({local, relay}, message_relay, Params, []).
+	gen_server:start_link(?MODULE, Params, []).
 
 init(Params) ->
 	{ok, Params}.
@@ -13,7 +13,7 @@ handle_call(_Request, _From, State) ->
 	{reply, ok, State}.
 
 handle_cast({tweet, Tweet}, State) ->
-	io:format("Received tweet~n"),
+	io:format("Received tweet ~p~n", [State]),
         processTweet(State, Tweet),
 	{noreply, State};
 handle_cast(Message, State) ->
@@ -28,32 +28,6 @@ terminate(_Reason, _State) ->
 
 code_change(_OldVsn, State, _) ->
 	{ok, State}.
-
-
-%starting mrelay loop, or if it exists returns its ID
-%start(User, SearchWords) ->
-%  case whereis(mRelay) of
-%    undefined ->
-%      {ok, spawn(fun() ->
-%        register(mRelay, self()),
-%        loop(User, SearchWords)
-%      end)};
-%    Pid ->
-%      {ok, Pid}
-%  end.
-
-%loop waits for messages
-%loop(User, SearchWords) ->
-%  receive
-%    {From,{tweet, Tweet}} ->
-%      From ! {self(), message_get},                             %message was received, let sender know
-%      spawn(fun() ->                                            %spawn a process for the tweet
-%        %mRelay ! {self(), processTweet({tweet, Tweet})} end),  %that processes the tweet and sends it back to mrelay
-%        processTweet(User, SearchWords, {tweet, Tweet}) end),            %that processes the tweet and sends it back to mrelay
-%      loop(User, SearchWords);
-%    {From, stop} ->
-%      From ! {self(), stopped}
-%  end.
 
 %Test function to quickly check if things are working
 testTweet() ->
@@ -72,8 +46,8 @@ processTweet({User, SearchWords}, {{_, Tid},{text, TweetBody},{_, Timezone}}) ->
 	UsedKeywords = findTweetBrand(Keywords, binary_to_list(TweetBody)),  %
 	%io:fwrite("Used keywords: ~p~n", [UsedKeywords]),
 
-	%NlpWeight = pyerlTest:pyProcess(TweetBody),                   %test value replace 1 with function
-	NlpWeight = 1,                   %test value replace 1 with function
+	%NlpWeight = pyerlTest:pyProcess(TweetBody),
+	NlpWeight = 1,			%test without NLP
 	
 	Wtweet = {tweet,{{text, TweetBody},{weight, NlpWeight},{timezone, Timezone}}},
 	
@@ -91,11 +65,3 @@ processTweet({User, SearchWords}, {{_, Tid},{text, TweetBody},{_, Timezone}}) ->
 findTweetBrand(Brands, TweetText) ->
   [X || X <- Brands, 0 < string:str(string:to_lower(TweetText), string:to_lower(X))].
 
-%Converting tweets into a Json string format, currently not used
-%tweetToJson({tweet,{{id, Tid},{text, TweetBody},{weight, Weight},{timezone, Timezone},{coorinates, Coordinates}}}) ->
-%  string:join(["{\"tweet\":{\"id\":\"", Tid,
-%    "\",\"text\":\"", TweetBody,
-%    "\",\"weight\":\"", Weight,
-%    "\",\"timezone\":\"", Timezone,
-%    "\",\"coordinates\":\"", Coordinates,
-%    "}}"],"").
