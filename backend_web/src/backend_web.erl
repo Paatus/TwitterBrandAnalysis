@@ -68,6 +68,13 @@ loop(Req, _Broadcaster, false, DocRoot) ->
                     false ->
                         Req:not_found()
                 end;
+            serve_files -> case filelib:is_file(filename:join([DocRoot, Path])) of
+                               true ->
+                                   Req:serve_file(Path, DocRoot);
+                               false ->
+                                   Req:not_found()
+                           end;
+
             Response -> Response
         end
     catch

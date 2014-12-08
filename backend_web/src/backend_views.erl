@@ -15,7 +15,8 @@ urls() -> [
            {"^api/login/?$", login                          },
            {"^api/logout/?$", logout                        },
            {"^api/keywords/add/(.{3,64})$", add_user_keyword},
-           {"^api/keywords/get$", get_user_keywords         }
+           {"^api/keywords/get$", get_user_keywords         },
+           {"^{js|css|font|vendor|imgs}/.*", serve_files    }
           ].
 
 get_world_view('GET', Req) ->
