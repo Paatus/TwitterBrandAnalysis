@@ -63,7 +63,7 @@ logout('POST', Req) ->
     logout('GET', Req).
 
 illegal_access_response(Req) ->
-    Cookie = mochiweb_cookies:cookie(?SESSION_COOKIE,"", [{path, "/"},{max_age,0}]),
+    Cookie = mochiweb_cookies:cookie(?SESSION_COOKIE,"expired", [{path, "/"},{max_age,0}]),
     backend_utils:illegal_access(Req, ?API_NO_LOGIN_MSG, Cookie).
 
 add_user_keyword(_, Req, []) ->

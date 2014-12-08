@@ -19,11 +19,11 @@ redirect(Req, Location, Message, Cookie) ->
                  Message}).
 
 illegal_access(Req,Message) ->
-    illegal_access(Req,Message,[]);
+    illegal_access(Req,Message,[]).
 illegal_access(Req,Message,ExtraHeader) ->
     Req:respond({403,
                  [
-                  {"Content-Type", "text/html; charset=UTF-8"}|ExtraHeader
+                  {"Content-Type", "text/html; charset=UTF-8"},ExtraHeader
                  ],
                  Message}).
 

@@ -1,7 +1,9 @@
 -module(backend_login).
 
 -export([authenticate/2, logout/1]).
--export([create_cookie/2,create_session/2,check_cookie/1,check_session/1,get_username/1]).
+-export([create_cookie/2,check_cookie/1,check_session/1,get_username/1]).
+-export([update_session/1,create_session/2]).
+
 
 -include("backend_config.hrl").
 
@@ -21,7 +23,7 @@ logout(Req) ->
                      end;
         _ -> undefined
     end,
-    mochiweb_cookies:cookie(?SESSION_COOKIE,"", [{path, "/"},{max_age,0}]).
+    mochiweb_cookies:cookie(?SESSION_COOKIE,"expired", [{path, "/"},{max_age,0}]).
 
 % May need to utilize these functions:
 % mochiweb_util:quote_plus/1
