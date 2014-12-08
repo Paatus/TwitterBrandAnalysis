@@ -15,7 +15,7 @@ authenticate(Username, Password) ->
 % mochiweb_util:unquote/1
 create_cookie(Username,Ip) ->
     UUID = create_session(Username,Ip),
-    mochiweb_cookies:cookie(?SESSION_COOKIE,UUID).
+    mochiweb_cookies:cookie(?SESSION_COOKIE,UUID, [{path, "/"}]).
 
 check_cookie(Req) ->
     ClientIp = backend_utils:get_ip(Req),
