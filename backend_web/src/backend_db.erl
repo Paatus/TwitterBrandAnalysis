@@ -1,6 +1,6 @@
 -module(backend_db).
 
--export([start_link/0, close_link/1, fetch/2, put/4, format_date/1]).
+-export([start_link/0, close_link/1, fetch/2, put/4, format_date/1, remove/2]).
 
 start_link() ->
     start_link("127.0.0.1", 8087).
@@ -43,6 +43,11 @@ put(Pid, Bucket, Key, Value, Indices) ->
 	M2 = riakc_obj:set_secondary_index(M1, Indices),
 	OI = riakc_obj:update_metadata(O, M2),
 	riakc_pb_socket:put(Pid, OI).
+
+remove(Bucket, Key) ->
+	{ok, Pid} = start_link(),
+    riakc_pb_socket:delete(Pid, Bucket, Key),
+	close_link(Pid).
 
 to_binary(Input) when is_binary(Input) -> Input;
 to_binary(Input) when is_list(Input) -> list_to_binary(Input);

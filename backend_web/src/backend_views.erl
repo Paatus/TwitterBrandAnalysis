@@ -1,6 +1,6 @@
 -module(backend_views).
 
--export([urls/0, get_world_view/2, login/2, add_user_keyword/3, get_user_keywords/2]).
+-export([urls/0, get_world_view/2, login/2, add_user_keyword/3, get_user_keywords/2, logout/2]).
 
 -include("backend_config.hrl").
 
@@ -13,6 +13,7 @@
 urls() -> [
            {"^api/world/?$", get_world_view                 },
            {"^api/login/?$", login                          },
+           {"^api/logout/?$", logout                        },
            {"^api/keywords/add/(.{3,64})$", add_user_keyword},
            {"^api/keywords/get$", get_user_keywords         }
           ].
@@ -53,6 +54,14 @@ login('POST', Req) ->
 login('GET', Req) ->
     backend_utils:redirect(Req, "/",
         "Error! No login credentials.").
+
+logout('GET', Req) ->
+    Cookie = backend_login:logout(Req),
+    backend_utils:redirect(Req, "/",
+        "Login Successfull!", Cookie);
+logout('POST', Req) ->
+    logout('GET', Req).
+
 
 add_user_keyword(_, Req, []) ->
     backend_utils:error_response(Req, ?API_ERROR_MSG);

@@ -1,6 +1,7 @@
 -module(backend_login).
 
--export([authenticate/2,create_cookie/2,create_session/2,check_cookie/1,check_session/1,get_username/1]).
+-export([authenticate/2, logout/1]).
+-export([create_cookie/2,create_session/2,check_cookie/1,check_session/1,get_username/1]).
 
 -include("backend_config.hrl").
 
@@ -9,6 +10,19 @@ authenticate(Username, Password) ->
         {ok, Result} -> Result == backend_utils:hash_input(Password);
         _ -> false
     end.
+
+logout(Req) ->
+    ClientIp = backend_utils:get_ip(Req),
+    case Req:get_cookie_value(?SESSION_COOKIE) of
+        undefined -> undefined;
+        SessionID when length(SessionID) > 0 -> case check_session(SessionID) of
+                         {_Username, ClientIp} -> backend_db:remove(?LOGIN_BUCKET, SessionID);
+                         _ -> undefined
+                     end;
+        _ -> undefined
+    end,
+    mochiweb_cookies:cookie(?SESSION_COOKIE,"", [{path, "/"}]).
+
 
 % May need to utilize these functions:
 % mochiweb_util:quote_plus/1
