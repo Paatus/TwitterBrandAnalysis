@@ -4,7 +4,7 @@
 	{vsn, "0.1"},
 	{modules, []},
 	{registered, []},
-	%{mod, {'TwitterBrandAnalysis', []}},
+	{mod, {main, []}},
 	{env, []},
 	{applications, [kernel, stdlib, crypto, ibrowse, ssl]}]
 }.

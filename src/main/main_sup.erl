@@ -4,7 +4,6 @@
 -export([init/1]).
 
 start() ->
-	application:ensure_all_started(tba),
 	supervisor:start_link({local, main_sup}, ?MODULE, []).
 
 stop() ->

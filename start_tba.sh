@@ -1,1 +1,1 @@
-erl -pa Mining/dit029-twitter-miner/ebin Mining/dit029-twitter-miner/deps/*/ebin ebin -config Mining/dit029-twitter-miner/twitterminer -run main run -run init stop -noshell
+erl -pa ebin deps/*/ebin -config tba -name name@dns -setcookie insert_cookie_here -run main -noshell
