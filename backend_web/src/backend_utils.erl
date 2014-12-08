@@ -1,6 +1,6 @@
 -module(backend_utils).
 
--export([redirect/3, redirect/4, illegal_access/2, error_response/2]).
+-export([redirect/3, redirect/4, illegal_access/2, illegal_access/3, error_response/2]).
 -export([get_directory/0, get_ip/1, print_hostinfo/1, get_date_from/1]).
 -export([generate_uuid/0, uuid_to_string/1, hash_input/1]).
 
@@ -19,9 +19,11 @@ redirect(Req, Location, Message, Cookie) ->
                  Message}).
 
 illegal_access(Req,Message) ->
+    illegal_access(Req,Message,[]);
+illegal_access(Req,Message,ExtraHeader) ->
     Req:respond({403,
                  [
-                  {"Content-Type", "text/html; charset=UTF-8"}
+                  {"Content-Type", "text/html; charset=UTF-8"}|ExtraHeader
                  ],
                  Message}).
 

@@ -48,7 +48,7 @@ login('POST', Req) ->
                         "Login Successfull!", Cookie);
                 _ -> 
                     backend_utils:redirect(Req, "/",
-                        "Login failed!", mochiweb_cookies:cookie(?SESSION_COOKIE,""))
+                        "Login failed!", mochiweb_cookies:cookie(?SESSION_COOKIE,"", [{path, "/"},{max_age,0}]))
             end
     end;
 login('GET', Req) ->
@@ -62,6 +62,9 @@ logout('GET', Req) ->
 logout('POST', Req) ->
     logout('GET', Req).
 
+illegal_access_response(Req) ->
+    Cookie = mochiweb_cookies:cookie(?SESSION_COOKIE,"", [{path, "/"},{max_age,0}]),
+    backend_utils:illegal_access(Req, ?API_NO_LOGIN_MSG, Cookie).
 
 add_user_keyword(_, Req, []) ->
     backend_utils:error_response(Req, ?API_ERROR_MSG);
@@ -70,7 +73,7 @@ add_user_keyword('POST', Req, Keywords) ->
 add_user_keyword('GET', Req, [Keyword]) ->
     case backend_login:check_cookie(Req) of
         undefined ->
-                backend_utils:illegal_access(Req, ?API_NO_LOGIN_MSG);
+                illegal_access_response(Req);
            _ -> 
                 backend_user:add_user_keywords(Req, Keyword),
                 Req:ok({"application/json",?API_HEADER,[mochijson2:encode({struct,[{status,<<"ok">>}]})]})
@@ -81,7 +84,7 @@ get_user_keywords('POST', Req) ->
 get_user_keywords('GET', Req) ->
     case backend_login:check_cookie(Req) of
         undefined ->
-                backend_utils:illegal_access(Req, ?API_NO_LOGIN_MSG);
+                illegal_access_response(Req);
             _ ->
                 Keys = backend_user:get_user_keywords(Req),
                 Keywords = lists:map(fun (X) -> list_to_binary(X) end, Keys),
