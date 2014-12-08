@@ -1,6 +1,6 @@
 -module(riakio).
 
--export([start_link/0, close_link/1, put_tweet/3, put/4, fetch/2, query_date_range/3, query_date_range/4, query_location/2, intersect/2, concat/3, delete_list/2]).
+-export([start_link/0, close_link/1, put_tweet/3, put_concat/4, put/4, put/5, fetch/2, query_date_range/3, query_date_range/4, query_location/2, format_date/1, intersect/2, delete_keys/2]).
 
 start_link() -> start_link("127.0.0.1", 8087).
 start_link(Ip, Port) -> riakc_pb_socket:start_link(Ip, Port).
@@ -82,18 +82,6 @@ format_date({{Year,Month,Day},{Hour,Minute,Second}}) ->
 intersect(List1, List2) ->
 	sets:to_list(sets:intersection(sets:from_list(List1),sets:from_list(List2))).
 
-concat(Bucket, StartDate, EndDate) ->
-	Start = format_date(StartDate),
-	End = format_date(EndDate),
-	{ok, Keys} = query_date_range(Bucket, Start, End),
-	{ok, Result} = mapred_weight:mapred_weight(Keys),
-	{User, Keyword} = Bucket,
-	Concatbucket = {User, Keyword, concat},
-	{ok, Pid} = start_link(),
-        put_concat(Pid, Concatbucket, End, Result),
-	delete_list(Pid, Keys),
-        close_link(Pid).
-
 put_concat(_, _,  _, []) -> ok;
 put_concat(Pid, Bucket, DateTime, [Value|Tail]) ->
 	{Location, Weight} = Value,
@@ -104,8 +92,8 @@ put_concat(Pid, Bucket, DateTime, [Value|Tail]) ->
 
 	put_concat(Pid, Bucket, DateTime, Tail).
 
-delete_list(_, []) -> ok;
-delete_list(Pid, [BKPair|Tail]) ->
+delete_keys(_, []) -> ok;
+delete_keys(Pid, [BKPair|Tail]) ->
 	{Bucket, Key} = BKPair,
 	riakc_pb_socket:delete(Pid, to_binary(Bucket), to_binary(Key)),
-	delete_list(Pid, Tail).
+	delete_keys(Pid, Tail).

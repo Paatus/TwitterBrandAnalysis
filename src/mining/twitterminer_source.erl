@@ -1,7 +1,7 @@
 -module(twitterminer_source).
 
 -behaviour(gen_server).
--export([start/1]).
+-export([start/2]).
 
 -export([init/1,
          handle_call/3, 
@@ -13,10 +13,10 @@
 -record(account_keys, {api_key, api_secret,
                        access_token, access_token_secret}).
 
-start(Params) ->
-	gen_server:start_link(?MODULE, Params, []).
+start(SearchWords, RelayPid) ->
+	gen_server:start_link(?MODULE, [SearchWords, RelayPid], []).
 
-init({SearchWords, RelayPid}) ->
+init([SearchWords, RelayPid]) ->
 	PipelineP = run(SearchWords, RelayPid),
 	{ok, PipelineP}.
 
