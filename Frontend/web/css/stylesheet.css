@@ -306,7 +306,8 @@ img{
     bottom: 1%;
     margin:0;
 }
-#container1, #container2, #container3, #container4,#container4 svg,.container41 {
+#container1, #container2, #container3, #container4,
+#container4 svg,#container41,#container41 svg,#container42,#container42 svg {
     min-width: 310px;
     max-width: 800px;
     margin: 0 auto;
@@ -315,28 +316,63 @@ img{
     width: 100%;
     margin: 0;
 }
-.container41{
+
+
+/*hamburger menu icon*/
+
+.dropdown{
+    right: 10px;
+    position: absolute;
+    width: 25px;
+    height: 23px;
+    padding: 0;
+    margin-top: 10px;
+}
+#dropdownMenu1{
+    width: 25px;
+    height: 23px;
+    padding: 0px;
+    border: 0px;
+}
+
+.dropdown-menu{
+    text-align: right;
+    margin-left: -40px;
+    min-width: 20px;
+}
+.dropdown-menu>li>a{
+    padding: 3px 5px 0px 5px;
+}
+
+.clearfix{
+    width: 25px;
+    height: 23px;
+}
+.pbs{
+    margin-right: 10px
+}
+
+.icon-menu {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+
+}
+[class^="icon-"], [class*=" icon-"] {
+  display: inline-block;
+  color: #000000;
+  fill: currentColor;
+}
+use{
+    width: 18px;
+    height: 14px;
+}
+
+#container4{
+
+}
+
+#container41,#container42{
     display: none;
 }
 
-#selectbar{
-    z-index: 2;
-    position: absolute;
-    right: 0;
-    margin-right: 5px;
-    margin-top: 5px;
-}
-.dropdown,
-#toggle_message{
-    height: auto;
-    right: 5px;
-    position: absolute;
-}
-#container4,svg{
-     z-index: -1;
-     top: 0;
-}
-
-p{
-    color: black;
-}
