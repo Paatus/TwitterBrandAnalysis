@@ -4,11 +4,17 @@
 
 -include("backend_config.hrl").
 
+%
+% urls/1 is where the dynamic pages is defined in a 
+% tuple containing a regular expression and the name of the function
+% that handles the call.
+%
+
 urls() -> [
-           {"^world/?$", get_world_view},
-           {"^login/?$", login},
+           {"^api/world/?$", get_world_view                 },
+           {"^api/login/?$", login                          },
            {"^api/keywords/add/(.{3,64})$", add_user_keyword},
-           {"^api/keywords/get$", get_user_keywords}
+           {"^api/keywords/get$", get_user_keywords         }
           ].
 
 get_world_view('GET', Req) ->
@@ -16,8 +22,11 @@ get_world_view('GET', Req) ->
     %{ok, Keys} = tba_riakdb:query_date_range("gigabucket", web_functions:get_date_from(15),"9"),
     %{ok, Info} = tba_riakdb:mapred_weight(Keys),
     %Req:ok({"application/json",[], [mochijson2:encode({struct,[{A,web_functions:fix_double_number(B)} || {A,B} <- Info]})]})
-    Req:ok({"application/json",[], ["{\"hej\":1}"]}).
-    %Req:ok({"application/json",[], ["{\"hej\":1}"]}).
+    Req:ok({"application/json",?API_HEADER,
+            [mochijson2:encode({struct,[{country,float_to_binary(1.0)}]})]});
+
+get_world_view('POST', Req) ->
+    get_world_view('GET', Req).
 
 login('POST', Req) ->
     Post = Req:parse_post(),
@@ -26,7 +35,10 @@ login('POST', Req) ->
     case length(Password) of
         0 -> 
             backend_utils:redirect(Req, "/",
-                "Something went wrong!");
+                "Login failed!");
+        _ when Username =:= [] -> 
+            backend_utils:redirect(Req, "/",
+                "Login failed!");
         N when N > 0 ->
             case backend_login:authenticate(Username,Password) of
                 true ->
@@ -39,28 +51,32 @@ login('POST', Req) ->
             end
     end;
 login('GET', Req) ->
-    Req:respond({302,
-        [{"Location", "/login.html"},
-        {"Content-Type", "text/html; charset=UTF-8"}],
-        "BAD USER! U STOOPID!"}).
+    backend_utils:redirect(Req, "/",
+        "Error! No login credentials.").
 
+add_user_keyword(_, Req, []) ->
+    backend_utils:error_response(Req, ?API_ERROR_MSG);
+add_user_keyword('POST', Req, Keywords) ->
+    add_user_keyword('GET', Req, Keywords);
 add_user_keyword('GET', Req, [Keyword]) ->
     case backend_login:check_cookie(Req) of
         undefined ->
-                backend_utils:illegal_access(Req, "Bad user!");
+                backend_utils:illegal_access(Req, ?API_NO_LOGIN_MSG);
            _ -> 
                 backend_user:add_user_keywords(Req, Keyword),
-                Req:ok({"application/json",[],[mochijson2:encode({struct,[{status,<<"ok">>}]})]})
+                Req:ok({"application/json",?API_HEADER,[mochijson2:encode({struct,[{status,<<"ok">>}]})]})
     end.
 
+get_user_keywords('POST', Req) ->
+    get_user_keywords('GET', Req);
 get_user_keywords('GET', Req) ->
     case backend_login:check_cookie(Req) of
         undefined ->
-                backend_utils:illegal_access(Req, "Bad user!");
+                backend_utils:illegal_access(Req, ?API_NO_LOGIN_MSG);
             _ ->
                 Keys = backend_user:get_user_keywords(Req),
                 Keywords = lists:map(fun (X) -> list_to_binary(X) end, Keys),
-                Req:ok({"application/json",[], [mochijson2:encode({struct,[{"keywords",Keywords}]})]})
+                Req:ok({"application/json",?API_HEADER, [mochijson2:encode({struct,[{"keywords",Keywords}]})]})
     end.
 
     %Req:respond({302,

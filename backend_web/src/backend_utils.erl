@@ -1,6 +1,7 @@
 -module(backend_utils).
 
--export([redirect/3, redirect/4, get_ip/1, print_hostinfo/1, illegal_access/2]).
+-export([redirect/3, redirect/4, illegal_access/2, error_response/2]).
+-export([get_directory/0, get_ip/1, print_hostinfo/1, get_date_from/1]).
 -export([generate_uuid/0, uuid_to_string/1, hash_input/1]).
 
 -include("backend_config.hrl").
@@ -19,6 +20,13 @@ redirect(Req, Location, Message, Cookie) ->
 
 illegal_access(Req,Message) ->
     Req:respond({403,
+                 [
+                  {"Content-Type", "text/html; charset=UTF-8"}
+                 ],
+                 Message}).
+
+error_response(Req,Message) ->
+    Req:respond({400,
                  [
                   {"Content-Type", "text/html; charset=UTF-8"}
                  ],
@@ -47,3 +55,26 @@ get_ip(Req) ->
 print_hostinfo(Req) ->
     {ok, {hostent, Hostname,_,_,_,[Ip]}} = inet:gethostbyaddr(Req:get(peer)),
     io:format("Connection from: ~s (~s)~n",[Hostname,inet:ntoa(Ip)]).
+
+get_directory() ->
+        {file, Here} = code:is_loaded(?MODULE),
+            io:format("~p~n",[Here]),
+                filename:dirname(filename:dirname(Here)) ++ "/www".
+
+get_date_from(Minutes) ->
+    {{Year, Months, Days}, {H, M, _S}} = subtract_minutes(calendar:universal_time(), Minutes),
+    fix_single_digit(Year) ++ "-" ++ fix_single_digit(Months) ++ "-" ++ fix_single_digit(Days) ++ " " ++ fix_single_digit(H) ++ ":" ++ fix_single_digit(M).
+
+subtract_minutes({{Year, Months, Days}, {Hours, Minutes, _Seconds}},M) when Minutes >= M ->
+    {{Year, Months, Days}, {Hours, Minutes - M, _Seconds}};
+subtract_minutes({{Year, Months, Days}, {Hours, Minutes, _Seconds}},M) when Hours >= 1 ->
+    subtract_minutes({{Year, Months, Days}, {Hours - 1, Minutes, _Seconds}}, M - 60);
+subtract_minutes({{Year, Months, Days}, {_Hours, Minutes, _Seconds}},M) when Days > 1   ->
+    subtract_minutes({{Year, Months, Days - 1}, {23, Minutes, _Seconds}}, M - 60);
+subtract_minutes({{Year, Months, _Days}, {_Hours, Minutes, _Seconds}},M) when Months > 1 ->
+    subtract_minutes({{Year, Months - 1, calendar:last_day_of_the_month(Year, Months - 1)}, {23, Minutes, _Seconds}}, M - 60);
+subtract_minutes({{Year, _Months, _Days}, {_Hours, Minutes, _Seconds}},M) ->
+    subtract_minutes({{Year - 1, 12, calendar:last_day_of_the_month(Year - 1, 12)}, {23, Minutes, _Seconds}}, M - 60).
+
+fix_single_digit(X) when X < 10 -> "0" ++ integer_to_list(X);
+fix_single_digit(X) -> integer_to_list(X).

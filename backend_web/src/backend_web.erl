@@ -3,8 +3,8 @@
 %% To run: erlc *.erl && erl -pa ../../ebin -s backend_web
 
 -export([start/0, start_link/0, ws_loop/3, loop/3]).
-%-export([broadcast_server/1]).
--export([send_json/1]).
+
+-include("backend_config.hrl").
 
 -ifdef(debug).
 -define(DEBUG,true).
@@ -26,7 +26,7 @@ start_link() ->
     io:format("Listening at http://127.0.0.1:8080/~n"),
     Broadcaster = spawn_link(web_broadcaster, start, [dict:new()]),
     %spawn_link(?MODULE, send_json, [Broadcaster]),
-    DocRoot = web_functions:get_directory(),
+    DocRoot = backend_utils:get_directory(),
     mochiweb_http:start_link([
                               {name, client_access},
                               {loop, {?MODULE, loop, [Broadcaster, DocRoot]}},
@@ -40,11 +40,16 @@ ws_loop(Payload, Broadcaster, _ReplyChannel) ->
     Broadcaster.
 
 loop(Req, Broadcaster, DocRoot) ->
-    H = mochiweb_request:get_header_value("Upgrade", Req),
-    "/" ++ _Path = Req:get(path),
-    loop(Req,
-         Broadcaster,
-         H =/= undefined andalso string:to_lower(H) =:= "websocket", DocRoot).
+    case Req:get_header_value("host") of
+        Host when Host =:= ?WEB_ADDRESS orelse Host =:= ?IP_ADDRESS ->
+            "/" ++ _Path = Req:get(path),
+            H = mochiweb_request:get_header_value("Upgrade", Req),
+            loop(Req,
+                 Broadcaster,
+                 H =/= undefined andalso string:to_lower(H) =:= "websocket", DocRoot);
+        _ ->
+            Req:respond({501, [], []})
+    end.
 
 loop(Req, _Broadcaster, false, DocRoot) ->
     "/" ++ Path = Req:get(path),
@@ -53,13 +58,13 @@ loop(Req, _Broadcaster, false, DocRoot) ->
     try
         case dispatch(Req, backend_views:urls()) of
             none ->
-                case filelib:is_file(filename:join([DocRoot, Path])) of
+                FixedDocRoot = case backend_login:check_cookie(Req) of
+                    undefined -> lists:append(DocRoot,"/priv");
+                    _ -> DocRoot
+                end,
+                case filelib:is_file(filename:join([FixedDocRoot, Path])) of
                     true -> 
-                        case backend_login:check_cookie(Req) of
-                            undefined ->
-                                Req:serve_file(Path, lists:append(DocRoot,"/priv"), [{"Cache-Control", "no-cache"}]);
-                            _ -> Req:serve_file(Path, DocRoot)
-                        end;
+                        Req:serve_file(Path, FixedDocRoot, [{"Cache-Control", "no-cache"}]);
                     false ->
                         Req:not_found()
                 end;
@@ -126,59 +131,3 @@ dispatch(Req, [{Regex, F}|Xs]) ->
            end;
         _ -> dispatch(Req, Xs)
     end.
-
-%% This server keeps track of connected pids
-%%broadcast_server(Pids) ->
-%%    Pids1 = receive
-%%                {register, Pid, Channel} ->
-%%                    io:format("~p~n",[Channel]),
-%%                    broadcast_register(Pid, Channel, Pids);
-%%                {broadcast, Pid, Message} ->
-%%                    broadcast_sendall(Pid, Message, Pids);
-%%                {'DOWN', MRef, process, Pid, _Reason} ->
-%%                    broadcast_down(Pid, MRef, Pids);
-%%                Msg ->
-%%                    io:format("Unknown message: ~p~n", [Msg]),
-%%                    Pids
-%%            end,
-%%    erlang:hibernate(?MODULE, broadcast_server, [Pids1]).
-%%
-%%broadcast_register(Pid, Channel, Pids) ->
-%%    MRef = erlang:monitor(process, Pid),
-%%    broadcast_sendall(
-%%      Pid, "connected", dict:store(Pid, {Channel, MRef}, Pids)).
-%%
-%%broadcast_down(Pid, MRef, Pids) ->
-%%    Pids1 = case dict:find(Pid, Pids) of
-%%                {ok, {_, MRef}} ->
-%%                    dict:erase(Pid, Pids);
-%%                _ ->
-%%                    Pids
-%%            end,
-%%    broadcast_sendall(Pid, "disconnected", Pids1).
-%%
-%%broadcast_sendall(Pid, Msg, Pids) ->
-%%    M = iolist_to_binary([pid_to_list(Pid), ": ", Msg]),
-%%    dict:fold(
-%%      fun (K, {Reply, MRef}, Acc) ->
-%%              try
-%%                  begin
-%%                      Reply(M),
-%%                      dict:store(K, {Reply, MRef}, Acc)
-%%                  end
-%%              catch
-%%                  _:_ ->
-%%                      Acc
-%%              end
-%%      end,
-%%      dict:new(),
-%%      Pids).
-
-%
-% Test functions!
-%
-
-send_json(Broadcaster) ->
-    Broadcaster ! {broadcast, self(), mochijson2:encode({struct, [{test,<<"1">>}]})},
-    timer:sleep(30000),
-    send_json(Broadcaster).
