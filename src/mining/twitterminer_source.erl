@@ -108,7 +108,7 @@ receive_tweets({init, URL, Keys, SearchWords}) ->
   % Our parsing of the stream later on depends on delimited=length.
   % I have never managed to receive a stall warning, but it would
   % be a good idea to handle them somehow (or at least log).
-  SignedParams = oauth:sign("GET", URL, [{delimited, length}, {stall_warnings, true}, {track, SearchWords}], Consumer, AccessToken, AccessTokenSecret),
+  SignedParams = oauth:sign("GET", URL, [{delimited, length}, {stall_warnings, true}, {track, SearchWords}, {language, "en"}], Consumer, AccessToken, AccessTokenSecret),
   % SignedParams = oauth:sign("GET", URL, [{delimited, length}, {stall_warnings, true}], Consumer, AccessToken, AccessTokenSecret),
 
   % We use stream_to self() to get the HTTP stream delivered to our process as individual messages.
@@ -182,13 +182,7 @@ get_stuff(Tweet, RelayPid) ->
 	case Tweet of
 		{invalid_tweet, B} -> io:format("failed to parse: ~s~n", [B]);
 		{parsed_tweet, L, _B, _} ->
-			%io:format("Tweet:~n~p~n", [L]),
-			%io:format("Tweet parsed: ~p~n", [get_id(L)]),
-			case is_eng(L) of
-				true ->
-					gen_server:cast(RelayPid, {tweet, {{id,get_id(L)},{text, get_text(L)}, {timezone, get_timezone(L)}}});
-				false -> not_eng
-			end
+			gen_server:cast(RelayPid, {tweet, {{id,get_id(L)},{text, get_text(L)}, {timezone, get_timezone(L)}}})
 	end.
 
 get_id(Tweet) ->
@@ -212,17 +206,6 @@ get_timezone(Tweet) ->
 				{found, null} -> null;
 				{found, TZ} -> TZ;
 				not_found -> null
-			end;
-		not_found -> false
-	end.
-
-is_eng(Tweet) ->
-	case extract(<<"user">>, Tweet) of
-		{found, {U}} ->
-			case extract(<<"lang">>, U) of
-				{found, <<"en">>} -> true;
-				{found, _} -> false; 
-				not_found -> false
 			end;
 		not_found -> false
 	end.
