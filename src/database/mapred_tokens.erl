@@ -2,9 +2,27 @@
 -compile(export_all).
 %-export([mapred_tokens/1]).
 
+mapred_tokens_user(User, From, To) ->
+    {ok, List} = riakio:fetch("AccountInfo", User),
+    Keys = prepare_keys([extract_data(riakio:query_date_range({User, L}, From, To)) || L <- List]),
+    %io:format("~s", Keys),
+    {ok, T} = mapred_tokens(Keys),
+    T.  
+
+extract_data(Item) ->
+    {ok, Data} = Item,
+    Data.
+
+prepare_keys(L) ->
+    keyprep(L, []).
+
+keyprep([], Acc) -> Acc;
+keyprep([H|T], Acc) ->
+    keyprep(T, Acc ++ H).
+
 mapred_tokens(Keys) ->
     {ok, Pid} = riakio:start_link(),
-    case riakc_pb_socket:mapred(
+    Ret = case riakc_pb_socket:mapred(
         Pid,
         Keys,
         [{map, {modfun, ?MODULE, map_tokens}, none, false},
@@ -12,11 +30,12 @@ mapred_tokens(Keys) ->
          {reduce, {modfun, ?MODULE, red_limit_tokens}, none, false},
          {reduce, {modfun, ?MODULE, red_sort_and_to_struct}, none, true}]
         ) of
-    {error, E} -> io:format("~s", [E]);
+    {error, E} -> {error, E};
     {ok,[{_N,[T]}]} ->
         riakio:close_link(Pid),
         {ok, T}
-    end.
+    end,
+	Ret.
 
 map_tokens(RiakObject, _, _) ->
     {{text, Text},_,_} = binary_to_term(riak_object:get_value(RiakObject)),
@@ -24,7 +43,7 @@ map_tokens(RiakObject, _, _) ->
         [lists:foldl(fun (T, Acc) -> 
 		dict:update_counter(T, 1, Acc)
 	 end,
-	 dict:new(), [ X || X <-  string:tokens(FinalText,"\s\t\n!.,\"()[]{}"), length(X) > 3])].
+	 dict:new(), [ string:to_lower(X) || X <-  string:tokens(FinalText,"\s\t\n!.,\"()[]{}"), length(X) > 3])].
 
 red_tokens(Input, _) ->
     [lists:foldl(fun(T,Acc) -> dict:merge( fun(_Key, Value1, Value2) -> Value1 + Value2 end, T, Acc)  end ,dict:new(),Input)].
