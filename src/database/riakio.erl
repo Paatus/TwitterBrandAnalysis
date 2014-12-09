@@ -1,6 +1,6 @@
 -module(riakio).
 
--export([start_link/0, close_link/1, put_tweet/3, put_concat/4, put/4, put/5, fetch/2, query_date_range/3, query_date_range/4, query_location/2, format_date/1, intersect/2, delete_keys/2]).
+-export([start_link/0, close_link/1, put_tweet/3, put/4, put/5, fetch/2, query_date_range/3, query_date_range/4, query_location/2, format_date/1, to_binary/1, intersect/2, delete_keys/2]).
 
 start_link() -> start_link("127.0.0.1", 8087).
 start_link(Ip, Port) -> riakc_pb_socket:start_link(Ip, Port).
@@ -81,16 +81,6 @@ format_date({{Year,Month,Day},{Hour,Minute,Second}}) ->
 
 intersect(List1, List2) ->
 	sets:to_list(sets:intersection(sets:from_list(List1),sets:from_list(List2))).
-
-put_concat(_, _,  _, []) -> ok;
-put_concat(Pid, Bucket, DateTime, [Value|Tail]) ->
-	{Location, Weight} = Value,
-	put(Pid, Bucket, {DateTime, Location}, Weight, [
-		{{binary_index,"datetime"},[to_binary(DateTime)]},
-		{{binary_index,"location"},[to_binary(Location)]}
-	]),
-
-	put_concat(Pid, Bucket, DateTime, Tail).
 
 delete_keys(_, []) -> ok;
 delete_keys(Pid, [BKPair|Tail]) ->
