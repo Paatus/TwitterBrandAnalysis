@@ -59,9 +59,9 @@ loop(Req, _Broadcaster, false, DocRoot) ->
         case dispatch(Req, backend_views:urls()) of
             none ->
                 FixedDocRoot = case backend_login:check_cookie(Req) of
-                    undefined -> lists:append(DocRoot,"/public");
+                    undefined -> lists:append(DocRoot,"public/");
                     _ -> backend_login:update_session(Req),
-                         lists:append(DocRoot,"/private")
+                         lists:append(DocRoot,"private/")
                 end,
                 case filelib:is_file(filename:join([FixedDocRoot, Path])) of
                     true -> 
@@ -69,13 +69,6 @@ loop(Req, _Broadcaster, false, DocRoot) ->
                     false ->
                         Req:not_found()
                 end;
-            serve_files -> case filelib:is_file(filename:join([DocRoot, Path])) of
-                               true ->
-                                   Req:serve_file(Path, DocRoot);
-                               false ->
-                                   Req:not_found()
-                           end;
-
             Response -> Response
         end
     catch
