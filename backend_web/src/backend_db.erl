@@ -1,9 +1,12 @@
 -module(backend_db).
 
--export([start_link/0, close_link/1, fetch/2, put/4, format_date/1, remove/2]).
+-export([start_link/0, close_link/1, fetch/2, put/4, put/5, format_date/1, remove/2, query_date_range/3]).
+
+-include("backend_config.hrl").
+
 
 start_link() ->
-    start_link("127.0.0.1", 8087).
+    start_link(?RIAK_IP, ?RIAK_PORT).
 start_link(Ip, Port) ->
     riakc_pb_socket:start_link(Ip, Port).
 
@@ -55,3 +58,17 @@ to_binary(Input) -> term_to_binary(Input).
 
 format_date({{Year,Month,Day},{Hour,Minute,Second}}) -> 
         io_lib:format("~4.10.0B-~2.10.0B-~2.10.0B ~2.10.0B:~2.10.0B:~2.10.0B", [Year,Month,Day,Hour,Minute,Second]).
+
+query_date_range(Bucket, Start, End) ->
+	{ok, Pid} = start_link(),
+	B = to_binary(Bucket),
+	{ok, {_, Keys, _, _}} = riakc_pb_socket:get_index_range(
+		Pid,
+		B,
+		{binary_index, "datetime"},
+		to_binary(Start), to_binary(End)
+	),
+	close_link(Pid),
+	BucketKeys = [{B, K} || K <- Keys],
+	{ok, BucketKeys}.
+

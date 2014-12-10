@@ -19,3 +19,6 @@
 
 -define(SERVER_NODE, 'name@dns').
 -define(SERVER_MODULE, main_serv).
+
+-define(RIAK_IP, "127.0.0.1").
+-define(RIAK_PORT, 8087).
