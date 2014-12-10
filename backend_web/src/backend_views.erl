@@ -1,6 +1,6 @@
 -module(backend_views).
 
--export([urls/0, get_world_view/2, login/2, add_user_keyword/3, get_user_keywords/2, logout/2]).
+-export([urls/0, get_world_view/2, login/2, add_user_keyword/3, get_user_keywords/2, logout/2, serve_files/2]).
 
 -include("backend_config.hrl").
 
@@ -16,7 +16,11 @@ urls() -> [
            {"^api/logout/?$", logout                        },
            {"^api/keywords/add/(.{3,64})$", add_user_keyword},
            {"^api/keywords/get$", get_user_keywords         },
-           {"^{js|css|font|vendor|imgs}/.*", serve_files    }
+           {"^js/.*", serve_files    },
+           {"^css/.*", serve_files    },
+           {"^font/.*", serve_files    },
+           {"^vendor/.*", serve_files    },
+           {"^imgs/.*", serve_files    }
           ].
 
 get_world_view('GET', Req) ->
@@ -91,6 +95,17 @@ get_user_keywords('GET', Req) ->
                 Keywords = lists:map(fun (X) -> list_to_binary(X) end, Keys),
                 Req:ok({"application/json",?API_HEADER, [mochijson2:encode({struct,[{"keywords",Keywords}]})]})
     end.
+
+serve_files('POST', Req) ->
+    serve_files('GET', Req);
+serve_files('GET', Req) ->
+    "/" ++ Path = Req:get(path),
+    case filelib:is_file(filename:join([?HARDCODED_FOLDER, Path])) of
+        true ->
+            Req:serve_file(Path, ?HARDCODED_FOLDER);
+        false ->
+            Req:not_found()
+        end.
 
     %Req:respond({302,
     %    [{"Location", "/"},
