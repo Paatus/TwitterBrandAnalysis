@@ -1,6 +1,6 @@
 -module(concat).
 -behavior(gen_server).
--export([start/2, concat/3, retroconcat/2, to_interval/1, datestring_to_datetime/1]).
+-export([start/2, concat/3, retroconcat/2]).
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 
 start(User, SearchWords) ->
@@ -50,12 +50,12 @@ concat(User, Keyword, DateTime) ->
 	{ok, Keys} = riakio:query_date_range({User, Keyword}, M5, M0),
 	{ok, MapResult} = mapred_weight:mapred_weight(Keys),
 	{ok, {_, [{_, Words}, {_, Tags}, {_, Users}]}} = mapred_tokens:mapred_tokens(Keys),
-%	{ok, Amounts} = mapred_count:mapred_count(Keys),
+	{ok, Amounts} = mapred_count:mapred_count(Keys),
 	MapBucket = {User, Keyword, worldmap},
 	WordBucket = {User, Keyword, words},
 	TagBucket = {User, Keyword, hashtags},
 	UserBucket = {User, Keyword, users},
-%	AmountBucket = {User, Keyword, amount},
+	AmountBucket = {User, Keyword, amount},
 	{ok, Pid} = riakio:start_link(),
 	[riakio:put(
 		Pid, MapBucket, {M0, Location}, Weight,
@@ -71,11 +71,11 @@ concat(User, Keyword, DateTime) ->
 	riakio:put(
 		Pid, UserBucket, M0, limit_list(50, Users),
 		[{{binary_index,"datetime"},[list_to_binary(M0)]}]),
-%	riakio:put(
-%		Pid, AmountBucket, M0, Amounts,
-%		[{{binary_index,"datetime"},[list_to_binary(M0)]}]),
+	riakio:put(
+		Pid, AmountBucket, M0, Amounts,
+		[{{binary_index,"datetime"},[list_to_binary(M0)]}]),
 	
-	%store some sample tweets
+%	store some sample tweets
 	riakio:delete_keys(Pid, Keys),
 	riakio:close_link(Pid).
 

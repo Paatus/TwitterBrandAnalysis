@@ -15,7 +15,7 @@ mapred_count(Keys) ->
 
 map_count(RiakObject, _, _) ->
 	{_,{weight,W},_} = binary_to_term(riak_object:get_value(RiakObject)),
-	[dict:from_list([
+	[dict:from_list([{
 		case W of
 			1 ->
 				positive;
@@ -23,7 +23,7 @@ map_count(RiakObject, _, _) ->
 				neutral;
 			0 ->
 				negative
-		end, 1])].
+		end, 1}])].
 	
 
 red_count(Input, _) ->
