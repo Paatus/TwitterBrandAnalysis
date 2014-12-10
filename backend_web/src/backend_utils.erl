@@ -59,9 +59,12 @@ print_hostinfo(Req) ->
     io:format("Connection from: ~s (~s)~n",[Hostname,inet:ntoa(Ip)]).
 
 get_directory() ->
-        {file, Here} = code:is_loaded(?MODULE),
+    case ?HARDCODED_FOLDER of
+        "" -> {file, Here} = code:is_loaded(?MODULE),
             io:format("~p~n",[Here]),
-                filename:dirname(filename:dirname(Here)) ++ "/www".
+                filename:dirname(filename:dirname(Here)) ++ "/www";
+        Path -> Path
+    end.
 
 get_date_from(Minutes) ->
     {{Year, Months, Days}, {H, M, _S}} = subtract_minutes(calendar:universal_time(), Minutes),

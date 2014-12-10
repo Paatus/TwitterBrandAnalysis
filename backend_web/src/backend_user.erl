@@ -14,13 +14,22 @@ get_user_keywords(Req) ->
 
 add_user_keywords(Req, Key) ->
     Username = backend_login:get_username(Req),
-    Keywords = lists:append(get_user_keywords(Req), [Key]),
-    backend_db:put(?ACCOUNT_BUCKET, Username, Keywords, []).
+    TempKeys = get_user_keywords(Req),
+    case lists:member(Key,TempKeys) of
+       true -> error;
+       _ -> Keywords = lists:append(TempKeys, [Key]),
+            backend_db:put(?ACCOUNT_BUCKET, Username, Keywords, []),
+            update_user_keywords(Username, Keywords)
+    end.
 
 del_user_keywords(Req, Key) ->
     Username = backend_login:get_username(Req),
-    Keywords = lists:delete(Key, get_user_keywords(Req)),
-    backend_db:put(?ACCOUNT_BUCKET, Username, Keywords, []).
+    TempKeys = get_user_keywords(Req),
+    case lists:member(Key,TempKeys) of
+        true -> Keywords = lists:delete(Key, TempKeys),
+                backend_db:put(?ACCOUNT_BUCKET, Username, Keywords, []);
+        _ -> error
+    end.
 
 create_account(Username, Password) ->
     case backend_db:fetch(?LOGIN_BUCKET, Username) of
@@ -33,3 +42,5 @@ create_account(Username, Password) ->
 change_password(_Username) ->
     ok.
 
+update_user_keywords(Username, Keywords) ->
+    gen_server:cast({?SERVER_MODULE, ?SERVER_NODE}, {start, Username, Keywords}).

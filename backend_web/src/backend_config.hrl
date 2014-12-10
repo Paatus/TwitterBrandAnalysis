@@ -14,3 +14,8 @@
 
 -define(WEB_ADDRESS, "dev.kento.se:8080").
 -define(IP_ADDRESS, "176.58.121.71:8080").
+
+-define(HARDCODED_FOLDER, "").
+
+-define(SERVER_NODE, 'name@dns').
+-define(SERVER_MODULE, main_serv).
