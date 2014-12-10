@@ -46,4 +46,4 @@ If rebase gives an error, it's likely since some files are changed after the git
 Depending on your git settings, you might be prompted for github username & password
 
 ###Riak\_pb fix
-Until the bug with riak\_pb and rebar 2.5.1 is fixed, run `./rebar clean compile deps\_dir=..` in the riak\_pb folder.
+Until the bug with riak\_pb and rebar 2.5.1 is fixed, run `./rebar clean compile deps_dir=..` in the riak\_pb folder.

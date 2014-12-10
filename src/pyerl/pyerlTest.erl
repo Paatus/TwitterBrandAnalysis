@@ -20,7 +20,7 @@ pyStart() ->
 	%%It's already started.
 	case whereis(pyIns) of 
 		undefined ->
-			{ok, Pid} = python:start(),
+			{ok, Pid} = python:start([{python, "python3"}]),
 			register(pyIns, Pid);
 		_->
 			ok
