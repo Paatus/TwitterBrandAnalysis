@@ -53,8 +53,8 @@ loop(Req, Broadcaster, DocRoot) ->
 
 loop(Req, _Broadcaster, false, DocRoot) ->
     "/" ++ Path = Req:get(path),
-    backend_utils:print_hostinfo(Req),
-    io:format("~p~n",[Req]),
+    %backend_utils:print_hostinfo(Req),
+    %io:format("~p~n",[Req]),
     try
         case dispatch(Req, backend_views:urls()) of
             none ->
@@ -125,7 +125,6 @@ dispatch(Req, [{Regex, F}|Xs]) ->
         {match, [MatchList]} ->
            case length(MatchList) of
               0 ->
-                  io:format("~p~n",[Match]),
                   backend_views:F(Method, Req); 
               L when L > 0 ->
                   backend_views:F(Method, Req, MatchList)
