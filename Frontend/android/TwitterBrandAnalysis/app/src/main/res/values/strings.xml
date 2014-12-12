@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">TwitterBrandAnalysis</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="drawer_title">Search</string>
+    <string name="drawer_open">Opens drawer</string>
+    <string name="drawer_close">Opens drawer</string>
+    <string name="map_url">http://dev.kento.se:8080/map.html</string>
+
+</resources>

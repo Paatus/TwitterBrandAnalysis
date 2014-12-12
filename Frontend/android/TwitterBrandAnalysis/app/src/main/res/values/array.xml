@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="List_items">
+        <item>Home</item>
+        <item>Brand opinion per country</item>
+        <item>Brand opinion over time</item>
+    </array>
+</resources>

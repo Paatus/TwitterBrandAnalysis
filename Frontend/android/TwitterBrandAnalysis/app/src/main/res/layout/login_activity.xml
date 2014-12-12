@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/HelioTrope">
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/tba_logo_128"/>
+    <TextView
+        android:id="@+id/title"
+        android:text="TwitterBrandAnalysis"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:paddingBottom="10dp"
+        android:textColor="@color/Hex"
+        android:textSize="25sp"
+        android:layout_gravity="center_horizontal" />
+
+    <RelativeLayout
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <EditText
+            android:id="@+id/username"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:padding="15sp"
+            android:hint="Username"
+            android:singleLine="true"
+            android:textColor="@color/Hex"
+            android:textColorHint="@color/Hex"/>
+
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/username"
+            android:inputType="textPassword"
+            android:padding="15sp"
+            android:hint="Password"
+            android:layout_marginTop="20dp"
+            android:textColorHint="@color/Hex"
+            android:textColor="@color/Hex"
+            />
+
+        <Button
+            android:id="@+id/forgot_pw_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/password"
+            android:layout_alignRight="@id/password"
+            android:text="Forgot password?"
+            android:background="@android:color/transparent"
+            android:textAllCaps="false"
+            android:padding="10dp"
+            android:shadowRadius="0"
+            android:shadowDx="0"
+            android:shadowDy="0"/>
+
+        <Button
+            android:id="@+id/login_button"
+            android:text="Log in"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/forgot_pw_button"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="5dp"
+            android:layout_marginTop="15dp"
+            android:textAllCaps="false"
+            android:textColor="@color/Hex"
+            android:background="@color/Evening_cloud"/>
+        <Button
+            android:id="@+id/sign_up_button"
+            android:text="Sign up"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/login_button"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="5dp"
+            android:textAllCaps="false"
+            android:textColor="@color/Hex"
+            android:background="@color/Evening_cloud"/>
+    </RelativeLayout>
+
+    </LinearLayout>

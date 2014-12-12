@@ -1,0 +1,53 @@
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <!-- main layout -->
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity" />    <!-- List for the drawer -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="start">
+    <ListView
+        android:id="@+id/drawer_list"
+        android:layout_width="280dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:choiceMode="singleChoice"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0dp"
+        android:background="@color/Shadow_dirt"
+        android:listSelector="@drawable/menuitem_bg"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true">
+            <TextView
+                android:id="@+id/settings_btn"
+                android:text="Settings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="25sp"
+                android:padding="16sp"
+                android:textColor="@android:color/black"
+                android:background="?android:attr/activatedBackgroundIndicator"/>
+            <TextView
+                android:id="@+id/logout_btn"
+                android:text="Log out"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/settings_btn"
+                android:textSize="25sp"
+                android:padding="16sp"
+                android:textColor="@android:color/black"
+                android:background="?android:attr/activatedBackgroundIndicator"/>
+        </RelativeLayout>
+    </RelativeLayout>
+</android.support.v4.widget.DrawerLayout>
