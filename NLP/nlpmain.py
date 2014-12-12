@@ -8,7 +8,7 @@ import json
 #start 
 def processTweet(tweet):
     #decode bytestring utf-8
-    tweet = tweet.decode('utf-8')
+    #tweet = tweet.decode('utf-8')
     #Convert to lower case
     tweet = tweet.lower()
     #Convert www.* or https?://* to URL

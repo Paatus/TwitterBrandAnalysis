@@ -94,7 +94,7 @@ concat_worldmap(User, Keywords, DateTime) ->
 	{ok, Pid} = riakio:start_link(),
 	[riakio:put(
 		Pid, {User, worldmap}, {End, Location}, Weight,
-		[{{binary_index,"datetime"},[list_to_binary(End)]},
+		[{{binary_index,"datetime"},[list_to_binary(Start)]},
 		{{binary_index,"location"},[riakio:to_binary(Location)]}])
 		|| {Location, Weight} <- Result],
 	riakio:close_link(Pid).

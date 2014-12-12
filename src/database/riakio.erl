@@ -1,6 +1,6 @@
 -module(riakio).
 
--export([start_link/0, close_link/1, put_tweet/3, put/4, put/5, fetch/2, query_date_range/3, query_location/2, fetch_all_users/0, format_date/1, to_binary/1, intersect/2, delete_keys/2]).
+-export([start_link/0, close_link/1, put_tweet/3, put/4, put/5, fetch/2, delete/2, query_date_range/3, query_location/2, fetch_all_users/0, format_date/1, to_binary/1, intersect/2, delete_keys/2]).
 
 start_link() -> start_link("127.0.0.1", 8087).
 start_link(Ip, Port) -> riakc_pb_socket:start_link(Ip, Port).
@@ -41,6 +41,13 @@ fetch(Bucket, Key) ->
 	Value = riakc_obj:get_value(Fetch),
 	close_link(Pid),
 	{ok, binary_to_term(Value)}.
+
+delete(Bucket, Key) ->
+	{ok, Pid} = start_link(),
+	B = to_binary(Bucket),
+	K = to_binary(Key),
+	riakc_pb_socket:delete(Pid, B, K),
+	close_link(Pid).
 
 query_date_range(Bucket, Start, End) ->
 	{ok, Pid} = start_link(),
