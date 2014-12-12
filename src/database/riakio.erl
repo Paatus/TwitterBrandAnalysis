@@ -1,6 +1,6 @@
 -module(riakio).
 
--export([start_link/0, close_link/1, put_tweet/3, put/4, put/5, fetch/2, query_date_range/3, query_location/2, format_date/1, to_binary/1, intersect/2, delete_keys/2]).
+-export([start_link/0, close_link/1, put_tweet/3, put/4, put/5, fetch/2, query_date_range/3, query_location/2, fetch_all_users/0, format_date/1, to_binary/1, intersect/2, delete_keys/2]).
 
 start_link() -> start_link("127.0.0.1", 8087).
 start_link(Ip, Port) -> riakc_pb_socket:start_link(Ip, Port).
@@ -64,9 +64,20 @@ query_location(Bucket, Location) ->
 		{binary_index, "location"},
 		to_binary(Location)
 	),
-	{_,Keys,_,_} = Result,
+	{_, Keys, _, _} = Result,
 	BucketKeys = [{B, K} || K <- Keys],
 	{ok, BucketKeys}.
+
+fetch_all_users() ->
+	{ok, Pid} = start_link(),
+	{ok, Result} = riakc_pb_socket:get_index(
+		Pid,
+		<<"AccountInfo">>,
+		{binary_index, "user"},
+		<<"user">>
+	),
+	{_, Keys, _, _} = Result,
+	{ok, [binary_to_list(K) || K <- Keys]}.
 
 to_binary(Input) when is_binary(Input) -> Input;
 to_binary(Input) when is_list(Input) -> list_to_binary(Input);

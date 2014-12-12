@@ -1,6 +1,6 @@
 -module(concat).
 -behavior(gen_server).
--export([start/2, concat/3, retroconcat/2]).
+-export([start/2, concat/4, concat_worldmap/3, retroconcat/2]).
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 
 start(User, SearchWords) ->
@@ -36,14 +36,16 @@ loop(User, Keywords, WaitTime) ->
 			{_,{_,Min,_}} = Now = calendar:universal_time(),
 			case Min rem 5 of
 				0 ->
-					[spawn_link(?MODULE, concat, [User, KW, Now]) || KW <- Keywords],
+					Pid = spawn_link(?MODULE, concat_worldmap, [User, Keywords, Now]),
+					[spawn_link(?MODULE, concat, [User, KW, Now, Pid]) || KW <- Keywords],
+					
 					loop(User, Keywords, 240000);
 				_ ->
 					loop(User, Keywords, 5000)
 			end
 	end.
 
-concat(User, Keyword, DateTime) ->
+concat(User, Keyword, DateTime, MapconcatPid) ->
 	M0 = riakio:format_date(remove_seconds(calendar:gregorian_seconds_to_datetime(calendar:datetime_to_gregorian_seconds(DateTime) - 0 * 60))),
 	M5 = riakio:format_date(remove_seconds(calendar:gregorian_seconds_to_datetime(calendar:datetime_to_gregorian_seconds(DateTime) - 5 * 60))),
 	io:format("Concatenating ~p range ~s - ~s~n", [{User, Keyword}, M5, M0]),
@@ -74,9 +76,27 @@ concat(User, Keyword, DateTime) ->
 	riakio:put(
 		Pid, AmountBucket, M0, Amounts,
 		[{{binary_index,"datetime"},[list_to_binary(M0)]}]),
-	
-%	store some sample tweets
+%	store some sample tweets here?
 	riakio:delete_keys(Pid, Keys),
+	riakio:close_link(Pid),
+	case MapconcatPid of
+		none -> ok;
+		P -> P ! Keyword
+	end.
+
+concat_worldmap(User, Keywords, DateTime) ->
+	Start = riakio:format_date(remove_seconds(DateTime)),
+	End = riakio:format_date(calendar:gregorian_seconds_to_datetime(calendar:datetime_to_gregorian_seconds(remove_seconds(DateTime)) + 1)),
+	R1 = [receive K -> riakio:query_date_range({User, K, worldmap}, Start, End) end || K <- Keywords],
+	io:format("Concatenating ~p range ~s - ~s~n", [{User, worldmap}, Start, End]),	
+	Keys = lists:append([L || {ok, L} <- R1]),
+	{ok, Result} = mapred_weight:mapred_concat_weight(Keys),
+	{ok, Pid} = riakio:start_link(),
+	[riakio:put(
+		Pid, {User, worldmap}, {End, Location}, Weight,
+		[{{binary_index,"datetime"},[list_to_binary(End)]},
+		{{binary_index,"location"},[riakio:to_binary(Location)]}])
+		|| {Location, Weight} <- Result],
 	riakio:close_link(Pid).
 
 retroconcat(User, Keyword) ->
@@ -95,7 +115,7 @@ retroconcat(User, Keyword) ->
 			ok;
 		TermList ->
 			TimePeriods = lists:delete(to_interval(calendar:universal_time()), lists:usort([to_interval(datestring_to_datetime(binary_to_list(Datestring))) || {Datestring, _} <- TermList])),
-			[concat(User, Keyword, P) || P <- TimePeriods]
+			[concat(User, Keyword, P, none) || P <- TimePeriods]
 	end,
 	ok.
 	
