@@ -8,7 +8,7 @@ import json
 #start 
 def processTweet(tweet):
     #decode bytestring utf-8
-    #tweet = tweet.decode('utf-8')
+    tweet = tweet.decode('utf-8')
     #Convert to lower case
     tweet = tweet.lower()
     #Convert www.* or https?://* to URL
@@ -30,10 +30,10 @@ def processTweet(tweet):
 
 #start
 def stopwords(tweet):
+    tweet = processTweet(tweet)
     tokens = []
-    
     tweet = nltk.word_tokenize(tweet)
-    stopwords = json.load(open("NLP/stopwords1.txt",'r'))
+    stopwords = pickle.load(open("NLP/stopwords.p", "rb"))
     
     '''Append list y elimaitaing StopWords in tweet - StopWords e.g. [I,am,the,of...]'''
     for word in tweet:
