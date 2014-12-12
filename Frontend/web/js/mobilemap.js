@@ -171,11 +171,7 @@ $(function() {
         mapChart = $('#container').highcharts('Map', {
 
             title: {
-                text: 'Brand opinion of the world'
-            },
-
-            subtitle: {
-                text: 'Source: Random tweets on the interwebs, cause the internet is always right'
+                text: ''
             },
 
             mapNavigation: {

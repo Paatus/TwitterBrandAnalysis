@@ -127,10 +127,10 @@ $(function() {
     //     createCookie(name, "", -1);
     // }
     // login submit
-    $('#login').click(function(){
-       $("#login-body").show().html("<h1>Thank you!</h1>");
-       alert('submited');
-    });
+    //$('#login').click(function(){
+    //   $("#login-body").show().html("<h1>Thank you!</h1>");
+    //   alert('submited');
+    //});
 
             // dropdown menu for word-cloud
     $('#positive-cloud').click(function(){
