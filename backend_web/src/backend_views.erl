@@ -37,7 +37,7 @@ urls() -> [
            {"^api/amount/(\\w{3,64})/(\\d{1,6})/(\\d{1,6})/?$", get_amount_timespan_view              },
            {"^api/login/?$", login                                                                    },
            {"^api/logout/?$", logout                                                                  },
-           {"^api/account/change_password?$", change_password                                         },
+           {"^api/account/change_password/?$", change_password                                         },
            {"^api/keywords/add/(\\w{3,64})/?$", add_user_keyword                                      },
            {"^api/keywords/get$", get_user_keywords                                                   },
            {"^(?:js|css|font|vendor|imgs)/.*$", serve_files                                           }
