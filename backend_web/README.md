@@ -35,11 +35,11 @@ Web Backend API
 * <b>api/amount/&#60;String Keyword&#62;/&#60;Number StartTime&#62;/&#60;Number StopTime&#62;/</b><br />
     Gets the amount from keyword in the given timespan.
 * <b>api/login/</b><br />
-    A post call that handles login. Uses username and pwd as input.
+    A post call that handles login. Uses <b>username</b> and <b>pwd</b> as input.
 * <b>api/logout/</b><br />
     A logout call.
 * <b>api/account/change_password/</b><br />
-    A post call that changes the current users password. Uses pwd as input.
+    A post call that changes the current users password. Uses <b>pwd</b> as input.
 * <b>api/keywords/add/&#60;String Keyword&#62;</b><br />
     Adds a new keyword to the current user.
 * <b>api/keywords/get</b><br />
@@ -47,6 +47,6 @@ Web Backend API
 
 
 ###Usage:
-All calls are gets if not stated otherwise.
-Keywords are ascii strings 3-64 characters long.
-The time fields are integers 1-6 characters long and states a range defined in minutes..
+All calls are gets if not stated otherwise.<br />
+Keywords are ascii strings 3-64 characters long.<br />
+The time fields are integers 1-6 characters long and states a range defined in minutes..<br />
