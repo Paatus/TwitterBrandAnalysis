@@ -17,7 +17,7 @@
 
 urls() -> [
            {"^api/world/total/?$", get_world_view                                },
-           {"^api/world/total/\\d{1-6/\\d{1-6}]?$", get_world_timespan_view                          },
+           {"^api/world/total/\\d{1,6}/\\d{1,6}/?$", get_world_timespan_view                          },
            {"^api/world/keyword/(\\w{3,64})/?$", get_world_keyword_view           },
            {"^api/world/keyword/(\\w{3,64})/(\\d{1,6})/(\\d{1,6})/?$", get_world_keyword_timespan_view},
            {"^api/world/country/(\\w{3,64})/?$", get_world_view_country           },
@@ -41,7 +41,7 @@ get_world_timespan_view('POST', Req, Args) ->
     get_world_timespan_view('GET', Req, Args);
 get_world_timespan_view('GET', Req, [Start, End]) when is_list(Start) andalso is_list(End) ->
     get_world_timespan_view('GET', Req, [list_to_integer(Start), list_to_integer(End)]);
-get_world_timespan_view('GET', Req, [Start, End]) when Start < End ->
+get_world_timespan_view('GET', Req, [Start, End]) when Start > End ->
     case backend_login:check_cookie(Req) of
         {error, Reason} ->
             backend_utils:api_error_response(Req,
@@ -65,7 +65,7 @@ get_world_keyword_timespan_view('POST', Req, Args) ->
     get_world_keyword_timespan_view('GET', Req, Args);
 get_world_keyword_timespan_view('GET', Req, [Keyword,Start,End]) when is_list(Start) andalso is_list(End) ->
     get_world_keyword_timespan_view('GET', Req, [Keyword, list_to_integer(Start), list_to_integer(End)]);
-get_world_keyword_timespan_view('GET', Req, [Keyword,Start,End]) when Start < End ->
+get_world_keyword_timespan_view('GET', Req, [Keyword,Start,End]) when Start > End ->
     case backend_user:user_has_keyword(Req, Keyword) of
         {true, Username} ->
             {ok, Keys} = backend_db:query_date_range({Username, Keyword, worldmap}, backend_utils:get_date_from(Start),backend_utils:get_date_from(End)),
@@ -101,7 +101,9 @@ get_world_view_country('GET', Req, [_Country]) ->
 get_top_keyword_view(_, Req) ->
     get_top_keyword_timespan_view('GET', Req, [1440, 0]).
 
-get_top_keyword_timespan_view('GET', Req, [Start, End]) ->
+get_top_keyword_timespan_view('GET', Req, [Start, End]) when is_list(Start) andalso is_list(End) ->
+    get_top_keyword_timespan_view('GET', Req, [list_to_integer(Start), list_to_integer(End)]);
+get_top_keyword_timespan_view('GET', Req, [Start, End]) when Start > End ->
     case backend_login:check_cookie(Req) of
         {error, Reason} ->
             backend_utils:api_error_response(Req,
@@ -121,7 +123,9 @@ get_top_keyword_timespan_view('GET', Req, _) ->
 get_top_hashtag_view('GET', Req) ->
     get_top_hashtag_timespan_view('GET', Req, [1440, 0]).
 
-get_top_hashtag_timespan_view('GET', Req, [Start, End]) ->
+get_top_hashtag_timespan_view('GET', Req, [Start, End]) when is_list(Start) andalso is_list(End) ->
+    get_top_hashtag_timespan_view('GET', Req, [list_to_integer(Start), list_to_integer(End)]);
+get_top_hashtag_timespan_view('GET', Req, [Start, End]) when Start > End ->
     case backend_login:check_cookie(Req) of
         {error, Reason} ->
             backend_utils:api_error_response(Req,
@@ -141,7 +145,9 @@ get_top_hashtag_timespan_view('GET', Req, _) ->
 get_top_user_view('GET', Req) ->
     get_top_user_timespan_view('GET', Req, [1440, 0]).
 
-get_top_user_timespan_view('GET', Req, [Start, End]) ->
+get_top_user_timespan_view('GET', Req, [Start, End]) when is_list(Start) andalso is_list(End) ->
+    get_top_user_timespan_view('GET', Req, [list_to_integer(Start), list_to_integer(End)]);
+get_top_user_timespan_view('GET', Req, [Start, End]) when Start > End ->
     case backend_login:check_cookie(Req) of
         {error, Reason} ->
             backend_utils:api_error_response(Req,
