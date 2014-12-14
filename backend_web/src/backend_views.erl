@@ -28,7 +28,6 @@ urls() -> [
            {"^api/top/keyword/(\\w{3,64})/(\\d{1,6})/(\\d{1,6})/?$", get_top_keywords_timespan_view   },
            {"^api/top/hashtag/?$", get_top_hashtags_view                                              },
            {"^api/top/hashtag/(\\d{1,6})/(\\d{1,6})/?$", get_top_hashtags_timespan_view               },
-           {"^api/top/hashtag/(\\d{1,6})/(\\d{1,6})/?$", get_top_hashtags_timespan_view               },
            {"^api/top/hashtag/(\\w{3,64})/(\\d{1,6})/(\\d{1,6})/?$", get_top_hashtags_timespan_view   },
            {"^api/top/user/?$", get_top_users_view                                                    },
            {"^api/top/user/(\\d{1,6})/(\\d{1,6})/?$", get_top_users_timespan_view                     },
