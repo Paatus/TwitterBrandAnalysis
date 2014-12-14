@@ -6,6 +6,7 @@
 -export([get_top_keywords_view/2, get_top_keywords_timespan_view/3]).
 -export([get_top_hashtags_view/2, get_top_hashtags_timespan_view/3]).
 -export([get_top_users_view/2, get_top_users_timespan_view/3]).
+-export([get_amount_view/3, get_amount_timespan_view/3]).
 -export([change_password/2]).
 
 -include("backend_config.hrl").
@@ -32,6 +33,8 @@ urls() -> [
            {"^api/top/user/?$", get_top_users_view                                                    },
            {"^api/top/user/(\\d{1,6})/(\\d{1,6})/?$", get_top_users_timespan_view                     },
            {"^api/top/user/(\\w{3,64})/(\\d{1,6})/(\\d{1,6})/?$", get_top_users_timespan_view         },
+           {"^api/amount/(\\w{3,64})/?$", get_amount_view                                             },
+           {"^api/amount/(\\w{3,64})/(\\d{1,6})/(\\d{1,6})/?$", get_amount_timespan_view              },
            {"^api/login/?$", login                                                                    },
            {"^api/logout/?$", logout                                                                  },
            {"^api/account/change_password?$", change_password                                         },
@@ -221,6 +224,31 @@ get_top_users_timespan_view('GET', Req, [Keyword, Start, End]) when Start > End 
                                              backend_utils:json_error("Unknown error"), ?API_HEADER_CACHE)
     end;
 get_top_users_timespan_view('GET', Req, _) ->
+    backend_utils:api_error_response(Req,
+         backend_utils:json_error("Api error time is incorrect!"), ?API_HEADER_CACHE).
+
+get_amount_view(_, Req, [Keyword]) ->
+    get_amount_timespan_view('GET', Req, [Keyword, 1440, 0]).
+
+get_amount_timespan_view('GET', Req, [Keyword, Start, End]) when is_list(Start) andalso is_list(End) ->
+    get_top_users_timespan_view('GET', Req, [Keyword, list_to_integer(Start), list_to_integer(End)]);
+get_amount_timespan_view('GET', Req, [Keyword, Start, End]) when Start > End andalso length(Keyword) > 0 ->
+    case backend_user:user_has_keyword(Req, Keyword) of
+        {false, _} ->
+            backend_utils:api_error_response(Req,
+                                             backend_utils:json_error("Keyword does not exist in the database."), ?API_HEADER_CACHE);
+        {error, Reason} ->
+            backend_utils:api_error_response(Req,
+                                             backend_utils:json_error(Reason), ?API_HEADER_CACHE);
+        {true, Username} ->
+            {ok, Keys} = backend_db:query_date_range({Username, Keyword, amount}, backend_utils:get_date_from(Start),backend_utils:get_date_from(End)),
+            {ok, Info} = mapred_count:mapred(Keys),
+            Req:ok({"application/json",?API_HEADER, [mochijson2:encode({struct,[{A,integer_to_binary(B)} || {A,B} <- Info]})]});
+        _ ->
+            backend_utils:api_error_response(Req,
+                                             backend_utils:json_error("Unknown error"), ?API_HEADER_CACHE)
+    end;
+get_amount_timespan_view('GET', Req, _) ->
     backend_utils:api_error_response(Req,
          backend_utils:json_error("Api error time is incorrect!"), ?API_HEADER_CACHE).
 
