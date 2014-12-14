@@ -36,12 +36,12 @@
     <div class="userpage">
         <div id="header" class="userheader">
             <div class="container-fluid">
-                <div class="col-md-1">
-                    <a href="index.html">
+                <div class="col-md-1" >
+                    <a href="privateindex.html">
                         <h3>Home</h3>
                     </a>
                 </div>
-                <div class="col-md-1">
+                <div class="col-md-1" >
                     <a href="view.html">
                         <h3>Views</h3>
                     </a>
@@ -69,9 +69,13 @@
                     <div class="col-md-2">
                         <div class="input-group">
                             <form id="search-the-world">
-                                <input type="text" class="form-control" />
+                                <input type="text" id="searchArea" class="form-control" />
+
                                 <span class="input-group-btn">
-                                    <button class="btn btn-default" type="submit">Search</button>
+                                    <button class="btn btn-default" id="searchButton" type="submit"><img src="imgs/search.png" id="searchIcon"></button>
+                                </span>
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" id="editButton" type="submit"><img src="imgs/edit.png" id="editIcon"></button>
                                 </span>
                             </form>
                         </div><!-- /input-group -->
@@ -80,12 +84,14 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="col-md-8">
-                        <div id="container"></div>
-                    </div>
-                    <div class="col-md-2">
-                        <h4>top10</h4>
-                    </div>
+ <!--                    <div class="privateHome"> -->
+                        <div class="col-md-8" id="hometest1" >
+                            <div id="container"></div>
+                        </div>
+                        <div class="col-md-2" id="hometest2">
+                            <h4>top10</h4>
+                        </div>
+<!--                     </div> -->
                 </div>
             </div>
         </div>

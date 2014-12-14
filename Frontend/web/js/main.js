@@ -1,24 +1,10 @@
 
-// $(function() {
-//     $("#searchInput").keypress(function(event) {
-//         if (event.which == 13) {
-//             var item = $('.search-history').append($("<li><img class='remove-item' src='remove' /><span></span></li>"));
-//             // var item = $('.search-history').append($("<li><span></span></li>"));
-//             item.find('span').html($(this).val());
 
-//             $(this).val('');
-//             return false;
-//         }
-//     });
-//     $("body").on("click", ".remove-item", function() {
-//         $(this).parent().remove();
-//     });
-//     $("#searchButton").click(function(){
-//         $("#searchInput").keypress();
-//     });
-
-// });
 $(function() {
+
+
+
+    // add keywords&edit keywords
     $('#search-the-world').submit(function( event ) {
         event.preventDefault();
         var value = $(this).find('input').val();
@@ -30,12 +16,21 @@ $(function() {
             $('.search-history').prepend(item);
 
             $(this).find('input').val('');
+            if ($('.search-history li img').length){
+                $('.search-history li img').remove();
+            };
         }
         return false;
     });
-    // $("body").on("click", 'li', function() {
-    //     $(this).remove();
-    // });
+    // load keywords in different page
+    var preWords = localStorage.getItem('search-history').replace(/^\"|\"$/g, '');
+
+    preWords.split('","').forEach(function(value) {
+        var item = $("<li><span></span></li>");
+        item.first('span').html(value);
+        $('.search-history').prepend(item);
+    });
+
     //
     //
     // pass stored history to website
@@ -47,6 +42,19 @@ $(function() {
             });
         }
     });
+
+    $('#editButton').click(function(){
+        if ($('.search-history li img').length) {
+            $('.search-history li img').remove();
+        }else{
+            $('.search-history li').append('<img id="deletIcon" src="imgs/delet.png" />');
+        };
+    });
+
+    $("body").on("click", '#deletIcon', function() {
+        $(this).parent().remove();
+    });
+
 
      // start signup function
     var ck_username = /^[A-Za-z0-9_]{3,20}$/;
@@ -127,10 +135,18 @@ $(function() {
     //     createCookie(name, "", -1);
     // }
     // login submit
+<<<<<<< Updated upstream
     //$('#login').click(function(){
     //   $("#login-body").show().html("<h1>Thank you!</h1>");
     //   alert('submited');
     //});
+=======
+    $('#login').click(function(){
+       $("#login-body").show().html("<h1>Thank you!</h1>");
+       alert('submited');
+       $("#login-form").submit();
+    });
+>>>>>>> Stashed changes
 
             // dropdown menu for word-cloud
     $('#positive-cloud').click(function(){
@@ -148,6 +164,8 @@ $(function() {
         $('#container4').hide();
         $('#container41').hide();
     });
+
+
 
 
 

@@ -23,8 +23,7 @@
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-    <!-- add customized Java script -->
-    <script src="js/main.js"></script>
+
     <!--     add view -->
     <script src="js/diagram.js"></script>
     <!--     second view -->
@@ -35,7 +34,10 @@
     <!--     forth view -->
     <script src="js/d3.js"></script>
     <script src="js/d3.layout.cloud.js"></script>
-        <!-- happymap's theme -->
+
+
+    <!-- add customized Java script -->
+    <script src="js/main.js"></script>
 
 <!--     <script src="jquery.js"></script> -->
 
@@ -47,12 +49,12 @@
     <div class="userpage">
         <div id="header" class="userheader">
             <div class="container-fluid">
-                <div class="col-md-1">
-                    <a href="index.html">
+                <div class="col-md-1" >
+                    <a href="privateindex.html">
                         <h3>Home</h3>
                     </a>
                 </div>
-                <div class="col-md-1">
+                <div class="col-md-1" >
                     <a href="view.html">
                         <h3>Views</h3>
                     </a>
@@ -82,9 +84,13 @@
                     <div class="col-md-2">
                         <div class="input-group">
                             <form id="search-the-world">
-                                <input type="text" class="form-control" />
+                                <input type="text" id="searchArea" class="form-control" />
+
                                 <span class="input-group-btn">
-                                    <button class="btn btn-default" type="submit">Search</button>
+                                    <button class="btn btn-default" id="searchButton" type="submit"><img src="imgs/search.png" id="searchIcon"></button>
+                                </span>
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" id="editButton" type="submit"><img src="imgs/edit.png" id="editIcon"></button>
                                 </span>
                             </form>
                         </div><!-- /input-group -->
@@ -93,52 +99,57 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="col-md-10">
-                        <div class="container-fluid viewContainer">
-                            <div class="row" id="viwoneWrap">
-                                <div class="col-md-6">
-                                    <div id="container1"></div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div id="container2"></div>
-                                </div>
-                            </div>
-                            <div class="row" id="viwtwoWrap">
-                                <div class="col-md-6">
-                                    <div id="container3"></div>
-                                </div>
-                                <div class="col-md-6">
-                <!-- hamburger menu icon -->
-                                    <div class="dropdown">
-                                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
-                                            <svg display="none" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                                                    <defs>
-                                                        <symbol id="icon-menu" viewBox="0 0 1024 1024">
-                                                            <title>menu</title>
-                                                            <path class="path1" d="M64 192h896v192h-896zM64 448h896v192h-896zM64 704h896v192h-896z"></path>
-                                                        </symbol>
-                                                    </defs>
-                                                </svg>
-                                                <div class="clearfix pbs">
-                                                    <svg class="icon-menu"><use xlink:href="#icon-menu"></use></svg>
-                                                </div>
-                                            <span class="caret"></span>
-                                        </button>
-                                        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-                                            <li role="presentation"><a id="positive-cloud"role="menuitem" tabindex="-1" href="#">Positive</a></li>
-                                            <li role="presentation"><a id="negative-cloud" role="menuitem" tabindex="-1" href="#">Negative</a></li>
-                                            <li role="presentation"><a id="all-cloud" role="menuitem" tabindex="-1" href="#">All</a></li>
-                                        </ul>
+
+
+
+
+         <!--            <div class="privateView"> -->
+                        <div class="col-md-10" id="viewtest">
+                            <div class="container-fluid viewContainer">
+                                <div class="row" id="viwoneWrap">
+                                    <div class="col-md-6">
+                                        <div id="container1"></div>
                                     </div>
-                                        <div id="container4"></div>
-                                        <div id="container41"></div>
-                                        <div id="container42"></div>
-
-
+                                    <div class="col-md-6">
+                                        <div id="container2"></div>
+                                    </div>
+                                </div>
+                                <div class="row" id="viwtwoWrap">
+                                    <div class="col-md-6">
+                                        <div id="container3"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                    <!-- hamburger menu icon -->
+                                        <div class="dropdown">
+                                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+                                                <svg display="none" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                                        <defs>
+                                                            <symbol id="icon-menu" viewBox="0 0 1024 1024">
+                                                                <title>menu</title>
+                                                                <path class="path1" d="M64 192h896v192h-896zM64 448h896v192h-896zM64 704h896v192h-896z"></path>
+                                                            </symbol>
+                                                        </defs>
+                                                    </svg>
+                                                    <div class="clearfix pbs">
+                                                        <svg class="icon-menu"><use xlink:href="#icon-menu"></use></svg>
+                                                    </div>
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                                                <li role="presentation"><a id="positive-cloud"role="menuitem" tabindex="-1" href="#">Positive</a></li>
+                                                <li role="presentation"><a id="negative-cloud" role="menuitem" tabindex="-1" href="#">Negative</a></li>
+                                                <li role="presentation"><a id="all-cloud" role="menuitem" tabindex="-1" href="#">All</a></li>
+                                            </ul>
+                                        </div>
+                                            <div id="container4"></div>
+                                            <div id="container41"></div>
+                                            <div id="container42"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+
+                 <!--    </div> -->
                 </div>
             </div>
 

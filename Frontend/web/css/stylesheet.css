@@ -262,11 +262,36 @@ img{
     height: 100%;
 }
 /*keyword search history*/
+
+#search-the-world{
+    height: auto;
+}
+.input-group-btn{
+    height: 30px;
+    width: 30px;
+
+}
+#editButton,
+#searchButton{
+    border-radius: 5px;
+    height: 30px;
+    width: 30px;
+    margin-top: 2px;
+    margin-left: 5px;
+    padding: 0px;
+}
+#searchIcon,#editIcon,#deletIcon{
+    height: auto;
+}
+#searchArea{
+    border-radius: 5px;
+}
 .input-group{
     margin-top:10px;
 }
 .input-group .form-control{
-    width: 60%;
+    width: 62%;
+
 }
 .search-history{
     list-style-type:none;
@@ -274,7 +299,11 @@ img{
 }
 .search-history li{
     font-size: 20px;
+/*    width: 50%;*/
 
+}
+#deletIcon{
+    right: 0;
 }
 #userWrap > .col-md-8 > #container {
     margin-left: 0px;
@@ -306,8 +335,7 @@ img{
     bottom: 1%;
     margin:0;
 }
-#container1, #container2, #container3, #container4,
-#container4 svg,#container41,#container41 svg,#container42,#container42 svg {
+#container1, #container2, #container3, #container4,#container4 svg,.container41 {
     min-width: 310px;
     max-width: 800px;
     margin: 0 auto;
@@ -316,8 +344,9 @@ img{
     width: 100%;
     margin: 0;
 }
-
-
+.container41{
+    display: none;
+}
 /*hamburger menu icon*/
 
 .dropdown{
@@ -355,8 +384,7 @@ img{
 .icon-menu {
   width: 16px;
   height: 16px;
-  margin-top: 2px;
-
+ margin-top: 2px;
 }
 [class^="icon-"], [class*=" icon-"] {
   display: inline-block;
@@ -367,12 +395,18 @@ use{
     width: 18px;
     height: 14px;
 }
-
-#container4{
-
+.dropdown-menu{
+    right: 0;
 }
 
-#container41,#container42{
-    display: none;
+
+
+#container4,svg{
+     z-index: -1;
+     top: 0;
 }
 
+
+p{
+    color: black;
+}
