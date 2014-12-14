@@ -65,7 +65,7 @@ loop(Req, _Broadcaster, false, DocRoot) ->
                 end,
                 case filelib:is_file(filename:join([FixedDocRoot, Path])) of
                     true -> 
-                        Req:serve_file(Path, FixedDocRoot, [{"Cache-Control", "no-cache"}]);
+                        Req:serve_file(Path, FixedDocRoot, ?API_HEADER);
                     false ->
                         Req:not_found()
                 end;
