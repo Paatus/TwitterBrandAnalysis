@@ -122,6 +122,8 @@ get_top_keywords_timespan_view('GET', Req, [Start, End]) when Start > End ->
             backend_utils:api_error_response(Req,
                                              backend_utils:json_error("Unknown error"), ?API_HEADER_CACHE)
     end;
+get_top_keywords_timespan_view('GET', Req, [Keyword, Start, End]) when is_list(Start) andalso is_list(End) ->
+    get_top_keywords_timespan_view('GET', Req, [Keyword, list_to_integer(Start), list_to_integer(End)]);
 get_top_keywords_timespan_view('GET', Req, [Keyword, Start, End]) when Start > End andalso length(Keyword) > 0 ->
     case backend_user:user_has_keyword(Req, Keyword) of
         {false, _} ->
@@ -160,6 +162,8 @@ get_top_hashtags_timespan_view('GET', Req, [Start, End]) when Start > End ->
             backend_utils:api_error_response(Req,
                                              backend_utils:json_error("Unknown error"), ?API_HEADER_CACHE)
     end;
+get_top_hashtags_timespan_view('GET', Req, [Keyword, Start, End]) when is_list(Start) andalso is_list(End) ->
+    get_top_hashtags_timespan_view('GET', Req, [Keyword, list_to_integer(Start), list_to_integer(End)]);
 get_top_hashtags_timespan_view('GET', Req, [Keyword, Start, End]) when Start > End andalso length(Keyword) > 0 ->
     case backend_user:user_has_keyword(Req, Keyword) of
         {false, _} ->
@@ -198,6 +202,8 @@ get_top_users_timespan_view('GET', Req, [Start, End]) when Start > End ->
             backend_utils:api_error_response(Req,
                                              backend_utils:json_error("Unknown error"), ?API_HEADER_CACHE)
     end;
+get_top_users_timespan_view('GET', Req, [Keyword, Start, End]) when is_list(Start) andalso is_list(End) ->
+    get_top_users_timespan_view('GET', Req, [Keyword, list_to_integer(Start), list_to_integer(End)]);
 get_top_users_timespan_view('GET', Req, [Keyword, Start, End]) when Start > End andalso length(Keyword) > 0 ->
     case backend_user:user_has_keyword(Req, Keyword) of
         {false, _} ->
