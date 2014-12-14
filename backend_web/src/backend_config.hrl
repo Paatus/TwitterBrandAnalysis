@@ -7,7 +7,8 @@
 
 -define(LOGIN_BUCKET, "Login").
 
--define(API_HEADER, [{"Cache-Control", "max-age=0, no-cache, no-store"}]).
+-define(API_HEADER_CACHE, {"Cache-Control", "max-age=0, no-cache, no-store"}).
+-define(API_HEADER, [?API_HEADER_CACHE]).
 
 -define(API_NO_LOGIN_MSG, "Illegal Access!").
 -define(API_ERROR_MSG, "API error!").

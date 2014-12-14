@@ -1,8 +1,8 @@
 -module(backend_login).
 
 -export([authenticate/2, logout/1]).
--export([create_cookie/2,check_cookie/1,check_session/1,get_username/1]).
--export([update_session/1,create_session/2]).
+-export([create_cookie/2, check_cookie/1, check_session/1, get_username/1]).
+-export([update_session/1, create_session/2]).
 
 
 -include("backend_config.hrl").
@@ -35,12 +35,13 @@ create_cookie(Username,Ip) ->
 check_cookie(Req) ->
     ClientIp = backend_utils:get_ip(Req),
     case Req:get_cookie_value(?SESSION_COOKIE) of
-        undefined -> undefined;
-        SessionID when length(SessionID) > 0 -> case check_session(SessionID) of
-                                                    {Username, ClientIp} -> {Username, ClientIp};
-                                                    _ -> undefined
-                     end;
-        _ -> undefined
+        undefined -> {error, "User is not logged in!"};
+        SessionID when length(SessionID) > 0 -> 
+            case check_session(SessionID) of
+                {Username, ClientIp} -> {Username, ClientIp};
+                _ -> {error, "Session has the wrong ip."}
+            end;
+        _ -> {error, "Unknown error!"}
     end.
 
 create_session(Username,Ip) ->
@@ -55,7 +56,7 @@ update_session(Req) ->
         SessionID when length(SessionID) > 0 ->
             ClientIp = backend_utils:get_ip(Req),
             case check_session(SessionID) of
-                     {Username, ClientIp} -> 
+                     {Username, ClientIp} ->
 	BinDate = list_to_binary(backend_db:format_date(calendar:universal_time())),
     backend_db:put(?SESSION_BUCKET, SessionID, {Username, ClientIp}, [{{binary_index,"datetime"}, [BinDate]}]),
     mochiweb_cookies:cookie(?SESSION_COOKIE,SessionID, [{max_age, 60*60*24*7},{path, "/"}]);

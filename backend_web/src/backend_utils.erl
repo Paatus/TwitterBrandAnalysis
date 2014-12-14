@@ -1,7 +1,8 @@
 -module(backend_utils).
 
--export([redirect/3, redirect/4, illegal_access/2, illegal_access/3, error_response/2]).
--export([get_directory/0, get_ip/1, print_hostinfo/1, get_date_from/1]).
+-export([redirect/3, redirect/4, illegal_access/2, illegal_access/3, error_response/2, api_error_response/2,api_error_response/3]).
+-export([json_error/1]).
+-export([get_directory/0, get_ip/1, print_hostinfo/1, get_date_from/1, fix_double_number/1]).
 -export([generate_uuid/0, uuid_to_string/1, hash_input/1]).
 
 -include("backend_config.hrl").
@@ -33,6 +34,19 @@ error_response(Req,Message) ->
                   {"Content-Type", "text/html; charset=UTF-8"}
                  ],
                  Message}).
+
+api_error_response(Req,Message) ->
+    api_error_response(Req,Message,[]).
+api_error_response(Req,Message,ExtraHeader) ->
+    Req:respond({400,
+                 [
+                  {"Content-Type", "application/json; charset=UTF-8"},
+                  ExtraHeader
+                 ],
+                 Message}).
+
+json_error(Text) ->
+    [mochijson2:encode({struct,[{error, list_to_binary(Text)}]})].
 
 hash_input(Input) -> crypto:hash(sha512,lists:append(Input,?SALT_VALUE)).
 
@@ -83,3 +97,7 @@ subtract_minutes({{Year, _Months, _Days}, {_Hours, Minutes, _Seconds}},M) ->
 
 fix_single_digit(X) when X < 10 -> "0" ++ integer_to_list(X);
 fix_single_digit(X) -> integer_to_list(X).
+
+fix_double_number({A,B}) -> [fix_number(A), fix_number(B)].
+fix_number(A) when is_float(A) -> float_to_binary(A);
+fix_number(A) when is_integer(A) -> integer_to_binary(A).
