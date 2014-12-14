@@ -17,19 +17,19 @@
 
 urls() -> [
            {"^api/world/total/?$", get_world_view                                },
-           {"^api/world/total/\d{1-6/\d{1-6}]?$", get_world_timespan_view                          },
-           {"^api/world/keyword/(\w{3,64})/?$", get_world_keyword_view           },
-           {"^api/world/keyword/(\w{3,64})/(\d{1,6})/(\d{1,6})/?$", get_world_keyword_timespan_view},
-           {"^api/world/country/(\w{3,64})/?$", get_world_view_country           },
+           {"^api/world/total/\\d{1-6/\\d{1-6}]?$", get_world_timespan_view                          },
+           {"^api/world/keyword/(\\w{3,64})/?$", get_world_keyword_view           },
+           {"^api/world/keyword/(\\w{3,64})/(\\d{1,6})/(\\d{1,6})/?$", get_world_keyword_timespan_view},
+           {"^api/world/country/(\\w{3,64})/?$", get_world_view_country           },
            {"^api/top/keyword/?$", get_top_keyword_view           },
-           {"^api/top/keyword/(\d{1,6})/(\d{1,6})/?$", get_top_keyword_timespan_view},
+           {"^api/top/keyword/(\\d{1,6})/(\\d{1,6})/?$", get_top_keyword_timespan_view},
            {"^api/top/hashtag/?$", get_top_hashtag_view           },
-           {"^api/top/hashtag/(\d{1,6})/(\d{1,6})/?$", get_top_hashtag_timespan_view},
+           {"^api/top/hashtag/(\\d{1,6})/(\\d{1,6})/?$", get_top_hashtag_timespan_view},
            {"^api/top/user/?$", get_top_user_view           },
-           {"^api/top/user/(\d{1,6})/(\d{1,6})/?$", get_top_user_timespan_view},
+           {"^api/top/user/(\\d{1,6})/(\\d{1,6})/?$", get_top_user_timespan_view},
            {"^api/login/?$", login                                               },
            {"^api/logout/?$", logout                                             },
-           {"^api/keywords/add/(\w{3,64})/?$", add_user_keyword                  },
+           {"^api/keywords/add/(\\w{3,64})/?$", add_user_keyword                  },
            {"^api/keywords/get$", get_user_keywords                              },
            {"^(?:js|css|font|vendor|imgs)/.*$", serve_files                      }
           ].
