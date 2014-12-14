@@ -3,9 +3,10 @@
 -export([urls/0, get_world_view_country/3, login/2, add_user_keyword/3, get_user_keywords/2, logout/2, serve_files/2]).
 -export([get_world_view/2, get_world_timespan_view/3]).
 -export([get_world_keyword_view/3, get_world_keyword_timespan_view/3]).
--export([get_top_keyword_view/2, get_top_keyword_timespan_view/3]).
--export([get_top_hashtag_view/2, get_top_hashtag_timespan_view/3]).
--export([get_top_user_view/2, get_top_user_timespan_view/3]).
+-export([get_top_keywords_view/2, get_top_keywords_timespan_view/3]).
+-export([get_top_hashtags_view/2, get_top_hashtags_timespan_view/3]).
+-export([get_top_users_view/2, get_top_users_timespan_view/3]).
+-export([change_password/2]).
 
 -include("backend_config.hrl").
 
@@ -16,22 +17,27 @@
 %
 
 urls() -> [
-           {"^api/world/total/?$", get_world_view                                },
+           {"^api/world/total/?$", get_world_view                                                     },
            {"^api/world/total/\\d{1,6}/\\d{1,6}/?$", get_world_timespan_view                          },
-           {"^api/world/keyword/(\\w{3,64})/?$", get_world_keyword_view           },
+           {"^api/world/keyword/(\\w{3,64})/?$", get_world_keyword_view                               },
            {"^api/world/keyword/(\\w{3,64})/(\\d{1,6})/(\\d{1,6})/?$", get_world_keyword_timespan_view},
-           {"^api/world/country/(\\w{3,64})/?$", get_world_view_country           },
-           {"^api/top/keyword/?$", get_top_keyword_view           },
-           {"^api/top/keyword/(\\d{1,6})/(\\d{1,6})/?$", get_top_keyword_timespan_view},
-           {"^api/top/hashtag/?$", get_top_hashtag_view           },
-           {"^api/top/hashtag/(\\d{1,6})/(\\d{1,6})/?$", get_top_hashtag_timespan_view},
-           {"^api/top/user/?$", get_top_user_view           },
-           {"^api/top/user/(\\d{1,6})/(\\d{1,6})/?$", get_top_user_timespan_view},
-           {"^api/login/?$", login                                               },
-           {"^api/logout/?$", logout                                             },
-           {"^api/keywords/add/(\\w{3,64})/?$", add_user_keyword                  },
-           {"^api/keywords/get$", get_user_keywords                              },
-           {"^(?:js|css|font|vendor|imgs)/.*$", serve_files                      }
+           {"^api/world/country/(\\w{3,64})/?$", get_world_view_country                               },
+           {"^api/top/keyword/?$", get_top_keywords_view                                              },
+           {"^api/top/keyword/(\\d{1,6})/(\\d{1,6})/?$", get_top_keywords_timespan_view               },
+           {"^api/top/keyword/(\\w{3,64})/(\\d{1,6})/(\\d{1,6})/?$", get_top_keywords_timespan_view   },
+           {"^api/top/hashtag/?$", get_top_hashtags_view                                              },
+           {"^api/top/hashtag/(\\d{1,6})/(\\d{1,6})/?$", get_top_hashtags_timespan_view               },
+           {"^api/top/hashtag/(\\d{1,6})/(\\d{1,6})/?$", get_top_hashtags_timespan_view               },
+           {"^api/top/hashtag/(\\w{3,64})/(\\d{1,6})/(\\d{1,6})/?$", get_top_hashtags_timespan_view   },
+           {"^api/top/user/?$", get_top_users_view                                                    },
+           {"^api/top/user/(\\d{1,6})/(\\d{1,6})/?$", get_top_users_timespan_view                     },
+           {"^api/top/user/(\\w{3,64})/(\\d{1,6})/(\\d{1,6})/?$", get_top_users_timespan_view         },
+           {"^api/login/?$", login                                                                    },
+           {"^api/logout/?$", logout                                                                  },
+           {"^api/account/change_password?$", change_password                                         },
+           {"^api/keywords/add/(\\w{3,64})/?$", add_user_keyword                                      },
+           {"^api/keywords/get$", get_user_keywords                                                   },
+           {"^(?:js|css|font|vendor|imgs)/.*$", serve_files                                           }
           ].
 
 get_world_view(_, Req) ->
@@ -98,12 +104,12 @@ get_world_view_country('GET', Req, [_Country]) ->
                     Req:ok({"application/json",?API_HEADER, [mochijson2:encode({struct,[{A,backend_utils:fix_double_number(B)} || {A,B} <- Info]})]})
     end.
 
-get_top_keyword_view(_, Req) ->
-    get_top_keyword_timespan_view('GET', Req, [1440, 0]).
+get_top_keywords_view(_, Req) ->
+    get_top_keywords_timespan_view('GET', Req, [1440, 0]).
 
-get_top_keyword_timespan_view('GET', Req, [Start, End]) when is_list(Start) andalso is_list(End) ->
-    get_top_keyword_timespan_view('GET', Req, [list_to_integer(Start), list_to_integer(End)]);
-get_top_keyword_timespan_view('GET', Req, [Start, End]) when Start > End ->
+get_top_keywords_timespan_view('GET', Req, [Start, End]) when is_list(Start) andalso is_list(End) ->
+    get_top_keywords_timespan_view('GET', Req, [list_to_integer(Start), list_to_integer(End)]);
+get_top_keywords_timespan_view('GET', Req, [Start, End]) when Start > End ->
     case backend_login:check_cookie(Req) of
         {error, Reason} ->
             backend_utils:api_error_response(Req,
@@ -116,16 +122,32 @@ get_top_keyword_timespan_view('GET', Req, [Start, End]) when Start > End ->
             backend_utils:api_error_response(Req,
                                              backend_utils:json_error("Unknown error"), ?API_HEADER_CACHE)
     end;
-get_top_keyword_timespan_view('GET', Req, _) ->
+get_top_keywords_timespan_view('GET', Req, [Keyword, Start, End]) when Start > End andalso length(Keyword) > 0 ->
+    case backend_user:user_has_keyword(Req, Keyword) of
+        {false, _} ->
+            backend_utils:api_error_response(Req,
+                                             backend_utils:json_error("Keyword does not exist in the database."), ?API_HEADER_CACHE);
+        {error, Reason} ->
+            backend_utils:api_error_response(Req,
+                                             backend_utils:json_error(Reason), ?API_HEADER_CACHE);
+        {true, Username} ->
+            {ok, Keys} = backend_db:query_date_range({Username, Keyword, words}, backend_utils:get_date_from(Start),backend_utils:get_date_from(End)),
+            {ok, Info} = mapred_count:mapred(Keys),
+            Req:ok({"application/json",?API_HEADER, [mochijson2:encode({struct,[{A,integer_to_binary(B)} || {A,B} <- Info]})]});
+        _ ->
+            backend_utils:api_error_response(Req,
+                                             backend_utils:json_error("Unknown error"), ?API_HEADER_CACHE)
+    end;
+get_top_keywords_timespan_view('GET', Req, _) ->
     backend_utils:api_error_response(Req,
          backend_utils:json_error("Api error time is incorrect!"), ?API_HEADER_CACHE).
 
-get_top_hashtag_view('GET', Req) ->
-    get_top_hashtag_timespan_view('GET', Req, [1440, 0]).
+get_top_hashtags_view('GET', Req) ->
+    get_top_hashtags_timespan_view('GET', Req, [1440, 0]).
 
-get_top_hashtag_timespan_view('GET', Req, [Start, End]) when is_list(Start) andalso is_list(End) ->
-    get_top_hashtag_timespan_view('GET', Req, [list_to_integer(Start), list_to_integer(End)]);
-get_top_hashtag_timespan_view('GET', Req, [Start, End]) when Start > End ->
+get_top_hashtags_timespan_view('GET', Req, [Start, End]) when is_list(Start) andalso is_list(End) ->
+    get_top_hashtags_timespan_view('GET', Req, [list_to_integer(Start), list_to_integer(End)]);
+get_top_hashtags_timespan_view('GET', Req, [Start, End]) when Start > End ->
     case backend_login:check_cookie(Req) of
         {error, Reason} ->
             backend_utils:api_error_response(Req,
@@ -138,16 +160,32 @@ get_top_hashtag_timespan_view('GET', Req, [Start, End]) when Start > End ->
             backend_utils:api_error_response(Req,
                                              backend_utils:json_error("Unknown error"), ?API_HEADER_CACHE)
     end;
-get_top_hashtag_timespan_view('GET', Req, _) ->
+get_top_hashtags_timespan_view('GET', Req, [Keyword, Start, End]) when Start > End andalso length(Keyword) > 0 ->
+    case backend_user:user_has_keyword(Req, Keyword) of
+        {false, _} ->
+            backend_utils:api_error_response(Req,
+                                             backend_utils:json_error("Keyword does not exist in the database."), ?API_HEADER_CACHE);
+        {error, Reason} ->
+            backend_utils:api_error_response(Req,
+                                             backend_utils:json_error(Reason), ?API_HEADER_CACHE);
+        {true, Username} ->
+            {ok, Keys} = backend_db:query_date_range({Username, Keyword, hashtags}, backend_utils:get_date_from(Start),backend_utils:get_date_from(End)),
+            {ok, Info} = mapred_count:mapred(Keys),
+            Req:ok({"application/json",?API_HEADER, [mochijson2:encode({struct,[{A,integer_to_binary(B)} || {A,B} <- Info]})]});
+        _ ->
+            backend_utils:api_error_response(Req,
+                                             backend_utils:json_error("Unknown error"), ?API_HEADER_CACHE)
+    end;
+get_top_hashtags_timespan_view('GET', Req, _) ->
     backend_utils:api_error_response(Req,
          backend_utils:json_error("Api error time is incorrect!"), ?API_HEADER_CACHE).
 
-get_top_user_view('GET', Req) ->
-    get_top_user_timespan_view('GET', Req, [1440, 0]).
+get_top_users_view('GET', Req) ->
+    get_top_users_timespan_view('GET', Req, [1440, 0]).
 
-get_top_user_timespan_view('GET', Req, [Start, End]) when is_list(Start) andalso is_list(End) ->
-    get_top_user_timespan_view('GET', Req, [list_to_integer(Start), list_to_integer(End)]);
-get_top_user_timespan_view('GET', Req, [Start, End]) when Start > End ->
+get_top_users_timespan_view('GET', Req, [Start, End]) when is_list(Start) andalso is_list(End) ->
+    get_top_users_timespan_view('GET', Req, [list_to_integer(Start), list_to_integer(End)]);
+get_top_users_timespan_view('GET', Req, [Start, End]) when Start > End ->
     case backend_login:check_cookie(Req) of
         {error, Reason} ->
             backend_utils:api_error_response(Req,
@@ -160,7 +198,23 @@ get_top_user_timespan_view('GET', Req, [Start, End]) when Start > End ->
             backend_utils:api_error_response(Req,
                                              backend_utils:json_error("Unknown error"), ?API_HEADER_CACHE)
     end;
-get_top_user_timespan_view('GET', Req, _) ->
+get_top_users_timespan_view('GET', Req, [Keyword, Start, End]) when Start > End andalso length(Keyword) > 0 ->
+    case backend_user:user_has_keyword(Req, Keyword) of
+        {false, _} ->
+            backend_utils:api_error_response(Req,
+                                             backend_utils:json_error("Keyword does not exist in the database."), ?API_HEADER_CACHE);
+        {error, Reason} ->
+            backend_utils:api_error_response(Req,
+                                             backend_utils:json_error(Reason), ?API_HEADER_CACHE);
+        {true, Username} ->
+            {ok, Keys} = backend_db:query_date_range({Username, Keyword, users}, backend_utils:get_date_from(Start),backend_utils:get_date_from(End)),
+            {ok, Info} = mapred_count:mapred(Keys),
+            Req:ok({"application/json",?API_HEADER, [mochijson2:encode({struct,[{A,integer_to_binary(B)} || {A,B} <- Info]})]});
+        _ ->
+            backend_utils:api_error_response(Req,
+                                             backend_utils:json_error("Unknown error"), ?API_HEADER_CACHE)
+    end;
+get_top_users_timespan_view('GET', Req, _) ->
     backend_utils:api_error_response(Req,
          backend_utils:json_error("Api error time is incorrect!"), ?API_HEADER_CACHE).
 
@@ -227,6 +281,20 @@ get_user_keywords('GET', Req) ->
                 Req:ok({"application/json",
                         ?API_HEADER, [mochijson2:encode({struct,[{"keywords",Keywords}]})]})
     end.
+
+change_password('POST', Req) ->
+    Post = Req:parse_post(),
+    Password = proplists:get_value("pwd",Post,""),
+    case backend_user:change_user_password(Req, Password) of
+        {error, Reason} ->
+            backend_utils:api_error_response(Req, backend_utils:json_error(Reason), ?API_HEADER_CACHE);
+        {true, Reason} ->
+            Req:ok({"application/json",
+                    ?API_HEADER,[mochijson2:encode({struct,[{status,list_to_binary(Reason)}]})]})
+
+    end;
+change_password('GET', Req) ->
+    backend_utils:api_error_response(Req, backend_utils:json_error("API call is invalid."), ?API_HEADER_CACHE).
 
 serve_files('POST', Req) ->
     serve_files('GET', Req);

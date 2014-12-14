@@ -58,7 +58,8 @@ create_account(Username, Password) ->
             {error, "Account already exists!"};
         _ ->
             backend_db:put(?LOGIN_BUCKET, Username, backend_utils:hash_input(Password),[]),
-            send_create_user(Username)
+            send_create_user(Username),
+            {true, "Account created!"}
     end.
 
 change_user_password(Req, Password) when is_tuple(Req) ->
@@ -69,8 +70,9 @@ change_user_password(Req, Password) when is_tuple(Req) ->
 change_user_password(Username, Password) when is_list(Username) ->
     case backend_db:fetch(?LOGIN_BUCKET, Username) of
         {ok, _} ->
-            backend_db:put(?LOGIN_BUCKET, Username, backend_utils:hash_input(Password),[]);
-        _ -> ok
+            backend_db:put(?LOGIN_BUCKET, Username, backend_utils:hash_input(Password),[]),
+            {true, "User password changed!"};
+        _ -> {error, "Could not populate database with the password!"}
     end.
 
 send_user_add_keywords(Username, Keywords) ->
