@@ -4,7 +4,6 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>TBA - User</title>
-    <meta name="author" content="Alvaro Trigo Lopez" />
     <meta name="description" content="twitter opt erlang riak mapreduce d3." />
     <meta name="keywords" content="fullpage,jquery,demo,screen,fixed, header,footer, absolute, positioned,css" />
     <meta name="Resource-type" content="Document" />
@@ -21,12 +20,15 @@
 
 
     <!-- add map js -->
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
     <!-- add default map in the login page js -->
+    <script src="js/happymap.js"></script>
     <script src="js/highcharts.js"></script>
     <script src="js/map.js"></script>
-    <script src="js/happymap.js"></script>
+
     <script src="http://code.highcharts.com/mapdata/custom/world.js"></script>
     <script src="js/main.js"></script>
 
@@ -50,11 +52,54 @@
                     <img src="imgs/logo.png" alt="TBA logo">
                 </div>
                 <div class="col-md-1 col-md-offset-2">
-
-                        <h4>My Account</h4>
-
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#setting-diagram" data-whatever="@mdo">My Account</button>
                 </div>
-                <div class="col-md-1">
+
+
+<!-- change password -->
+                    <div class="modal fade" id="setting-diagram" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                    <h4 class="modal-title" id="exampleModalLabel">Change Password</h4>
+                                </div>
+                                <div class="modal-body" id="setting-body">
+                                    <form role="form" method="POST" action="/api/setting" id="setting-form">
+                                        <div class="form-group">
+                                            <label for="recipient-name" class="control-label">UserName:</label>
+                                            <input type="text"  name="username" id="setting-name">
+                                            <span class="error"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="message-text" class="control-label">Old Passwords:</label>
+                                            <input type="password" name="pwd" id="setting-oldpassword" >
+                                            <span class="error"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="message-text" class="control-label">New Passwords:</label>
+                                            <input type="password" name="pwd" id="setting-newpassword" >
+                                            <span class="error"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="message-text" class="control-label">Confirm New Passwords:</label>
+                                            <input type="password" name="pwd" id="setting-comfirmpassword" >
+                                            <span class="error"></span>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                    <button type="button" class="btn btn-primary" onclick="getPassword()" id="setting">Confirm</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                <div class="col-md-1" id="logout">
                     <a href="/api/logout/">
                         <h4>Log Out</h4>
                     </a>
@@ -97,29 +142,17 @@
         </div>
 
 
-
         <div id="footer" class="userfooter">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-md-2">
+                    <div class="col-md-6">
                         <h6>Copyright &copy; 2014 Name Pending</h6>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-6">
                     <!-- <i class="fa fa-envelope emailIcon" ></i> -->
                         <h6 class="emailAddress">Admin@namepending.com</h6>
                     </div>
-                    <div class="col-md-2">
-                        <i class="fa fa-minus"></i>
-                    </div>
-                    <div class="col-md-2">
-                        <h6>Copyright &copy; 2014 Name Pending</h6>
-                    </div>
-                    <div class="col-md-2">
-                        <h6>Copyright &copy; 2014 Name Pending</h6>
-                    </div>
-                    <div class="col-md-2">
-                        <h6>Copyright &copy; 2014 Name Pending</h6>
-                    </div>
+
                 </div>
             </div>
         </div>

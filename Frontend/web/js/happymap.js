@@ -1,6 +1,15 @@
-$(function() {
+$(function () {
 
-    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population-history.csv&callback=?', function(csv) {
+    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population-history.csv&callback=?', function (csv) {
+
+        // Parse the CSV Data
+        /*Highcharts.data({
+            csv: data,
+            switchRowsAndColumns: true,
+            parsed: function () {
+                console.log(this.columns);
+            }
+        });*/
 
         // Very simple and case-specific CSV string splitting
         function CSVtoArray(text) {
@@ -19,11 +28,11 @@ $(function() {
             categories = CSVtoArray(csv[1]).slice(4);
 
         // Parse the CSV into arrays, one array each country
-        $.each(csv.slice(2), function(j, line) {
+        $.each(csv.slice(2), function (j, line) {
             var row = CSVtoArray(line),
                 data = row.slice(4);
 
-            $.each(data, function(i, val) {
+            $.each(data, function (i, val) {
 
                 val = val.replace(quoteRegex, '');
                 if (numRegex.test(val)) {
@@ -58,20 +67,20 @@ $(function() {
             data.push({
                 name: countries[code3].name,
                 code3: code3,
-                value: Math.random(),
+                value: value,
                 year: year
             });
         }
 
         // Add lower case codes to the data set for inclusion in the tooltip.pointFormat
         var mapData = Highcharts.geojson(Highcharts.maps['custom/world']);
-        $.each(mapData, function() {
+        $.each(mapData, function () {
             this.id = this.properties['hc-key']; // for Chart.get()
             this.flag = this.id.replace('UK', 'GB').toLowerCase();
         });
 
         // Wrap point.select to get to the total selected points
-        Highcharts.wrap(Highcharts.Point.prototype, 'select', function(proceed) {
+        Highcharts.wrap(Highcharts.Point.prototype, 'select', function (proceed) {
 
             proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 
@@ -129,7 +138,7 @@ $(function() {
                     }).highcharts();
                 }
 
-                $.each(points, function(i) {
+                $.each(points, function (i) {
                     // Update
                     if (countryChart.series[i]) {
                         /*$.each(countries[this.code3].data, function (pointI, value) {
@@ -138,7 +147,6 @@ $(function() {
                         countryChart.series[i].update({
                             name: this.name,
                             data: countries[this.code3].data,
-							type: points.length > 1 ? 'line' : 'area'
                             type: points.length > 1 ? 'line' : 'area'
                         }, false);
                     } else {
@@ -170,12 +178,12 @@ $(function() {
         // Initiate the map chart
         mapChart = $('#container').highcharts('Map', {
 
-            title: {
-                text: 'Brand opinion of the world'
+            title : {
+                text : 'Population history by country'
             },
 
             subtitle: {
-                text: 'Source: Random tweets on the interwebs, cause the internet is always right'
+                text: 'Source: <a href="http://data.worldbank.org/indicator/SP.POP.TOTL/countries/1W?display=default">The World Bank</a>'
             },
 
             mapNavigation: {
@@ -187,19 +195,17 @@ $(function() {
 
             colorAxis: {
                 type: 'logarithmic',
-				minColor: "#FF0000",
-				maxColor: "#0000FF",
-                endOnTick: true,
-                startOnTick: true,
-                min: 0.1
+                endOnTick: false,
+                startOnTick: false,
+                min: 50000
             },
 
             tooltip: {
                 footerFormat: '<span style="font-size: 10px">(Click for details)</span>'
             },
 
-            series: [{
-                data: data,
+            series : [{
+                data : data,
                 mapData: mapData,
                 joinBy: ['iso-a3', 'code3'],
                 name: 'Current population',
@@ -216,6 +222,6 @@ $(function() {
         }).highcharts();
 
         // Pre-select a country
-        //mapChart.get('us').select();
+        mapChart.get('us').select();
     });
 });

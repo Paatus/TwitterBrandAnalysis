@@ -4,7 +4,6 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>TBA - Homepage</title>
-    <meta name="author" content="Alvaro Trigo Lopez" />
     <meta name="description" content="twitter opt erlang riak mapreduce d3." />
     <meta name="keywords" content="fullpage,jquery,demo,screen,fixed, header,footer, absolute, positioned,css" />
     <meta name="Resource-type" content="Document" />
@@ -29,21 +28,21 @@
     <!-- add fullpage plugin'js -->
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+
 <!--     <script type="text/javascript" src="js/jquery.js"></script> -->
     <script type="text/javascript" src="js/jquery.slimscroll.min.js"></script>
     <script type="text/javascript" src="js/jquery.fullPage.js"></script>
     <!-- Latest compiled and minified JavaScript -->
-
+    <!-- add happymap js for homepage -->
+    <script type="text/javascript" src="js/happymap.js"></script>
     <!-- add happness map -->
     <script src="js/highcharts.js"></script>
     <script src="js/map.js"></script>
     <script src="http://code.highcharts.com/mapdata/custom/world.js"></script>
-            <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
     <!-- add own js -->
     <script type="text/javascript" src="js/index.js"></script>
-    <!-- add happymap js for homepage -->
-    <script type="text/javascript" src="js/happymap.js"></script>
+
     <!-- add own js file -->
     <script type="text/javascript" src="js/main.js"></script>
 
@@ -56,92 +55,85 @@
     <div id="header">
         <div class="container-fluid">
             <div class="col-md-1">
-                <h4>Home</h4>
+                <h3>Home</h3>
             </div>
             <div class="col-md-1">
-                <h4>Product</h4>
-            </div>
-            <div class="col-md-1">
-                <h4>About Us</h4>
+                <h3>Product</h3>
             </div>
             <div class="col-md-4 col-md-offset-1" id="logo">
                 <img src="imgs/logo.png" alt="TBA logo" >
             </div>
-
-
-            <div class="col-md-1 col-md-offset-2">
+            <div class="col-md-1 col-md-offset-3">
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#login-diagram" data-whatever="@mdo">Log in</button>
             </div>
-
-
             <!-- login form -->
             <div class="modal fade" id="login-diagram" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                    <h4 class="modal-title" id="exampleModalLabel">Log In</h4>
-                  </div>
-                  <div class="modal-body" id="login-body">
-                    <form role="form" method="POST" action="/api/login" id="login-form">
-                      <div class="form-group">
-                        <label for="recipient-name" class="control-label">UserName:</label>
-                        <input type="text"  name="username" id="login-name">
-                        <span class="error"></span>
-                      </div>
-                      <div class="form-group">
-                        <label for="message-text" class="control-label">Passwords:</label>
-                        <input type="password" name="pwd" id="login-password" ></textarea>
-                        <span class="error"></span>
-                      </div>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <input type="submit" id="login" class="btn btn-primary" value="Log In"></input>
-                    <span class="success"></span>
-                  </div>
-                </form>
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                            <h4 class="modal-title" id="exampleModalLabel">Log In</h4>
+                        </div>
+                        <div class="modal-body" id="login-body">
+                            <form role="form" method="POST" action="/api/login" id="login-form">
+                                <div class="form-group">
+                                    <label for="recipient-name" class="control-label">UserName:</label>
+                                    <input type="text"  name="username" id="login-name">
+                                    <span class="error"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="message-text" class="control-label">Passwords:</label>
+                                    <input type="password" name="pwd" id="login-password" >
+                                    <span class="error"></span>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <input type="submit" id="login" class="btn btn-primary" value="Log In"></input>
+                            <span class="success"></span>
+                        </div>
+                    </div>
                 </div>
               </div>
-            </div>
-
-
             <!-- sign up form -->
             <div class="col-md-1">
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#signup-diagram" data-whatever="@mdo">Sign Up</button>
             </div>
                         <!-- Registration form -->
             <div class="modal fade" id="signup-diagram" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
+                <div class="modal-dialog">
+                    <div class="modal-content">
 
-                  <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                    <h4 class="modal-title" id="exampleModalLabel">Sign Up</h4>
-                  </div>
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;
+                                </span><span class="sr-only">Close</span>
+                            </button>
+                            <h4 class="modal-title" id="exampleModalLabel">Sign Up</h4>
+                        </div>
 
-                  <div class="modal-body" id="signup-body">
-                    <form role="form">
-                      <div class="form-group">
-                        <label for="recipient-name" class="control-label">Crate New UserName:</label>
-                        <input type="text"  id="signup-name">
-                        <span class="error"></span>
-                      </div>
-                      <div class="form-group">
-                        <label for="message-text" class="control-label">Crate New Passwords:</label>
-                        <input type="password" id="signup-password" ></textarea>
-                        <span class="error"></span>
-                      </div>
-                    </form>
-                  </div>
+                        <div class="modal-body" id="signup-body">
+                            <form role="form" action="/api/signup"  id="signup-form">
+                                <div class="form-group">
+                                    <label for="recipient-name" class="control-label">Crate New UserName:</label>
+                                    <input type="text"  id="signup-name">
+                                    <span class="error"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="message-text" class="control-label">Crate New Passwords:</label>
+                                    <input type="password" id="signup-password" >
+                                    <span class="error"></span>
+                                </div>
+                            </form>
+                        </div>
 
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="getPassword()" id="signup">Sign Up</button>
-                  </div>
-
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" onclick="getPassword()" id="signup">Sign Up</button>
+                        </div>
+                    </div>
                 </div>
-              </div>
             </div>
         </div>
     </div>
