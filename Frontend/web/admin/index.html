@@ -150,6 +150,11 @@ $( document ).ready(function() {
     $("#logout_link").click(function() {
         window.location = "/api/logout";
     });
+    $("#logout_link").hover(function() {
+        window.status = "/api/logout";
+    }, function() {
+        window.status = "";
+    });
 
     $( "#add_user_submit" ).click(function() { 
         $.ajax()
@@ -171,7 +176,7 @@ $( document ).ready(function() {
             dataType : "json",
 
             success: function( json ) {
-                sweetAlert("Response!", json.status, json.code);
+                sweetAlert("Success!", "Something went... ok!", "success");
                 //$( "<h1>" ).text( json.title ).appendTo( "body" );
                 //$( "<div class=\"content\">").html( json.html ).appendTo( "body" );
                 console.log(json);
@@ -219,7 +224,7 @@ $( document ).ready(function() {
             dataType : "json",
 
             success: function( json ) {
-                sweetAlert("Response!", json.status, json.code);
+                sweetAlert("Success!", "Something went... ok!", "success");
                 //$( "<h1>" ).text( json.title ).appendTo( "body" );
                 //$( "<div class=\"content\">").html( json.html ).appendTo( "body" );
                 console.log(json);
