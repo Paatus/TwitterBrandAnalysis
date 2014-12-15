@@ -7,7 +7,7 @@
 -export([get_top_hashtags_view/2, get_top_hashtags_timespan_view/3]).
 -export([get_top_users_view/2, get_top_users_timespan_view/3]).
 -export([get_amount_view/3, get_amount_timespan_view/3]).
--export([admin_change_password_view/2,admin_remove_user_view/2]).
+-export([admin_change_password_view/2,admin_add_user_view/2,admin_remove_user_view/2]).
 -export([get_admin_view/2]).
 -export([change_password/2]).
 
@@ -42,6 +42,7 @@ urls() -> [
            {"^api/keywords/add/(\\w{3,64})/?$", add_user_keyword                                      },
            {"^api/keywords/get/?$", get_user_keywords                                                 },
            {"^api/admin/change_password/?$", admin_change_password_view                               },
+           {"^api/admin/add_user/?$", admin_add_user_view                               },
            {"^api/admin/remove_user/?$", admin_remove_user_view                                       },
            {"^admin/.*$", get_admin_view                                                              },
            {"^(?:js|css|font|vendor|imgs)/.*$", serve_files                                           }
@@ -357,6 +358,16 @@ admin_change_password_view('POST', Req) ->
             Username = proplists:get_value("username",Post,""),
             Password = proplists:get_value("pwd",Post,"temp"),
             backend_user:change_user_password(Username, Password);
+        _ -> Req:not_found()
+    end.
+
+admin_add_user_view('POST', Req) ->
+    case backend_login:check_cookie(Req) of
+        {"admin", _} ->
+            Post = Req:parse_post(),
+            Username = proplists:get_value("username",Post,""),
+            Password = proplists:get_value("pwd",Post,"temp"),
+            backend_user:create_account(Username, Password);
         _ -> Req:not_found()
     end.
 
