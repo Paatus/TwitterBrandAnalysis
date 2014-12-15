@@ -42,7 +42,7 @@ urls() -> [
            {"^api/keywords/add/(\\w{3,64})/?$", add_user_keyword                                      },
            {"^api/keywords/get/?$", get_user_keywords                                                 },
            {"^api/admin/change_password/?$", admin_change_password_view                               },
-           {"^api/admin/add_user/?$", admin_add_user_view                               },
+           {"^api/admin/add_user/?$", admin_add_user_view                                             },
            {"^api/admin/remove_user/?$", admin_remove_user_view                                       },
            {"^admin/.*$", get_admin_view                                                              },
            {"^(?:js|css|font|vendor|imgs)/.*$", serve_files                                           }
@@ -357,7 +357,9 @@ admin_change_password_view('POST', Req) ->
             Post = Req:parse_post(),
             Username = proplists:get_value("username",Post,""),
             Password = proplists:get_value("pwd",Post,"temp"),
-            backend_user:change_user_password(Username, Password);
+            backend_user:change_user_password(Username, Password),
+            Req:ok({"application/json",
+                    ?API_HEADER,[mochijson2:encode({struct,[{status,list_to_binary("Successfully changed users password!")}]})]});
         _ -> Req:not_found()
     end.
 
@@ -367,7 +369,9 @@ admin_add_user_view('POST', Req) ->
             Post = Req:parse_post(),
             Username = proplists:get_value("username",Post,""),
             Password = proplists:get_value("pwd",Post,"temp"),
-            backend_user:create_account(Username, Password);
+            backend_user:create_account(Username, Password),
+            Req:ok({"application/json",
+                    ?API_HEADER,[mochijson2:encode({struct,[{status,list_to_binary("Successfully added user!")}]})]});
         _ -> Req:not_found()
     end.
 
@@ -376,7 +380,9 @@ admin_remove_user_view('POST', Req) ->
         {"admin", _} ->
             Post = Req:parse_post(),
             Username = proplists:get_value("username",Post,""),
-            backend_user:remove_account(Username);
+            backend_user:remove_account(Username),
+            Req:ok({"application/json",
+                    ?API_HEADER,[mochijson2:encode({struct,[{status,list_to_binary("Successfully removed user!")}]})]});
         _ -> Req:not_found()
     end.
 
