@@ -361,10 +361,10 @@ admin_change_password_view('POST', Req) ->
                 {ok, _} ->
                     backend_user:change_user_password(Username, Password),
                     Req:ok({"application/json",
-                            ?API_HEADER,[mochijson2:encode({struct,[{status,list_to_binary("Successfully changed users password!")}]})]});
+                            ?API_HEADER,[mochijson2:encode({struct,[{status,list_to_binary("Successfully changed users password!")}, {code, list_to_binary("success")}]})]});
                 _ ->
                     Req:ok({"application/json",
-                            ?API_HEADER,[mochijson2:encode({struct,[{status,list_to_binary("Error account doesn't exist!")}]})]})
+                            ?API_HEADER,[mochijson2:encode({struct,[{status,list_to_binary("Error account doesn't exist!")}, {code, list_to_binary("error")}]})]})
             end;
         _ -> Req:not_found()
     end.
@@ -378,11 +378,11 @@ admin_add_user_view('POST', Req) ->
             case backend_db:fetch(?LOGIN_BUCKET, Username) of
                 {ok, _} ->
                     Req:ok({"application/json",
-                            ?API_HEADER,[mochijson2:encode({struct,[{status,list_to_binary("Error account already exists!")}]})]});
+                            ?API_HEADER,[mochijson2:encode({struct,[{status,list_to_binary("Error account already exists!")}, {code, list_to_binary("error")}]})]});
                 _ ->
                     backend_user:create_account(Username, Password),
                     Req:ok({"application/json",
-                            ?API_HEADER,[mochijson2:encode({struct,[{status,list_to_binary("Successfully added user!")}]})]})
+                            ?API_HEADER,[mochijson2:encode({struct,[{status,list_to_binary("Successfully added user!")}, {code, list_to_binary("success")}]})]})
              end;
         _ -> Req:not_found()
     end.
@@ -396,10 +396,10 @@ admin_remove_user_view('POST', Req) ->
                 {ok, _} ->
                     backend_user:remove_account(Username),
                     Req:ok({"application/json",
-                            ?API_HEADER,[mochijson2:encode({struct,[{status,list_to_binary("Successfully removed user!")}]})]});
+                            ?API_HEADER,[mochijson2:encode({struct,[{status,list_to_binary("Successfully removed user!")}, {code, list_to_binary("success")}]})]});
                 _ ->
                     Req:ok({"application/json",
-                            ?API_HEADER,[mochijson2:encode({struct,[{status,list_to_binary("Error account doesn't exist!")}]})]})
+                            ?API_HEADER,[mochijson2:encode({struct,[{status,list_to_binary("Error account doesn't exist!")}, {code, list_to_binary("error")}]})]})
             end;
         _ -> Req:not_found()
     end.
