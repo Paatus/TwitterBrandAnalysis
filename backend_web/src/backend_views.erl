@@ -357,9 +357,15 @@ admin_change_password_view('POST', Req) ->
             Post = Req:parse_post(),
             Username = proplists:get_value("username",Post,""),
             Password = proplists:get_value("pwd",Post,"temp"),
-            backend_user:change_user_password(Username, Password),
-            Req:ok({"application/json",
-                    ?API_HEADER,[mochijson2:encode({struct,[{status,list_to_binary("Successfully changed users password!")}]})]});
+            case backend_db:fetch(?LOGIN_BUCKET, Username) of
+                {ok, _} ->
+                    backend_user:change_user_password(Username, Password),
+                    Req:ok({"application/json",
+                            ?API_HEADER,[mochijson2:encode({struct,[{status,list_to_binary("Successfully changed users password!")}]})]});
+                _ ->
+                    Req:ok({"application/json",
+                            ?API_HEADER,[mochijson2:encode({struct,[{status,list_to_binary("Error account doesn't exist!")}]})]})
+            end;
         _ -> Req:not_found()
     end.
 
@@ -369,9 +375,15 @@ admin_add_user_view('POST', Req) ->
             Post = Req:parse_post(),
             Username = proplists:get_value("username",Post,""),
             Password = proplists:get_value("pwd",Post,"temp"),
-            backend_user:create_account(Username, Password),
-            Req:ok({"application/json",
-                    ?API_HEADER,[mochijson2:encode({struct,[{status,list_to_binary("Successfully added user!")}]})]});
+            case backend_db:fetch(?LOGIN_BUCKET, Username) of
+                {ok, _} ->
+                    Req:ok({"application/json",
+                            ?API_HEADER,[mochijson2:encode({struct,[{status,list_to_binary("Error account already exists!")}]})]});
+                _ ->
+                    backend_user:create_account(Username, Password),
+                    Req:ok({"application/json",
+                            ?API_HEADER,[mochijson2:encode({struct,[{status,list_to_binary("Successfully added user!")}]})]})
+             end;
         _ -> Req:not_found()
     end.
 
@@ -380,9 +392,15 @@ admin_remove_user_view('POST', Req) ->
         {"admin", _} ->
             Post = Req:parse_post(),
             Username = proplists:get_value("username",Post,""),
-            backend_user:remove_account(Username),
-            Req:ok({"application/json",
-                    ?API_HEADER,[mochijson2:encode({struct,[{status,list_to_binary("Successfully removed user!")}]})]});
+            case backend_db:fetch(?LOGIN_BUCKET, Username) of
+                {ok, _} ->
+                    backend_user:remove_account(Username),
+                    Req:ok({"application/json",
+                            ?API_HEADER,[mochijson2:encode({struct,[{status,list_to_binary("Successfully removed user!")}]})]});
+                _ ->
+                    Req:ok({"application/json",
+                            ?API_HEADER,[mochijson2:encode({struct,[{status,list_to_binary("Error account doesn't exist!")}]})]})
+            end;
         _ -> Req:not_found()
     end.
 
