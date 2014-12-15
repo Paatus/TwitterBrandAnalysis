@@ -7,6 +7,8 @@
 -export([get_top_hashtags_view/2, get_top_hashtags_timespan_view/3]).
 -export([get_top_users_view/2, get_top_users_timespan_view/3]).
 -export([get_amount_view/3, get_amount_timespan_view/3]).
+-export([admin_change_password_view/2,admin_remove_user_view/2]).
+-export([get_admin_view/2]).
 -export([change_password/2]).
 
 -include("backend_config.hrl").
@@ -36,9 +38,12 @@ urls() -> [
            {"^api/amount/(\\w{3,64})/(\\d{1,6})/(\\d{1,6})/?$", get_amount_timespan_view              },
            {"^api/login/?$", login                                                                    },
            {"^api/logout/?$", logout                                                                  },
-           {"^api/account/change_password/?$", change_password                                         },
+           {"^api/account/change_password/?$", change_password                                        },
            {"^api/keywords/add/(\\w{3,64})/?$", add_user_keyword                                      },
-           {"^api/keywords/get$", get_user_keywords                                                   },
+           {"^api/keywords/get/?$", get_user_keywords                                                 },
+           {"^api/admin/change_password/?$", admin_change_password_view                               },
+           {"^api/admin/remove_user/?$", admin_remove_user_view                                       },
+           {"^admin/.*$", get_admin_view                                                              },
            {"^(?:js|css|font|vendor|imgs)/.*$", serve_files                                           }
           ].
 
@@ -252,22 +257,22 @@ get_amount_timespan_view('GET', Req, _) ->
          backend_utils:json_error("Api error time is incorrect!"), ?API_HEADER_CACHE).
 
 login('POST', Req) ->
-    Post = Req:parse_post(),
-    Username = proplists:get_value("username",Post,""),
-    Password = proplists:get_value("pwd",Post,""),
-    case length(Password) of
-        0 ->
+    case backend_user:validate_login(Req) of
+        {{First,_},{Second,_}} when First == false orelse Second == false ->
             backend_utils:redirect(Req, "/",
                 "Login failed!");
-        _ when Username =:= [] ->
-            backend_utils:redirect(Req, "/",
-                "Login failed!");
-        N when N > 0 ->
+        {{true, Username},{true, Password}} ->
             case backend_login:authenticate(Username,Password) of
                 true ->
                     Cookie = backend_login:create_cookie(Username, backend_utils:get_ip(Req)),
-                    backend_utils:redirect(Req, "/",
-                        "Login Successfull!", Cookie);
+                    case Username of
+                        "admin" ->
+                            backend_utils:redirect(Req, "/admin/",
+                                "Login Successfull!", Cookie);
+                        _ ->
+                            backend_utils:redirect(Req, "/",
+                                "Login Successfull!", Cookie)
+                    end;
                 _ ->
                     backend_utils:redirect(Req, "/",
                         "Login failed!", mochiweb_cookies:cookie(?SESSION_COOKIE,"", [{path, "/"},{max_age,0}]))
@@ -297,7 +302,7 @@ add_user_keyword('GET', Req, [Keyword]) ->
         {error, Reason} ->
             backend_utils:api_error_response(Req, backend_utils:json_error(Reason), ?API_HEADER_CACHE);
         {Username,_} ->
-            backend_user:add_user_keywords(Username, Keyword),
+            backend_user:add_user_keywords(Username, string:to_lower(Keyword)),
             Req:ok({"application/json",
                     ?API_HEADER,[mochijson2:encode({struct,[{status,<<"ok">>}]})]})
     end.
@@ -329,6 +334,41 @@ change_password('POST', Req) ->
 change_password('GET', Req) ->
     backend_utils:api_error_response(Req, backend_utils:json_error("API call is invalid."), ?API_HEADER_CACHE).
 
+get_admin_view('POST', Req) ->
+    serve_files('GET', Req);
+get_admin_view('GET', Req) ->
+    "/" ++ Path = Req:get(path),
+    case backend_login:check_cookie(Req) of
+        {"admin", _} ->
+            case filelib:is_file(filename:join([?HARDCODED_FOLDER, Path])) of
+                true ->
+                    Req:serve_file(Path, ?HARDCODED_FOLDER);
+                false ->
+                    Req:not_found()
+            end;
+        _ ->
+            Req:not_found()
+    end.
+
+admin_change_password_view('POST', Req) ->
+    case backend_login:check_cookie(Req) of
+        {"admin", _} ->
+            Post = Req:parse_post(),
+            Username = proplists:get_value("username",Post,""),
+            Password = proplists:get_value("pwd",Post,"temp"),
+            backend_user:change_user_password(Username, Password);
+        _ -> Req:not_found()
+    end.
+
+admin_remove_user_view('POST', Req) ->
+    case backend_login:check_cookie(Req) of
+        {"admin", _} ->
+            Post = Req:parse_post(),
+            Username = proplists:get_value("username",Post,""),
+            backend_user:remove_account(Username);
+        _ -> Req:not_found()
+    end.
+
 serve_files('POST', Req) ->
     serve_files('GET', Req);
 serve_files('GET', Req) ->
@@ -338,7 +378,7 @@ serve_files('GET', Req) ->
             Req:serve_file(Path, ?HARDCODED_FOLDER);
         false ->
             Req:not_found()
-        end.
+    end.
 
     %Req:respond({302,
     %    [{"Location", "/"},

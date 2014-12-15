@@ -1,8 +1,9 @@
 -module(backend_user).
 
 -export([get_user_keywords/1, add_user_keywords/2, del_user_keywords/2]).
--export([create_account/2, change_user_password/2]).
+-export([create_account/2, remove_account/1, change_user_password/2]).
 -export([user_has_keyword/2]).
+-export([validate_login/1]).
 
 -include("backend_config.hrl").
 
@@ -62,6 +63,15 @@ create_account(Username, Password) ->
             {true, "Account created!"}
     end.
 
+remove_account(Username) ->
+    case backend_db:fetch(?LOGIN_BUCKET, Username) of
+        {ok, _} ->
+            backend_db:remove(?LOGIN_BUCKET, Username),
+            send_remove_user(Username);
+        _ ->
+            {error, "Could not find the Username!"}
+    end.
+
 change_user_password(Req, Password) when is_tuple(Req) ->
     case backend_login:get_username(Req) of
         undefined -> {error, "User is not logged in!"};
@@ -83,3 +93,37 @@ send_user_del_keywords(Username, Keywords) ->
 
 send_create_user(Username) ->
     gen_server:cast({?SERVER_MODULE, ?SERVER_NODE}, {create_user, Username}).
+
+send_remove_user(Username) ->
+    gen_server:cast({?SERVER_MODULE, ?SERVER_NODE}, {delete_user, Username}).
+
+validate_login(Req) ->
+    Post = Req:parse_post(),
+    UsernameInput = string:to_lower(proplists:get_value("username",Post,"")),
+    Username = case validate_username(UsernameInput) of
+        false -> {false, "Username is invalid!"};
+        true -> {true, UsernameInput}
+    end,
+    PasswordInput = proplists:get_value("pwd",Post,""),
+    Password = case length(PasswordInput) of
+        0 -> {error, "Password is to short!"};
+        _ -> {true, PasswordInput}
+    end,
+    {Username, Password}.
+
+validate_username(Username) ->
+    case length(Username) of
+        0 -> false;
+        _ -> validate_username_second(Username)
+    end.
+
+validate_username_second([]) ->
+    true;
+validate_username_second([$\n|_]) ->
+    false;
+validate_username_second([$\t|_]) ->
+    false;
+validate_username_second([32|_]) ->
+    false;
+validate_username_second([_|Xs]) ->
+    validate_username_second(Xs).
