@@ -78,8 +78,8 @@ remove_users_sessions(Username) ->
 	[backend_db:remove(?SESSION_BUCKET,U) || U <- Users].
 
 purge_sessions_datetime(End) ->
-    {ok, Keys} = backend_db:query_date_range(?SESSION_BUCKET, "0",backend_utils:get_date_from(End)),
-	[backend_db:remove(?SESSION_BUCKET,Key) || Key <- Keys].
+    {ok, Keys} = backend_db:query_date_range(?SESSION_BUCKET, "0", backend_utils:get_date_from(End)),
+	[backend_db:remove(?SESSION_BUCKET,Key) || {_,Key} <- Keys].
 
 
 get_username(Req) ->
