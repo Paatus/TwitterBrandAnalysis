@@ -67,6 +67,7 @@ remove_account(Username) ->
     case backend_db:fetch(?LOGIN_BUCKET, Username) of
         {ok, _} ->
             backend_db:remove(?LOGIN_BUCKET, Username),
+            backend_login:remove_users_sessions(Username),
             send_remove_user(Username);
         _ ->
             {error, "Could not find the Username!"}

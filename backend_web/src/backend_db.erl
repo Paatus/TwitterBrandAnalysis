@@ -1,6 +1,6 @@
 -module(backend_db).
 
--export([start_link/0, close_link/1, fetch/2, put/4, put/5, format_date/1, remove/2, query_date_range/3]).
+-export([start_link/0, close_link/1, fetch/2, put/4, put/5, format_date/1, remove/2, query_date_range/3, query_usernames_sessions/1]).
 
 -include("backend_config.hrl").
 
@@ -72,3 +72,14 @@ query_date_range(Bucket, Start, End) ->
 	BucketKeys = [{B, K} || K <- Keys],
 	{ok, BucketKeys}.
 
+query_usernames_sessions(Username) ->
+	{ok, Pid} = start_link(),
+	{ok, Result} = riakc_pb_socket:get_index(
+		Pid,
+		<<?SESSION_BUCKET>>,
+		{binary_index, "user"},
+		list_to_binary(Username)
+	),
+	close_link(Pid),
+	{_, Keys, _, _} = Result,
+	{ok, [binary_to_list(K) || K <- Keys]}.

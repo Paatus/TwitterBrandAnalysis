@@ -2,7 +2,7 @@
 
 -export([authenticate/2, logout/1]).
 -export([create_cookie/2, check_cookie/1, check_session/1, get_username/1]).
--export([update_session/1, create_session/2]).
+-export([update_session/1, create_session/2, remove_users_sessions/1]).
 
 
 -include("backend_config.hrl").
@@ -47,7 +47,7 @@ check_cookie(Req) ->
 create_session(Username,Ip) ->
     UUID = backend_utils:uuid_to_string(backend_utils:generate_uuid()),
 	BinDate = list_to_binary(backend_db:format_date(calendar:universal_time())),
-    backend_db:put(?SESSION_BUCKET, UUID, {Username, Ip}, [{{binary_index,"datetime"}, [BinDate]}]),
+    backend_db:put(?SESSION_BUCKET, UUID, {Username, Ip}, [{{binary_index, "user"}, [list_to_binary(Username)]}, {{binary_index,"datetime"}, [BinDate]}]),
     UUID.
 
 update_session(Req) ->
@@ -58,7 +58,7 @@ update_session(Req) ->
             case check_session(SessionID) of
                      {Username, ClientIp} ->
 	BinDate = list_to_binary(backend_db:format_date(calendar:universal_time())),
-    backend_db:put(?SESSION_BUCKET, SessionID, {Username, ClientIp}, [{{binary_index,"datetime"}, [BinDate]}]),
+    backend_db:put(?SESSION_BUCKET, SessionID, {Username, ClientIp}, [{{binary_index, "user"}, [list_to_binary(Username)]}, {{binary_index,"datetime"}, [BinDate]}]),
     mochiweb_cookies:cookie(?SESSION_COOKIE,SessionID, [{max_age, 60*60*24*7},{path, "/"}]);
                      _ ->
                         undefined
@@ -71,6 +71,11 @@ check_session(SessionID) ->
         {ok, Result} -> Result;
         _ -> error
     end.
+
+remove_users_sessions(Username) ->
+	{ok, Users} = backend_db:query_usernames_sessions(Username),
+	[backend_db:remove(?SESSION_BUCKET,U) || U <- Users].
+
 
 get_username(Req) ->
     ClientIp = backend_utils:get_ip(Req),
