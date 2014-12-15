@@ -3,6 +3,7 @@
 -export([authenticate/2, logout/1]).
 -export([create_cookie/2, check_cookie/1, check_session/1, get_username/1]).
 -export([update_session/1, create_session/2, remove_users_sessions/1]).
+-export([purge_sessions_datetime/1]).
 
 
 -include("backend_config.hrl").
@@ -75,6 +76,10 @@ check_session(SessionID) ->
 remove_users_sessions(Username) ->
 	{ok, Users} = backend_db:query_usernames_sessions(Username),
 	[backend_db:remove(?SESSION_BUCKET,U) || U <- Users].
+
+purge_sessions_datetime(End) ->
+    {ok, Keys} = backend_db:query_date_range(?SESSION_BUCKET, "0",backend_utils:get_date_from(End)),
+	[backend_db:remove(?SESSION_BUCKET,Key) || Key <- Keys].
 
 
 get_username(Req) ->
