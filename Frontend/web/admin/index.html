@@ -140,32 +140,54 @@ $( document ).ready(function() {
         clearTimeout( window.____adduser_keypress );
         window.____adduser_keypress = setTimeout( function() {
             var add_user_input = $("#add_user_username");
+            if ($('#username_list  option').length == 0) {
+                if (add_user_input.val().length == 0) {
+                    add_user_input.css("background-color","white");
+                    return;
+                } else if (add_user_input.val().length <= 3 &&  add_user_input.val().length > 0) {
+                    add_user_input.css("background-color","#FF4136");
+                } else {
+                    add_user_input.css("background-color","#2ECC40");
+                }
+            } else {
+                $("#username_list option").each(function(i, user) {
+                    if (add_user_input.val().length == 0) {
+                        add_user_input.css("background-color","white");
+                        return;
+                    }
+                    if (user.value == add_user_input.val() || (add_user_input.val().length <= 3 &&  add_user_input.val().length > 0)) {
+                        add_user_input.css("background-color","#FF4136");
+                        return;
+                    }
+                    add_user_input.css("background-color","#2ECC40");
+                });
+            }
+        }, 300);
+    });
+    $("#add_user_username").focusout(function() {
+        var add_user_input = $("#add_user_username");
+        if ($('#username_list  option').length == 0) {
+            if (add_user_input.val().length == 0) {
+                add_user_input.css("background-color","white");
+                return;
+            } else if (add_user_input.val().length <= 3 &&  add_user_input.val().length > 0) {
+                add_user_input.css("background-color","#FF4136");
+            } else {
+                add_user_input.css("background-color","#2ECC40");
+            }
+        } else {
             $("#username_list option").each(function(i, user) {
                 if (add_user_input.val().length == 0) {
                     add_user_input.css("background-color","white");
                     return;
                 }
-                if (user.value == add_user_input.val() || (add_user_input.val().length <= 3 &&  add_user_input.val().length > 0)) {
+                    if (user.value == add_user_input.val() || (add_user_input.val().length <= 3 &&  add_user_input.val().length > 0)) {
                     add_user_input.css("background-color","#FF4136");
                     return;
                 }
                 add_user_input.css("background-color","#2ECC40");
             });
-        }, 300);
-    });
-    $("#add_user_username").focusout(function() {
-        var add_user_input = $("#add_user_username");
-        $("#username_list option").each(function(i, user) {
-            if (add_user_input.val().length == 0) {
-                add_user_input.css("background-color","white");
-                return;
-            }
-                if (user.value == add_user_input.val() || (add_user_input.val().length <= 3 &&  add_user_input.val().length > 0)) {
-                add_user_input.css("background-color","#FF4136");
-                return;
-            }
-            add_user_input.css("background-color","#2ECC40");
-        });
+        }
         clearTimeout( window.____adduser_keypress );
     });
     $("#add_user_reset").click(function() { 
