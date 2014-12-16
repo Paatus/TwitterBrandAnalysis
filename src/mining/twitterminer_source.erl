@@ -217,6 +217,7 @@ print_headers(C) ->
 % as a result of specifying delimited=length.
 % https://dev.twitter.com/streaming/overview/processing
 split_loop(Sink, Sender, Buffer) ->
+%io:format("~p~n", [Buffer]),
   case pop_size(Buffer) of
     {size, N, Rest} ->
       case buffer_pop_n(Rest, N, Sender) of
@@ -236,7 +237,8 @@ split_loop(Sink, Sender, Buffer) ->
         {incomplete, Chunk}    -> Sink ! {error, {incomplete, Chunk}};
         {terminate, _Chunk}    -> Sink ! terminate;
         {error, Reason, Chunk} -> Sink ! {error, {Reason, Chunk}}
-      end
+      end;
+    {newline} -> split_loop(Sink, Sender, <<>>)
   end.
 
 % Get a chunk of N bytes from the buffer. If there is not enough data
@@ -259,6 +261,7 @@ buffer_pop_n(B, N, Sender) ->
 % We should also support discarding \r\n here
 % (see 'blank lines' in https://dev.twitter.com/streaming/overview/messages-types)
 pop_size(<<>>) -> {more, 1};
+pop_size(<<"\r\n">>) -> {newline};
 pop_size(<<A,Rest/binary>>) when A >= $0, A =< $9 ->
   pop_size((A - $0), 1, Rest).
 
