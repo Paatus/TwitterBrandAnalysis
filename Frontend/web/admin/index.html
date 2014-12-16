@@ -75,6 +75,8 @@
 
 </head>
 <body>
+  <datalist id="username_list">
+  </datalist>
 
   <!-- Primary Page Layout
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
@@ -90,7 +92,7 @@
       </div>
       <div class="six columns add_user">
         <label for="add_user_username">Username</label>
-        <input class="u-full-width" type="text" placeholder="Username" id="add_user_username">
+        <input class="u-full-width" type="text" placeholder="Username" id="add_user_username" list="username_list">
       </div>
       <div class="six columns add_user">
         <label for="add_user_password">Password</label>
@@ -105,7 +107,7 @@
       </div>
       <div class="six columns remove_user" style="display: none;">
         <label for="remove_user_username">Username</label>
-        <input class="u-full-width" type="text" placeholder="Username" id="remove_user_username">
+        <input class="u-full-width" type="text" placeholder="Username" id="remove_user_username" list="username_list">
       </div>
       <div class="six columns remove_user" style="display: none;">
         <input id="remove_user_reset" class="button u-pull-right" type="button" value="Reset" style="margin-left: .5rem; background-color: #FFFFFF;">
@@ -113,7 +115,6 @@
       </div>
     </div>
   </div>
-
   <script>
 $( document ).ready(function() {
     /*jQuery.fn.resize_delayed = function ( func, duration ){
@@ -200,7 +201,6 @@ $( document ).ready(function() {
     } );
 
     $( "#remove_user_submit" ).click(function() { 
-        $.ajax()
         var user = $("#remove_user_username").val();
         if (user.length == 0) {
             return false;
@@ -253,6 +253,33 @@ $( document ).ready(function() {
     });
     $("nav span.span_link").css("width",evenWidth);
 
+    $.ajax({
+
+
+        url: "/api/admin/get_all_usernames/",
+
+        data: {
+        },
+
+        type: "GET",
+
+        dataType : "json",
+
+        success: function( json ) {
+            var username_list = $("#username_list");
+            $.each(json.users, function(i, user) {
+                username_list.append(
+                    $('<option></option>').val(user)
+                );
+            });
+        },
+
+        error: function( xhr, status, errorThrown ) {
+        },
+
+        complete: function( xhr, status ) {
+        }
+    });
 });
   </script>
 <!-- End Document
