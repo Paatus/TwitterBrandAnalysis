@@ -6,8 +6,8 @@ mapred(Pid, Keys) ->
 	{ok, [{_, [R]}]} = riakc_pb_socket:mapred(
                 Pid,
                 Keys,
-                [{map, {modfun, ?MODULE, map_concat}, none, false},
-		{reduce, {modfun, ?MODULE, red_weight}, none, true}]
+                [{map, {modfun, ?MODULE, map_weight}, none, false},
+                {reduce, {modfun, ?MODULE, red_weight}, none, true}]
         ),
         {ok, dict:to_list(R)}.
 
