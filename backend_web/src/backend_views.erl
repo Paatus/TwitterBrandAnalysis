@@ -44,6 +44,7 @@ urls() -> [
            {"^api/admin/change_password/?$", admin_change_password_view                               },
            {"^api/admin/add_user/?$", admin_add_user_view                                             },
            {"^api/admin/remove_user/?$", admin_remove_user_view                                       },
+           {"^api/admin/get_all_usernames/?$", admin_get_users_view                                   },
            {"^admin/.*$", get_admin_view                                                              },
            {"^(?:js|css|font|vendor|imgs)/.*$", serve_files                                           }
           ].
