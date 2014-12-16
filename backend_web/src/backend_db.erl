@@ -1,6 +1,6 @@
 -module(backend_db).
 
--export([start_link/0, close_link/1, fetch/2, put/4, put/5, format_date/1, remove/2, query_date_range/3, query_usernames_sessions/1]).
+-export([start_link/0, close_link/1, fetch/2, put/4, put/5, format_date/1, remove/2, query_date_range/3, query_usernames_sessions/1, get_all_usernames/0]).
 
 -include("backend_config.hrl").
 
@@ -83,3 +83,14 @@ query_usernames_sessions(Username) ->
 	close_link(Pid),
 	{_, Keys, _, _} = Result,
 	{ok, [binary_to_list(K) || K <- Keys]}.
+
+get_all_usernames() ->
+    {ok, Pid} = start_link(),
+    {ok, Result} = riakc_pb_socket:get_index(
+        Pid,
+        <<"AccountInfo">>,
+        {binary_index, "user"},
+        <<"user">>
+    ),
+    {_, Keys, _, _} = Result,
+    {ok, [binary_to_list(K) || K <- Keys]}.

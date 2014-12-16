@@ -351,6 +351,8 @@ get_admin_view('GET', Req) ->
             Req:not_found()
     end.
 
+admin_change_password_view('GET', Req) ->
+        Req:not_found();
 admin_change_password_view('POST', Req) ->
     case backend_login:check_cookie(Req) of
         {"admin", _} ->
@@ -369,6 +371,8 @@ admin_change_password_view('POST', Req) ->
         _ -> Req:not_found()
     end.
 
+admin_add_user_view('GET', Req) ->
+        Req:not_found();
 admin_add_user_view('POST', Req) ->
     case backend_login:check_cookie(Req) of
         {"admin", _} ->
@@ -387,6 +391,8 @@ admin_add_user_view('POST', Req) ->
         _ -> Req:not_found()
     end.
 
+admin_remove_user_view('GET', Req) ->
+        Req:not_found();
 admin_remove_user_view('POST', Req) ->
     case backend_login:check_cookie(Req) of
         {"admin", _} ->
@@ -401,6 +407,17 @@ admin_remove_user_view('POST', Req) ->
                     Req:ok({"application/json",
                             ?API_HEADER,[mochijson2:encode({struct,[{status,list_to_binary("Error account doesn't exist!")}, {code, list_to_binary("error")}]})]})
             end;
+        _ -> Req:not_found()
+    end.
+
+admin_get_users_view('POST', Req) ->
+    admin_get_users_view('GET', Req);
+admin_get_users_view('GET', Req) ->
+    case backend_login:check_cookie(Req) of
+        {"admin", _} ->
+            {ok, Users} = backend_db:get_all_usernames(),
+            Req:ok({"application/json",
+                    ?API_HEADER,[mochijson2:encode({struct,[{users,[list_to_binary(V) || V <- Users]}]})]});
         _ -> Req:not_found()
     end.
 
