@@ -1,4 +1,4 @@
--module(mapred_count).
+-module(backend_mapred_count).
 -export([mapred/2, map_count/3, red_count/2]).
 
 mapred(Pid, Keys) ->

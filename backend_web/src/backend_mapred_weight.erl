@@ -1,4 +1,4 @@
--module(mapred_weight).
+-module(backend_mapred_weight).
 
 -export([mapred/2, map_weight/3, red_weight/2]).
 

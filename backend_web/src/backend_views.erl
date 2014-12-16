@@ -65,7 +65,7 @@ get_world_timespan_view('GET', Req, [Start, End]) when Start > End ->
                                              backend_utils:json_error(Reason), ?API_HEADER_CACHE);
         {Username,_} ->
             {ok, Keys} = backend_db:query_date_range({Username, worldmap}, backend_utils:get_date_from(Start),backend_utils:get_date_from(End)),
-            {ok, Info} = mapred_weight:mapred(Keys),
+            {ok, Info} = backend_mapred_weight:mapred(Keys),
             Req:ok({"application/json",?API_HEADER, [mochijson2:encode({struct,[{A,backend_utils:fix_double_number(B)} || {A,B} <- Info]})]});
         _ ->
             backend_utils:api_error_response(Req,
@@ -86,7 +86,7 @@ get_world_keyword_timespan_view('GET', Req, [Keyword,Start,End]) when Start > En
     case backend_user:user_has_keyword(Req, Keyword) of
         {true, Username} ->
             {ok, Keys} = backend_db:query_date_range({Username, Keyword, worldmap}, backend_utils:get_date_from(Start),backend_utils:get_date_from(End)),
-            {ok, Info} = mapred_weight:mapred(Keys),
+            {ok, Info} = backend_mapred_weight:mapred(Keys),
             Req:ok({"application/json",?API_HEADER, [mochijson2:encode({struct,[{A,backend_utils:fix_double_number(B)} || {A,B} <- Info]})]});
         {false, _} ->
             backend_utils:api_error_response(Req,
@@ -111,7 +111,7 @@ get_world_view_country('GET', Req, [_Country]) ->
     case backend_login:get_username(Req) of
         "" -> ok;
         _Username -> {ok, Keys} = backend_db:query_date_range({}, backend_utils:get_date_from(1440),"9"),
-                    {ok, Info} = mapred_weight:mapred(Keys),
+                    {ok, Info} = backend_mapred_weight:mapred(Keys),
                     Req:ok({"application/json",?API_HEADER, [mochijson2:encode({struct,[{A,backend_utils:fix_double_number(B)} || {A,B} <- Info]})]})
     end.
 
@@ -127,7 +127,7 @@ get_top_keywords_timespan_view('GET', Req, [Start, End]) when Start > End ->
                                              backend_utils:json_error(Reason), ?API_HEADER_CACHE);
         {Username,_} ->
             {ok, Keys} = backend_db:query_date_range({Username, words}, backend_utils:get_date_from(Start),backend_utils:get_date_from(End)),
-            {ok, Info} = mapred_count:mapred(Keys),
+            {ok, Info} = backend_mapred_count:mapred(Keys),
             Req:ok({"application/json",?API_HEADER, [mochijson2:encode({struct,[{A,integer_to_binary(B)} || {A,B} <- Info]})]});
         _ ->
             backend_utils:api_error_response(Req,
@@ -145,7 +145,7 @@ get_top_keywords_timespan_view('GET', Req, [Keyword, Start, End]) when Start > E
                                              backend_utils:json_error(Reason), ?API_HEADER_CACHE);
         {true, Username} ->
             {ok, Keys} = backend_db:query_date_range({Username, Keyword, words}, backend_utils:get_date_from(Start),backend_utils:get_date_from(End)),
-            {ok, Info} = mapred_count:mapred(Keys),
+            {ok, Info} = backend_mapred_count:mapred(Keys),
             Req:ok({"application/json",?API_HEADER, [mochijson2:encode({struct,[{A,integer_to_binary(B)} || {A,B} <- Info]})]});
         _ ->
             backend_utils:api_error_response(Req,
@@ -167,7 +167,7 @@ get_top_hashtags_timespan_view('GET', Req, [Start, End]) when Start > End ->
                                              backend_utils:json_error(Reason), ?API_HEADER_CACHE);
         {Username,_} ->
             {ok, Keys} = backend_db:query_date_range({Username, hashtags}, backend_utils:get_date_from(Start),backend_utils:get_date_from(End)),
-            {ok, Info} = mapred_count:mapred(Keys),
+            {ok, Info} = backend_mapred_count:mapred(Keys),
             Req:ok({"application/json",?API_HEADER, [mochijson2:encode({struct,[{A,integer_to_binary(B)} || {A,B} <- Info]})]});
         _ ->
             backend_utils:api_error_response(Req,
@@ -185,7 +185,7 @@ get_top_hashtags_timespan_view('GET', Req, [Keyword, Start, End]) when Start > E
                                              backend_utils:json_error(Reason), ?API_HEADER_CACHE);
         {true, Username} ->
             {ok, Keys} = backend_db:query_date_range({Username, Keyword, hashtags}, backend_utils:get_date_from(Start),backend_utils:get_date_from(End)),
-            {ok, Info} = mapred_count:mapred(Keys),
+            {ok, Info} = backend_mapred_count:mapred(Keys),
             Req:ok({"application/json",?API_HEADER, [mochijson2:encode({struct,[{A,integer_to_binary(B)} || {A,B} <- Info]})]});
         _ ->
             backend_utils:api_error_response(Req,
@@ -207,7 +207,7 @@ get_top_users_timespan_view('GET', Req, [Start, End]) when Start > End ->
                                              backend_utils:json_error(Reason), ?API_HEADER_CACHE);
         {Username,_} ->
             {ok, Keys} = backend_db:query_date_range({Username, users}, backend_utils:get_date_from(Start),backend_utils:get_date_from(End)),
-            {ok, Info} = mapred_count:mapred(Keys),
+            {ok, Info} = backend_mapred_count:mapred(Keys),
             Req:ok({"application/json",?API_HEADER, [mochijson2:encode({struct,[{A,integer_to_binary(B)} || {A,B} <- Info]})]});
         _ ->
             backend_utils:api_error_response(Req,
@@ -225,7 +225,7 @@ get_top_users_timespan_view('GET', Req, [Keyword, Start, End]) when Start > End 
                                              backend_utils:json_error(Reason), ?API_HEADER_CACHE);
         {true, Username} ->
             {ok, Keys} = backend_db:query_date_range({Username, Keyword, users}, backend_utils:get_date_from(Start),backend_utils:get_date_from(End)),
-            {ok, Info} = mapred_count:mapred(Keys),
+            {ok, Info} = backend_mapred_count:mapred(Keys),
             Req:ok({"application/json",?API_HEADER, [mochijson2:encode({struct,[{A,integer_to_binary(B)} || {A,B} <- Info]})]});
         _ ->
             backend_utils:api_error_response(Req,
@@ -250,7 +250,7 @@ get_amount_timespan_view('GET', Req, [Keyword, Start, End]) when Start > End and
                                              backend_utils:json_error(Reason), ?API_HEADER_CACHE);
         {true, Username} ->
             {ok, Keys} = backend_db:query_date_range({Username, Keyword, amount}, backend_utils:get_date_from(Start),backend_utils:get_date_from(End)),
-            {ok, Info} = mapred_count:mapred(Keys),
+            {ok, Info} = backend_mapred_count:mapred(Keys),
             Req:ok({"application/json",?API_HEADER, [mochijson2:encode({struct,[{A,integer_to_binary(B)} || {A,B} <- Info]})]});
         _ ->
             backend_utils:api_error_response(Req,
