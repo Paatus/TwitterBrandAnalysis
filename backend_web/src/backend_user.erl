@@ -63,6 +63,8 @@ create_account(Username, Password) ->
             {true, "Account created!"}
     end.
 
+remove_account("admin") ->
+    {error, "Could not find the Username!"};
 remove_account(Username) ->
     case backend_db:fetch(?LOGIN_BUCKET, Username) of
         {ok, _} ->
