@@ -289,8 +289,7 @@ login('GET', Req) ->
 login_json_view('POST', Req) ->
     case backend_user:validate_login(Req) of
         {{First,_},{Second,_}} when First == false orelse Second == false ->
-            Req:ok({"application/json",
-                    ?API_HEADER,[mochijson2:encode({struct,[{status,list_to_binary("Error account doesn't exist!")}, {code, list_to_binary("error")}]})]});
+                backend_utils:api_error_response(Req, [mochijson2:encode({struct,[{status,list_to_binary("Error account doesn't exist!")}, {code, list_to_binary("error")}]})], ?API_HEADER_CACHE);
         {{true, Username},{true, Password}} ->
             case backend_login:authenticate(Username,Password) of
                 true ->
@@ -301,13 +300,11 @@ login_json_view('POST', Req) ->
                                     [?API_HEADER_CACHE, Cookie]  ,[mochijson2:encode({struct,[{status,list_to_binary("Login Successfull!")}, {code, list_to_binary("success")}]})]})
                     end;
                 _ ->
-                    Req:ok({"application/json",
-                            ?API_HEADER,[mochijson2:encode({struct,[{status,list_to_binary("Error account doesn't exist!")}, {code, list_to_binary("error")}]})]})
+                    backend_utils:api_error_response(Req, [mochijson2:encode({struct,[{status,list_to_binary("Error account doesn't exist!")}, {code, list_to_binary("error")}]})], ?API_HEADER_CACHE)
             end
     end;
 login_json_view('GET', Req) ->
-    Req:ok({"application/json",
-            ?API_HEADER,[mochijson2:encode({struct,[{status,list_to_binary("Error account doesn't exist!")}, {code, list_to_binary("error")}]})]}).
+    backend_utils:api_error_response(Req, [mochijson2:encode({struct,[{status,list_to_binary("Error account doesn't exist!")}, {code, list_to_binary("error")}]})], ?API_HEADER_CACHE).
 
 logout('GET', Req) ->
     Cookie = backend_login:logout(Req),
