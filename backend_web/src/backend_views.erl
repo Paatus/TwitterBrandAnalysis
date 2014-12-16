@@ -1,7 +1,7 @@
 -module(backend_views).
 
 -export([urls/0, get_world_view_country/3, login/2, add_user_keyword/3, get_user_keywords/2, logout/2, serve_files/2]).
--export([login_json_view/3]).
+-export([login_json_view/2]).
 -export([get_world_view/2, get_world_timespan_view/3]).
 -export([get_world_keyword_view/3, get_world_keyword_timespan_view/3]).
 -export([get_top_keywords_view/2, get_top_keywords_timespan_view/3]).
@@ -298,7 +298,7 @@ login_json_view('POST', Req) ->
                     case Username of
                         _ ->
                             Req:ok({"application/json",
-                                    ?API_HEADER,[mochijson2:encode({struct,[{status,list_to_binary("Login Successfull!")}, {code, list_to_binary("success")}]})]})
+                                    [?API_HEADER_CACHE, Cookie]  ,[mochijson2:encode({struct,[{status,list_to_binary("Login Successfull!")}, {code, list_to_binary("success")}]})]})
                     end;
                 _ ->
                     Req:ok({"application/json",
