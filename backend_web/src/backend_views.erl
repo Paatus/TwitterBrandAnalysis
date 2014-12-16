@@ -1,6 +1,7 @@
 -module(backend_views).
 
 -export([urls/0, get_world_view_country/3, login/2, add_user_keyword/3, get_user_keywords/2, logout/2, serve_files/2]).
+-export([login_json_view/3]).
 -export([get_world_view/2, get_world_timespan_view/3]).
 -export([get_world_keyword_view/3, get_world_keyword_timespan_view/3]).
 -export([get_top_keywords_view/2, get_top_keywords_timespan_view/3]).
@@ -37,6 +38,7 @@ urls() -> [
            {"^api/amount/(\\w{3,64})/?$", get_amount_view                                             },
            {"^api/amount/(\\w{3,64})/(\\d{1,6})/(\\d{1,6})/?$", get_amount_timespan_view              },
            {"^api/login/?$", login                                                                    },
+           {"^api/login/json/?$", login_json_view                                                                    },
            {"^api/logout/?$", logout                                                                  },
            {"^api/account/change_password/?$", change_password                                        },
            {"^api/keywords/add/(\\w{3,64})/?$", add_user_keyword                                      },
@@ -283,6 +285,29 @@ login('POST', Req) ->
 login('GET', Req) ->
     backend_utils:redirect(Req, "/",
         "Error! No login credentials.").
+
+login_json_view('POST', Req) ->
+    case backend_user:validate_login(Req) of
+        {{First,_},{Second,_}} when First == false orelse Second == false ->
+            Req:ok({"application/json",
+                    ?API_HEADER,[mochijson2:encode({struct,[{status,list_to_binary("Error account doesn't exist!")}, {code, list_to_binary("error")}]})]});
+        {{true, Username},{true, Password}} ->
+            case backend_login:authenticate(Username,Password) of
+                true ->
+                    Cookie = backend_login:create_cookie(Username, backend_utils:get_ip(Req)),
+                    case Username of
+                        _ ->
+                            Req:ok({"application/json",
+                                    ?API_HEADER,[mochijson2:encode({struct,[{status,list_to_binary("Login Successfull!")}, {code, list_to_binary("success")}]})]})
+                    end;
+                _ ->
+                    Req:ok({"application/json",
+                            ?API_HEADER,[mochijson2:encode({struct,[{status,list_to_binary("Error account doesn't exist!")}, {code, list_to_binary("error")}]})]})
+            end
+    end;
+login_json_view('GET', Req) ->
+    Req:ok({"application/json",
+            ?API_HEADER,[mochijson2:encode({struct,[{status,list_to_binary("Error account doesn't exist!")}, {code, list_to_binary("error")}]})]}).
 
 logout('GET', Req) ->
     Cookie = backend_login:logout(Req),
