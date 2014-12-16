@@ -4,6 +4,7 @@
 -export([init/1]).
 
 start(User, SearchWords) ->
+	io:format("Starting ~p with words \"~s\".~n",[User, SearchWords]),
 	{ok, Pid} = supervisor:start_link(?MODULE, [User, SearchWords]),
 	{ok, Relay} = supervisor:start_child(Pid, {
 		relay,

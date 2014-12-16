@@ -15,7 +15,7 @@ handle_call(_Request, _From, State) ->
 handle_cast({tweet, Tweet}, State) ->
 	%io:format("Received tweet ~p~n", [State]),
 	[User, SearchWords] = State,
-        processTweet(User, SearchWords, Tweet),
+        spawn(fun() -> processTweet(User, SearchWords, Tweet) end),
 	{noreply, State};
 handle_cast(_Message, State) ->
 	%io:format("Received '~p' with state '~p'~n", [Message, State]),

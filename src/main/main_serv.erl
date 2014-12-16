@@ -64,7 +64,7 @@ add_kw(User, KeywordRaw) ->
 
 remove_kw(User, KeywordRaw) ->
 	Keyword = string:to_lower(KeywordRaw),
-	KWList = riakio:fetch("AccountInfo", User),
+	{ok, KWList} = riakio:fetch("AccountInfo", User),
 	case lists:member(Keyword, KWList) of
 		true ->
 			NewList = lists:delete(Keyword, KWList),
@@ -85,6 +85,10 @@ delete_user(User) ->
 	{ok, SearchWords} = riakio:fetch("AccountInfo", User),
 	[delete_keyword_data(User, SW) || SW <- SearchWords],
 	delete_bucket({User, worldmap}),
+	delete_bucket({User, words}),
+	delete_bucket({User, hashtags}),
+	delete_bucket({User, users}),
+	delete_bucket({User, amount}),
 	riakio:delete("AccountInfo", User),
 	ok.
 

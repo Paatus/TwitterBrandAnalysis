@@ -52,7 +52,7 @@ concat(User, Keyword, DateTime, MapconcatPid) ->
 	{ok, Keys} = riakio:query_date_range({User, Keyword}, M5, M0),
 	{ok, MapResult} = mapred_weight:mapred_weight(Keys),
 	{ok, {_, [{_, Words}, {_, Tags}, {_, Users}]}} = mapred_tokens:mapred_tokens(Keys),
-	{ok, Amounts} = mapred_count:mapred_count(Keys),
+	{ok, Amounts} = mapred_count:mapred_amount(Keys),
 	MapBucket = {User, Keyword, worldmap},
 	WordBucket = {User, Keyword, words},
 	TagBucket = {User, Keyword, hashtags},
@@ -87,16 +87,39 @@ concat(User, Keyword, DateTime, MapconcatPid) ->
 concat_worldmap(User, Keywords, DateTime) ->
 	Start = riakio:format_date(remove_seconds(DateTime)),
 	End = riakio:format_date(calendar:gregorian_seconds_to_datetime(calendar:datetime_to_gregorian_seconds(remove_seconds(DateTime)) + 1)),
-	R1 = [receive K -> riakio:query_date_range({User, K, worldmap}, Start, End) end || K <- Keywords],
-	io:format("Concatenating ~p range ~s - ~s~n", [{User, worldmap}, Start, End]),	
-	Keys = lists:append([L || {ok, L} <- R1]),
-	{ok, Result} = mapred_weight:mapred_concat_weight(Keys),
+	Results = [receive K ->
+		{ok, Mapkeys} = riakio:query_date_range({User, K, worldmap}, Start, End),
+		{ok, Wordkeys} = riakio:query_date_range({User, K, words}, Start, End),
+		{ok, Hashkeys} = riakio:query_date_range({User, K, hashtags}, Start, End),
+		{ok, Userkeys} = riakio:query_date_range({User, K, users}, Start, End),
+		{ok, Amountkeys} = riakio:query_date_range({User, K, amount}, Start, End),
+		[Mapkeys, Wordkeys, Hashkeys, Userkeys, Amountkeys]
+		end || K <- Keywords],
+	io:format("Concatenating ~p ~s~n", [{User}, Start]),
+	[Mapkeys, Wordkeys, Tagkeys, Userkeys, Amountkeys] = lists:foldl(fun([A1,B1,C1,D1,E1], [A2,B2,C2,D2,E2]) -> [A1++A2, B1++B2, C1++C2, D1++D2, E1++E2] end, [[],[],[],[],[]], Results),
+	{ok, MapResult} = mapred_weight:mapred_concat_weight(Mapkeys),
+	{ok, Words} = mapred_count:mapred_count(Wordkeys),
+	{ok, Tags} = mapred_count:mapred_count(Tagkeys),
+	{ok, Users} = mapred_count:mapred_count(Userkeys),
+	{ok, Amounts} = mapred_count:mapred_count(Amountkeys),
 	{ok, Pid} = riakio:start_link(),
 	[riakio:put(
-		Pid, {User, worldmap}, {End, Location}, Weight,
+		Pid, {User, worldmap}, {Start, Location}, Weight,
 		[{{binary_index,"datetime"},[list_to_binary(Start)]},
 		{{binary_index,"location"},[riakio:to_binary(Location)]}])
-		|| {Location, Weight} <- Result],
+		|| {Location, Weight} <- MapResult],
+	riakio:put(
+		Pid, {User, words}, Start, limit_list(100, Words),
+		[{{binary_index,"datetime"},[list_to_binary(Start)]}]),
+	riakio:put(
+		Pid, {User, hashtags}, Start, limit_list(50, Tags),
+		[{{binary_index,"datetime"},[list_to_binary(Start)]}]),
+	riakio:put(
+		Pid, {User, users}, Start, limit_list(50, Users),
+		[{{binary_index,"datetime"},[list_to_binary(Start)]}]),
+	riakio:put(
+		Pid, {User, amount}, Start, Amounts,
+		[{{binary_index,"datetime"},[list_to_binary(Start)]}]),
 	riakio:close_link(Pid).
 
 retroconcat(User, Keyword) ->
