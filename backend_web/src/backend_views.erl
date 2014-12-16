@@ -134,7 +134,7 @@ get_top_keywords_timespan_view('GET', Req, [Start, End]) when Start > End ->
         {Username,_} ->
             {ok, Keys} = backend_db:query_date_range({Username, words}, backend_utils:get_date_from(Start),backend_utils:get_date_from(End)),
             {ok, Pid} = backend_db:start_link(),
-            {ok, Info} = backend_mapred_count:mapred(Pid, Keys),
+            Info = backend_mapred_count:mapred(Pid, Keys),
             backend_db:close_link(Pid),
             Req:ok({"application/json",?API_HEADER, [mochijson2:encode({struct,[{A,integer_to_binary(B)} || {A,B} <- Info]})]});
         _ ->
@@ -154,7 +154,7 @@ get_top_keywords_timespan_view('GET', Req, [Keyword, Start, End]) when Start > E
         {true, Username} ->
             {ok, Keys} = backend_db:query_date_range({Username, Keyword, words}, backend_utils:get_date_from(Start),backend_utils:get_date_from(End)),
             {ok, Pid} = backend_db:start_link(),
-            {ok, Info} = backend_mapred_count:mapred(Pid, Keys),
+            Info = backend_mapred_count:mapred(Pid, Keys),
             backend_db:close_link(Pid),
             Req:ok({"application/json",?API_HEADER, [mochijson2:encode({struct,[{A,integer_to_binary(B)} || {A,B} <- Info]})]});
         _ ->
@@ -178,7 +178,7 @@ get_top_hashtags_timespan_view('GET', Req, [Start, End]) when Start > End ->
         {Username,_} ->
             {ok, Keys} = backend_db:query_date_range({Username, hashtags}, backend_utils:get_date_from(Start),backend_utils:get_date_from(End)),
             {ok, Pid} = backend_db:start_link(),
-            {ok, Info} = backend_mapred_count:mapred(Pid, Keys),
+            Info = backend_mapred_count:mapred(Pid, Keys),
             backend_db:close_link(Pid),
             Req:ok({"application/json",?API_HEADER, [mochijson2:encode({struct,[{A,integer_to_binary(B)} || {A,B} <- Info]})]});
         _ ->
@@ -198,7 +198,7 @@ get_top_hashtags_timespan_view('GET', Req, [Keyword, Start, End]) when Start > E
         {true, Username} ->
             {ok, Keys} = backend_db:query_date_range({Username, Keyword, hashtags}, backend_utils:get_date_from(Start),backend_utils:get_date_from(End)),
             {ok, Pid} = backend_db:start_link(),
-            {ok, Info} = backend_mapred_count:mapred(Pid, Keys),
+            Info = backend_mapred_count:mapred(Pid, Keys),
             backend_db:close_link(Pid),
             Req:ok({"application/json",?API_HEADER, [mochijson2:encode({struct,[{A,integer_to_binary(B)} || {A,B} <- Info]})]});
         _ ->
@@ -222,7 +222,7 @@ get_top_users_timespan_view('GET', Req, [Start, End]) when Start > End ->
         {Username,_} ->
             {ok, Keys} = backend_db:query_date_range({Username, users}, backend_utils:get_date_from(Start),backend_utils:get_date_from(End)),
             {ok, Pid} = backend_db:start_link(),
-            {ok, Info} = backend_mapred_count:mapred(Pid, Keys),
+            Info = backend_mapred_count:mapred(Pid, Keys),
             backend_db:close_link(Pid),
             Req:ok({"application/json",?API_HEADER, [mochijson2:encode({struct,[{A,integer_to_binary(B)} || {A,B} <- Info]})]});
         _ ->
@@ -242,7 +242,7 @@ get_top_users_timespan_view('GET', Req, [Keyword, Start, End]) when Start > End 
         {true, Username} ->
             {ok, Keys} = backend_db:query_date_range({Username, Keyword, users}, backend_utils:get_date_from(Start),backend_utils:get_date_from(End)),
             {ok, Pid} = backend_db:start_link(),
-            {ok, Info} = backend_mapred_count:mapred(Pid, Keys),
+            Info = backend_mapred_count:mapred(Pid, Keys),
             backend_db:close_link(Pid),
             Req:ok({"application/json",?API_HEADER, [mochijson2:encode({struct,[{A,integer_to_binary(B)} || {A,B} <- Info]})]});
         _ ->
@@ -269,7 +269,7 @@ get_amount_timespan_view('GET', Req, [Keyword, Start, End]) when Start > End and
         {true, Username} ->
             {ok, Keys} = backend_db:query_date_range({Username, Keyword, amount}, backend_utils:get_date_from(Start),backend_utils:get_date_from(End)),
             {ok, Pid} = backend_db:start_link(),
-            {ok, Info} = backend_mapred_count:mapred(Pid, Keys),
+            Info = backend_mapred_count:mapred(Pid, Keys),
             backend_db:close_link(Pid),
             Req:ok({"application/json",?API_HEADER, [mochijson2:encode({struct,[{A,integer_to_binary(B)} || {A,B} <- Info]})]});
         _ ->
