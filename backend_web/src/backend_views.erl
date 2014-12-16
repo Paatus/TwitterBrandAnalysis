@@ -136,7 +136,8 @@ get_top_keywords_timespan_view('GET', Req, [Start, End]) when Start > End ->
             {ok, Pid} = backend_db:start_link(),
             Info = backend_mapred_count:mapred(Pid, Keys),
             backend_db:close_link(Pid),
-            Req:ok({"application/json",?API_HEADER, [mochijson2:encode({struct,[{A,integer_to_binary(B)} || {A,B} <- Info]})]});
+            Enc = mochijson2:encoder([{utf8,true}]),
+            Req:ok({"application/json",?API_HEADER, [Enc({struct,[{unicode:characters_to_binary(binary_to_list(A)),integer_to_binary(B)} || {A,B} <- Info]})]});
         _ ->
             backend_utils:api_error_response(Req,
                                              backend_utils:json_error("Unknown error"), ?API_HEADER_CACHE)
@@ -156,7 +157,8 @@ get_top_keywords_timespan_view('GET', Req, [Keyword, Start, End]) when Start > E
             {ok, Pid} = backend_db:start_link(),
             Info = backend_mapred_count:mapred(Pid, Keys),
             backend_db:close_link(Pid),
-            Req:ok({"application/json",?API_HEADER, [mochijson2:encode({struct,[{A,integer_to_binary(B)} || {A,B} <- Info]})]});
+            Enc = mochijson2:encoder([{utf8,true}]),
+            Req:ok({"application/json",?API_HEADER, [Enc({struct,[{unicode:characters_to_binary(binary_to_list(A)),integer_to_binary(B)} || {A,B} <- Info]})]});
         _ ->
             backend_utils:api_error_response(Req,
                                              backend_utils:json_error("Unknown error"), ?API_HEADER_CACHE)
@@ -180,7 +182,8 @@ get_top_hashtags_timespan_view('GET', Req, [Start, End]) when Start > End ->
             {ok, Pid} = backend_db:start_link(),
             Info = backend_mapred_count:mapred(Pid, Keys),
             backend_db:close_link(Pid),
-            Req:ok({"application/json",?API_HEADER, [mochijson2:encode({struct,[{A,integer_to_binary(B)} || {A,B} <- Info]})]});
+            Enc = mochijson2:encoder([{utf8,true}]),
+            Req:ok({"application/json",?API_HEADER, [Enc({struct,[{unicode:characters_to_binary(binary_to_list(A)),integer_to_binary(B)} || {A,B} <- Info]})]});
         _ ->
             backend_utils:api_error_response(Req,
                                              backend_utils:json_error("Unknown error"), ?API_HEADER_CACHE)
@@ -200,7 +203,8 @@ get_top_hashtags_timespan_view('GET', Req, [Keyword, Start, End]) when Start > E
             {ok, Pid} = backend_db:start_link(),
             Info = backend_mapred_count:mapred(Pid, Keys),
             backend_db:close_link(Pid),
-            Req:ok({"application/json",?API_HEADER, [mochijson2:encode({struct,[{A,integer_to_binary(B)} || {A,B} <- Info]})]});
+            Enc = mochijson2:encoder([{utf8,true}]),
+            Req:ok({"application/json",?API_HEADER, [Enc({struct,[{unicode:characters_to_binary(binary_to_list(A)),integer_to_binary(B)} || {A,B} <- Info]})]});
         _ ->
             backend_utils:api_error_response(Req,
                                              backend_utils:json_error("Unknown error"), ?API_HEADER_CACHE)
@@ -224,7 +228,8 @@ get_top_users_timespan_view('GET', Req, [Start, End]) when Start > End ->
             {ok, Pid} = backend_db:start_link(),
             Info = backend_mapred_count:mapred(Pid, Keys),
             backend_db:close_link(Pid),
-            Req:ok({"application/json",?API_HEADER, [mochijson2:encode({struct,[{A,integer_to_binary(B)} || {A,B} <- Info]})]});
+            Enc = mochijson2:encoder([{utf8,true}]),
+            Req:ok({"application/json",?API_HEADER, [Enc({struct,[{unicode:characters_to_binary(binary_to_list(A)),integer_to_binary(B)} || {A,B} <- Info]})]});
         _ ->
             backend_utils:api_error_response(Req,
                                              backend_utils:json_error("Unknown error"), ?API_HEADER_CACHE)
@@ -244,7 +249,8 @@ get_top_users_timespan_view('GET', Req, [Keyword, Start, End]) when Start > End 
             {ok, Pid} = backend_db:start_link(),
             Info = backend_mapred_count:mapred(Pid, Keys),
             backend_db:close_link(Pid),
-            Req:ok({"application/json",?API_HEADER, [mochijson2:encode({struct,[{A,integer_to_binary(B)} || {A,B} <- Info]})]});
+            Enc = mochijson2:encoder([{utf8,true}]),
+            Req:ok({"application/json",?API_HEADER, [Enc({struct,[{unicode:characters_to_binary(binary_to_list(A)),integer_to_binary(B)} || {A,B} <- Info]})]});
         _ ->
             backend_utils:api_error_response(Req,
                                              backend_utils:json_error("Unknown error"), ?API_HEADER_CACHE)
@@ -271,7 +277,8 @@ get_amount_timespan_view('GET', Req, [Keyword, Start, End]) when Start > End and
             {ok, Pid} = backend_db:start_link(),
             Info = backend_mapred_count:mapred(Pid, Keys),
             backend_db:close_link(Pid),
-            Req:ok({"application/json",?API_HEADER, [mochijson2:encode({struct,[{A,integer_to_binary(B)} || {A,B} <- Info]})]});
+            Enc = mochijson2:encoder([{utf8,true}]),
+            Req:ok({"application/json",?API_HEADER, [Enc({struct,[{unicode:characters_to_binary(binary_to_list(A)),integer_to_binary(B)} || {A,B} <- Info]})]});
         _ ->
             backend_utils:api_error_response(Req,
                                              backend_utils:json_error("Unknown error"), ?API_HEADER_CACHE)
