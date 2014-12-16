@@ -7,7 +7,7 @@
 -export([get_top_hashtags_view/2, get_top_hashtags_timespan_view/3]).
 -export([get_top_users_view/2, get_top_users_timespan_view/3]).
 -export([get_amount_view/3, get_amount_timespan_view/3]).
--export([admin_change_password_view/2,admin_add_user_view/2,admin_remove_user_view/2]).
+-export([admin_change_password_view/2,admin_add_user_view/2,admin_remove_user_view/2,admin_get_users_view/2]).
 -export([get_admin_view/2]).
 -export([change_password/2]).
 
