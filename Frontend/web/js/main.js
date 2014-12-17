@@ -41,10 +41,10 @@ $(function() {
             $(this).next().hide();
         }
     });
-    $('#login').click(function(){
-       $("#login-body").show().html("<h1>Thank you!</h1>");
-       $("#login-form").submit();
-    });
+    //$('#login').click(function(){
+    //   $("#login-body").show().html("<h1>Thank you!</h1>");
+    //   $("#login-form").submit();
+    //});
 
 
 
