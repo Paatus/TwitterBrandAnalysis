@@ -111,7 +111,7 @@ $(function() {
 					console.log("Success");
 					//Update list of keywords here
 				},
-				error: funcion( xhr, status, errorThrown ) {
+				error: function( xhr, status, errorThrown ) {
 				},
 				complete: function( xhr, status ) {
 				}
