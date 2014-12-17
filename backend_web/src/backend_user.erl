@@ -34,7 +34,7 @@ add_user_keywords(Req, Key) when is_tuple(Req) ->
     end;
 add_user_keywords(Username, Key) when is_list(Username) ->
     case user_has_keyword(Username, Key) of
-       true ->
+       {true, _} ->
             {error, "Keyword is already in the keywords list!"};
        _ ->
             send_user_add_keywords(Username, Key)
@@ -46,8 +46,8 @@ del_user_keywords(Req, Key) when is_tuple(Req) ->
         Username -> del_user_keywords(Username, Key)
     end;
 del_user_keywords(Username, Key) when is_list(Username) ->
-    case user_has_keyword(Username, Key) of
-        true ->
+	case user_has_keyword(Username, Key) of
+        {true, _} ->
             send_user_del_keywords(Username, Key);
         _ ->
             {error, "Keyword not in the keywords list!"}

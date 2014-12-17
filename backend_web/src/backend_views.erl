@@ -1,6 +1,6 @@
 -module(backend_views).
 
--export([urls/0, get_world_view_country/3, login/2, add_user_keyword/3, get_user_keywords/2, logout/2, serve_files/2]).
+-export([urls/0, get_world_view_country/3, login/2, add_user_keyword/3, del_user_keyword/3, get_user_keywords/2, logout/2, serve_files/2]).
 -export([login_json_view/2]).
 -export([get_world_view/2, get_world_timespan_view/3]).
 -export([get_world_keyword_view/3, get_world_keyword_timespan_view/3]).
@@ -362,7 +362,7 @@ add_user_keyword('GET', Req, [Keyword]) ->
 del_user_keyword(_, Req, []) ->
     backend_utils:error_response(Req, ?API_ERROR_MSG);
 del_user_keyword('POST', Req, Keywords) ->
-    remove_user_keyword('GET', Req, Keywords);
+    del_user_keyword('GET', Req, Keywords);
 del_user_keyword('GET', Req, [Keyword]) ->
     case backend_login:check_cookie(Req) of
         {error, Reason} ->

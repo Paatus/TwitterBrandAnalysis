@@ -131,19 +131,20 @@ $(function() {
         return false;
     });
     // load keywords in different page
-    var preWords = localStorage.getItem('search-history').replace(/^\"|\"$/g, '');
+    /*var preWords = localStorage.getItem('search-history').replace(/^\"|\"$/g, '');
 
     preWords.split('","').forEach(function(value) {
         var item = $("<li><span></span></li>");
         item.first('span').html(value);
         $('.search-history').prepend(item);
-    });
+    });*/
     // pass stored history to website
     $.ajax({
         url: "/api/keywords/get",
         success: function( data ) {
 			data.keywords.forEach(function(value) {
-                $('.search-history').prepend(value);
+				var item = $("<li><span>" + value + "</span></li>");
+                $('.search-history').prepend(item);
 			});
         }
     });
@@ -156,7 +157,22 @@ $(function() {
     });
 
     $("body").on("click", '#deletIcon', function() {
-        $(this).parent().remove();
+        var value = $(this).parent().children().first().html();
+		var listparent = $(this).parent();
+		$.ajax({
+			url: "/api/keywords/delete/" + value,
+			data: {},
+			type: "GET",
+			dataType: "json",
+			success: function(returndata) {
+				listparent.remove();
+			},
+			error: function( xhr, status, errorThrown ) {
+			},
+			complete: function( xhr, status ) {
+			}
+		});
+		
     });
     // view page
     // dropdown menu for word-cloud
