@@ -101,7 +101,12 @@ $(function() {
         event.preventDefault();
         var value = $(this).find('input').val();
 
-        if (value.trim() !== "") {
+        $.post(
+			"/api/keywords/add/",
+			value,
+			function() { console.log("Success"); }
+        );
+	/*if (value.trim() !== "") {
             var item = $("<li><span></span></li>");
             item.first('span').html($(this).find('input').val());
 
@@ -111,7 +116,7 @@ $(function() {
             if ($('.search-history li img').length){
                 $('.search-history li img').remove();
             };
-        }
+        }*/
         return false;
     });
     // load keywords in different page
