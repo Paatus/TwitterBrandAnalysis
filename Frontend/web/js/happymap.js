@@ -48,10 +48,9 @@ $(function () {
                 data: data
             };
         });
-
         // For each country, use the latest value for current population
         var data = [];
-        for (var code3 in countries) {
+		for (var code3 in countries) {
             var value = null,
                 year,
                 itemData = countries[code3].data,
@@ -71,6 +70,10 @@ $(function () {
                 year: year
             });
         }
+		/* hardcoded sweden
+		data = [
+			{name: "Sweden", code3 : "SWE", value : 0.1, year : 2012}
+		];*/
 
         // Add lower case codes to the data set for inclusion in the tooltip.pointFormat
         var mapData = Highcharts.geojson(Highcharts.maps['custom/world']);
@@ -113,7 +116,7 @@ $(function () {
                             text: null
                         },
                         xAxis: {
-                            tickPixelInterval: 50,
+                            tickPixelInterval: 0.1,
                             crosshair: true
                         },
                         yAxis: {
@@ -132,7 +135,7 @@ $(function () {
                                     enabled: false
                                 },
                                 threshold: 0,
-                                pointStart: parseInt(categories[0]),
+                                pointStart: 1 /*parseInt(categories[0])*/,
                             }
                         }
                     }).highcharts();
@@ -208,7 +211,7 @@ $(function () {
                 data : data,
                 mapData: mapData,
                 joinBy: ['iso-a3', 'code3'],
-                name: 'Current population',
+                name: 'Brand opinion',
                 allowPointSelect: true,
                 cursor: 'pointer',
                 states: {

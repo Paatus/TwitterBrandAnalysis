@@ -16,11 +16,13 @@
 		40A392D01A287FDD00E6826B /* TBA2Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A392CF1A287FDD00E6826B /* TBA2Tests.swift */; };
 		40A392DA1A288AFD00E6826B /* TBAlogo1.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A392D91A288AFD00E6826B /* TBAlogo1.png */; };
 		40A392DB1A288AFD00E6826B /* TBAlogo1.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A392D91A288AFD00E6826B /* TBAlogo1.png */; };
+		A03D84A51A39D3CC003A2873 /* menuTableRight.swift in Sources */ = {isa = PBXBuildFile; fileRef = A03D84A41A39D3CC003A2873 /* menuTableRight.swift */; };
 		A0724D491A3880F000C174AC /* ENSideMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0724D471A3880EF00C174AC /* ENSideMenu.swift */; };
 		A0724D4A1A3880F000C174AC /* ENSideMenuNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0724D481A3880EF00C174AC /* ENSideMenuNavigationController.swift */; };
 		A0724D4D1A38813100C174AC /* menuTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0724D4B1A38813100C174AC /* menuTable.swift */; };
 		A0724D4E1A38813100C174AC /* navController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0724D4C1A38813100C174AC /* navController.swift */; };
 		A086FB071A3476B40017D5C0 /* firstPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A086FB061A3476B40017D5C0 /* firstPage.swift */; };
+		A0BAD19A1A3B35F900B77F13 /* connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0BAD1991A3B35F900B77F13 /* connection.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -30,6 +32,34 @@
 			proxyType = 1;
 			remoteGlobalIDString = 40A392B01A287FDC00E6826B;
 			remoteInfo = TBA2;
+		};
+		A016E4A31A3DD60900BBA14D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A0BAD1891A3B35DC00B77F13 /* SwiftHTTP.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6BFD901619C8D8B500DD99B6;
+			remoteInfo = SwiftHTTP;
+		};
+		A016E4A51A3DD60900BBA14D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A0BAD1891A3B35DC00B77F13 /* SwiftHTTP.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6BFD902119C8D8B500DD99B6;
+			remoteInfo = SwiftHTTPTests;
+		};
+		A016E4A71A3DD60900BBA14D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A0BAD1891A3B35DC00B77F13 /* SwiftHTTP.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D958025919E6EEEB003C8218;
+			remoteInfo = SwiftHTTPOSX;
+		};
+		A016E4A91A3DD60900BBA14D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A0BAD1891A3B35DC00B77F13 /* SwiftHTTP.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D958026319E6EEEB003C8218;
+			remoteInfo = SwiftHTTPOSXTests;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -46,11 +76,14 @@
 		40A392CE1A287FDD00E6826B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		40A392CF1A287FDD00E6826B /* TBA2Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TBA2Tests.swift; sourceTree = "<group>"; };
 		40A392D91A288AFD00E6826B /* TBAlogo1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TBAlogo1.png; sourceTree = "<group>"; };
+		A03D84A41A39D3CC003A2873 /* menuTableRight.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = menuTableRight.swift; sourceTree = "<group>"; };
 		A0724D471A3880EF00C174AC /* ENSideMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ENSideMenu.swift; sourceTree = "<group>"; };
 		A0724D481A3880EF00C174AC /* ENSideMenuNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ENSideMenuNavigationController.swift; sourceTree = "<group>"; };
 		A0724D4B1A38813100C174AC /* menuTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = menuTable.swift; sourceTree = "<group>"; };
 		A0724D4C1A38813100C174AC /* navController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = navController.swift; sourceTree = "<group>"; };
 		A086FB061A3476B40017D5C0 /* firstPage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = firstPage.swift; sourceTree = "<group>"; };
+		A0BAD1891A3B35DC00B77F13 /* SwiftHTTP.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SwiftHTTP.xcodeproj; path = ../../Project/SwiftHTTP/SwiftHTTP.xcodeproj; sourceTree = "<group>"; };
+		A0BAD1991A3B35F900B77F13 /* connection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = connection.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,10 +125,13 @@
 		40A392B31A287FDC00E6826B /* TBA2 */ = {
 			isa = PBXGroup;
 			children = (
+				A0BAD1891A3B35DC00B77F13 /* SwiftHTTP.xcodeproj */,
 				A0724D461A3880D200C174AC /* Library */,
 				40A392B61A287FDD00E6826B /* AppDelegate.swift */,
 				A0724D4B1A38813100C174AC /* menuTable.swift */,
 				A0724D4C1A38813100C174AC /* navController.swift */,
+				A03D84A41A39D3CC003A2873 /* menuTableRight.swift */,
+				A0BAD1991A3B35F900B77F13 /* connection.swift */,
 				A086FB061A3476B40017D5C0 /* firstPage.swift */,
 				40A392BB1A287FDD00E6826B /* ViewController.swift */,
 				40A392BD1A287FDD00E6826B /* Main.storyboard */,
@@ -131,6 +167,17 @@
 				40A392CE1A287FDD00E6826B /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		A016E49D1A3DD60200BBA14D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A016E4A41A3DD60900BBA14D /* SwiftHTTP.framework */,
+				A016E4A61A3DD60900BBA14D /* SwiftHTTPTests.xctest */,
+				A016E4A81A3DD60900BBA14D /* SwiftHTTPOSX.framework */,
+				A016E4AA1A3DD60900BBA14D /* SwiftHTTPOSXTests.xctest */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		A0724D461A3880D200C174AC /* Library */ = {
@@ -209,6 +256,12 @@
 			mainGroup = 40A392A81A287FDC00E6826B;
 			productRefGroup = 40A392B21A287FDC00E6826B /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = A016E49D1A3DD60200BBA14D /* Products */;
+					ProjectRef = A0BAD1891A3B35DC00B77F13 /* SwiftHTTP.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				40A392B01A287FDC00E6826B /* TBA2 */,
@@ -216,6 +269,37 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		A016E4A41A3DD60900BBA14D /* SwiftHTTP.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SwiftHTTP.framework;
+			remoteRef = A016E4A31A3DD60900BBA14D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A016E4A61A3DD60900BBA14D /* SwiftHTTPTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = SwiftHTTPTests.xctest;
+			remoteRef = A016E4A51A3DD60900BBA14D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A016E4A81A3DD60900BBA14D /* SwiftHTTPOSX.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SwiftHTTPOSX.framework;
+			remoteRef = A016E4A71A3DD60900BBA14D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A016E4AA1A3DD60900BBA14D /* SwiftHTTPOSXTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = SwiftHTTPOSXTests.xctest;
+			remoteRef = A016E4A91A3DD60900BBA14D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		40A392AF1A287FDC00E6826B /* Resources */ = {
@@ -248,8 +332,10 @@
 				A0724D4D1A38813100C174AC /* menuTable.swift in Sources */,
 				40A392BC1A287FDD00E6826B /* ViewController.swift in Sources */,
 				40A392BA1A287FDD00E6826B /* TBA2.xcdatamodeld in Sources */,
+				A03D84A51A39D3CC003A2873 /* menuTableRight.swift in Sources */,
 				A0724D491A3880F000C174AC /* ENSideMenu.swift in Sources */,
 				40A392B71A287FDD00E6826B /* AppDelegate.swift in Sources */,
+				A0BAD19A1A3B35F900B77F13 /* connection.swift in Sources */,
 				A086FB071A3476B40017D5C0 /* firstPage.swift in Sources */,
 				A0724D4E1A38813100C174AC /* navController.swift in Sources */,
 			);

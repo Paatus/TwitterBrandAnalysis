@@ -2,6 +2,15 @@ $(function() {
 
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population-history.csv&callback=?', function(csv) {
 
+        // Parse the CSV Data
+        /*Highcharts.data({
+            csv: data,
+            switchRowsAndColumns: true,
+            parsed: function () {
+                console.log(this.columns);
+            }
+        });*/
+
         // Very simple and case-specific CSV string splitting
         function CSVtoArray(text) {
             return text.replace(/^"/, '')
@@ -39,10 +48,9 @@ $(function() {
                 data: data
             };
         });
-
         // For each country, use the latest value for current population
         var data = [];
-        for (var code3 in countries) {
+		for (var code3 in countries) {
             var value = null,
                 year,
                 itemData = countries[code3].data,
@@ -62,6 +70,10 @@ $(function() {
                 year: year
             });
         }
+		/* hardcoded sweden
+		data = [
+			{name: "Sweden", code3 : "SWE", value : 0.1, year : 2012}
+		];*/
 
         // Add lower case codes to the data set for inclusion in the tooltip.pointFormat
         var mapData = Highcharts.geojson(Highcharts.maps['custom/world']);
@@ -104,7 +116,7 @@ $(function() {
                             text: null
                         },
                         xAxis: {
-                            tickPixelInterval: 50,
+                            tickPixelInterval: 0.1,
                             crosshair: true
                         },
                         yAxis: {
@@ -123,7 +135,7 @@ $(function() {
                                     enabled: false
                                 },
                                 threshold: 0,
-                                pointStart: parseInt(categories[0]),
+                                pointStart: 1 /*parseInt(categories[0])*/,
                             }
                         }
                     }).highcharts();
@@ -138,7 +150,6 @@ $(function() {
                         countryChart.series[i].update({
                             name: this.name,
                             data: countries[this.code3].data,
-							type: points.length > 1 ? 'line' : 'area'
                             type: points.length > 1 ? 'line' : 'area'
                         }, false);
                     } else {
@@ -183,9 +194,9 @@ $(function() {
 
             colorAxis: {
                 type: 'logarithmic',
-				minColor: "#FF0000",
-				maxColor: "#0000FF",
-                endOnTick: true,
+				minColor: "#ff0000",
+				maxColor: "#0000ff",
+                endOnTick: false,
                 startOnTick: true,
                 min: 0.1
             },
@@ -198,7 +209,7 @@ $(function() {
                 data: data,
                 mapData: mapData,
                 joinBy: ['iso-a3', 'code3'],
-                name: 'Current population',
+                name: 'Brand opinion',
                 allowPointSelect: true,
                 cursor: 'pointer',
                 states: {
@@ -215,3 +226,4 @@ $(function() {
         //mapChart.get('us').select();
     });
 });
+
