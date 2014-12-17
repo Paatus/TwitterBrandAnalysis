@@ -25,10 +25,10 @@ $(function() {
 
 // Public Page
     // login function
-    $('#login-name').keyup(function(){
+    /*$('#login-name').keyup(function(){
         var username=$(this).val();
         if (!ck_username.test(username)){
-            $(this).next().show().html("Min 3 charts no space");
+            $(this).next().show().html("Min 3 chars no space");
         }else{
             $(this).next().hide();
         }
@@ -36,11 +36,11 @@ $(function() {
     $('#login-password').keyup(function(){
         var password=$(this).val();
         if (!ck_password.test(password)){
-            $(this).next().show().html("Min 6 Charts");
+            $(this).next().show().html("Min 6 Chars");
         }else{
             $(this).next().hide();
         }
-    });
+    });*/
     //$('#login').click(function(){
     //   $("#login-body").show().html("<h1>Thank you!</h1>");
     //   $("#login-form").submit();
@@ -55,7 +55,7 @@ $(function() {
     $('#signup-name').keyup(function(){
         var username=$(this).val();
         if (!ck_username.test(username)){
-            $(this).next().show().html("Min 3 charts no space");
+            $(this).next().show().html("Min 3 chars no space");
         }else{
             $(this).next().hide();
         }
@@ -64,7 +64,7 @@ $(function() {
     $('#signup-password').keyup(function(){
         var password=$(this).val();
         if (!ck_password.test(password)){
-            $(this).next().show().html("Min 6 Charts");
+            $(this).next().show().html("Min 6 Chars");
         }else{
             $(this).next().hide();
         }
