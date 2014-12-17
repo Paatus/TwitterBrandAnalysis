@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>6280FDEA-97EA-47AF-9D39-65B48DE443DC</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>38D9009B322140394B9DA7467F68950B56B35FF5</key>
+		<string>https://github.com/daltoniam/SwiftHTTP.git</string>
+	</dict>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>38D9009B322140394B9DA7467F68950B56B35FF5</key>
+		<string>SwiftHTTP/</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/daltoniam/SwiftHTTP.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>38D9009B322140394B9DA7467F68950B56B35FF5</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>38D9009B322140394B9DA7467F68950B56B35FF5</string>
+			<key>IDESourceControlWCCName</key>
+			<string>SwiftHTTP</string>
+		</dict>
+	</array>
+</dict>
+</plist>

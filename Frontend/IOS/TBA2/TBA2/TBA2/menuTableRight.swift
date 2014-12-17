@@ -2,14 +2,12 @@
 
 import UIKit
 
-class menuTable: UITableViewController {
+class menuTableRight: UITableViewController {
     var selectedMenuItem : Int = 0
-    var keywordList = ["apple", "iphone", "ipad", "iwatch", "macbook", "imac"]
-    
-    
-
+    let viewsList = ["World Map", "Trend", "Top 5 Countries", "Word Cloud"]
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         // Customize apperance of table view
         tableView.contentInset = UIEdgeInsetsMake(64.0, 0, 0, 0) //
         tableView.separatorStyle = .None
@@ -36,7 +34,7 @@ class menuTable: UITableViewController {
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // Return the number of rows in the section.
-        return keywordList.count
+        return 4
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -52,9 +50,7 @@ class menuTable: UITableViewController {
             cell!.selectedBackgroundView = selectedBackgroundView
         }
         
-        //to set the nth element on the keyword list to the nth element in the list that's predefined 
-        //earlier.
-        cell!.textLabel.text = "\(keywordList[indexPath.row])"
+        cell!.textLabel.text = "\(viewsList[indexPath.row])"
         
         return cell!
     }
@@ -90,9 +86,5 @@ class menuTable: UITableViewController {
             break
         }
         sideMenuController()?.setContentViewController(destViewController)
-    }
-    
-    
-    
-    
+}
 }

@@ -239,11 +239,6 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="N5F-FG-IAa"/>
-                    <connections>
-                        <outlet property="loginButton" destination="Log-eT-vHR" id="bIn-Ai-S9o"/>
-                        <outlet property="pwdInput" destination="Re7-sL-6hr" id="cAU-Me-CHU"/>
-                        <outlet property="usernameInput" destination="Jxo-l9-SU0" id="1Uk-Hi-prS"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>

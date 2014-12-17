@@ -11,12 +11,13 @@ import WebKit
 class firstPage: UIViewController{
     
     var webView: UIWebView!
-   // var con = connection()
+
 
     @IBOutlet var container: UIView!
     
     func loadAddressURL(){
-        var urlpath = "http://dev.kento.se:8080/map.html"
+       
+        var urlpath = "http://www.google.com"
         //2.bp.blogspot.com/-pBGguf17fSs/U8I7_kVbfCI/AAAAAAAAADo/2l09LoNFVdU/s1600/swift-banner.png
         let requesturl = NSURL(string: urlpath)
         let request = NSURLRequest(URL: requesturl!)
