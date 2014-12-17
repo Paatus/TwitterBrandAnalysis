@@ -5,7 +5,7 @@ mapred_count(Keys) ->
 	mapred(
 		Keys,
 		[{map, {modfun, ?MODULE, map_count}, none, false},
-		{reduce, {modfun, ?MODULE, red_count}, none, false}],
+		{reduce, {modfun, ?MODULE, red_count}, none, false},
 		{reduce, {modfun, ?MODULE, red_sort}, none, true}]
 	).
 
@@ -13,8 +13,7 @@ mapred_amount(Keys) ->
 	mapred(
 		Keys,
 		[{map, {modfun, ?MODULE, map_amount}, none, false},
-		{reduce, {modfun, ?MODULE, red_count}, none, false}],
-		{reduce, {modfun, ?MODULE, red_sort}, none, true}]
+		{reduce, {modfun, ?MODULE, red_count}, none, true}]
 	).
 
 mapred(Keys, Phases) ->
@@ -52,4 +51,4 @@ red_count(Input, _) ->
 
 red_sort([Input], _) ->
 	L = dict:to_list(Input),
-	lists:sort(fun({_,V1},{_,V2}) -> V1 < V2 end, L). 
+	lists:sort(fun({_,V1},{_,V2}) -> V1 >= V2 end, L). 
