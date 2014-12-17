@@ -100,12 +100,23 @@ $(function() {
     $('#search-the-world').submit(function( event ) {
         event.preventDefault();
         var value = $(this).find('input').val();
-
-        $.post(
-			"/api/keywords/add/",
-			value,
-			function() { console.log("Success"); }
-        );
+		
+		if (value.trim() !== "") {
+			$.ajax({
+				url: "/api/keywords/add/" + value,
+				data: {},
+				type: "GET",
+				dataType: "json",
+				success: function(returndata) {
+					console.log("Success");
+					//Update list of keywords here
+				},
+				error: funcion( xhr, status, errorThrown ) {
+				},
+				complete: function( xhr, status ) {
+				}
+			});
+		}
 	/*if (value.trim() !== "") {
             var item = $("<li><span></span></li>");
             item.first('span').html($(this).find('input').val());
@@ -131,9 +142,9 @@ $(function() {
     $.ajax({
         url: "/api/keywords/get",
         success: function( data ) {
-            jQuery.parseJSON(data).forEach(function(value) {
+			data.keywords.forEach(function(value) {
                 $('.search-history').prepend(value);
-            });
+			});
         }
     });
     $('#editButton').click(function(){
