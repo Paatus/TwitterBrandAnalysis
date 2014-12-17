@@ -42,6 +42,7 @@ urls() -> [
            {"^api/logout/?$", logout                                                                  },
            {"^api/account/change_password/?$", change_password                                        },
            {"^api/keywords/add/(\\w{3,64})/?$", add_user_keyword                                      },
+           {"^api/keywords/delete/(\\w{3,64})/?$", del_user_keyword                                   },
            {"^api/keywords/get/?$", get_user_keywords                                                 },
            {"^api/admin/change_password/?$", admin_change_password_view                               },
            {"^api/admin/add_user/?$", admin_add_user_view                                             },
@@ -354,6 +355,20 @@ add_user_keyword('GET', Req, [Keyword]) ->
             backend_utils:api_error_response(Req, backend_utils:json_error(Reason), ?API_HEADER_CACHE);
         {Username,_} ->
             backend_user:add_user_keywords(Username, string:to_lower(Keyword)),
+            Req:ok({"application/json",
+                    ?API_HEADER,[mochijson2:encode({struct,[{status,<<"ok">>}]})]})
+    end.
+
+del_user_keyword(_, Req, []) ->
+    backend_utils:error_response(Req, ?API_ERROR_MSG);
+del_user_keyword('POST', Req, Keywords) ->
+    remove_user_keyword('GET', Req, Keywords);
+del_user_keyword('GET', Req, [Keyword]) ->
+    case backend_login:check_cookie(Req) of
+        {error, Reason} ->
+            backend_utils:api_error_response(Req, backend_utils:json_error(Reason), ?API_HEADER_CACHE);
+        {Username,_} ->
+            backend_user:del_user_keywords(Username, string:to_lower(Keyword)),
             Req:ok({"application/json",
                     ?API_HEADER,[mochijson2:encode({struct,[{status,<<"ok">>}]})]})
     end.
