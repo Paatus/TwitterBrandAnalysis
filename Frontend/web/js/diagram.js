@@ -1,22 +1,23 @@
 $(function() {
-    $('#container1').highcharts({
+	$('#container1').highcharts({
         chart: {
             type: 'bar'
         },
         title: {
-            text: 'Brand history track'
+            text: 'Brand tweet amounts'
         },
         xAxis: {
-            categories: ['Shan', 'Oranges', 'Pears', 'Grapes', 'Bananas']
+            //categories: ['Shan', 'Oranges', 'Pears', 'Grapes', 'Bananas']
+			categories: []
         },
         yAxis: {
             min: 0,
             title: {
-                text: 'Total fruit consumption'
+                text: 'Amount of tweets'
             }
         },
         legend: {
-            reversed: true
+            reversed: false
         },
         plotOptions: {
             series: {
@@ -24,16 +25,45 @@ $(function() {
             }
         },
         series: [{
-            name: 'Jiang',
-            data: [5, 3, 4, 7, 2]
+            name: 'Positive',
+			color: '#88FF88',
+            data: []
         }, {
-            name: 'Jane',
-            data: [2, 2, 3, 2, 1]
+            name: 'Neutral',
+			color: '#FFFF55',
+            data: []
         }, {
-            name: 'Joe',
-            data: [3, 4, 4, 2, 5]
+            name: 'Negative',
+			color: '#FF5555',
+            data: []
         }]
     });
+	var chart = $("#container1").highcharts();
+    //Get keywords
+	keywords = [];
+	$.ajax({
+		url: "/api/keywords/get/",
+		success: function(data) {
+			keywords = data.keywords;
+			chart.xAxis[0].update({categories: data.keywords})
+			
+			//Get data for each keyword
+			kwdata = {};
+			keywords.forEach(function(kw) {
+				$.ajax({
+					url: "/api/amount/" + kw,
+					success: function(data) {
+						kwdata[kw] = data;
+						chart.series[0].addPoint(parseInt(data.positive));
+						chart.series[1].addPoint(parseInt(data.neutral));
+						chart.series[2].addPoint(parseInt(data.negative));
+					}
+				});
+			});
+
+		}
+	});
+	
 });
 
 
@@ -166,6 +196,7 @@ function draw(words) {
 
 $(function() {
 
+
 var fill = d3.scale.category20();
 
 
@@ -189,7 +220,7 @@ d3.layout.cloud().size([w, h])
     }))
     .padding(5)
     .rotate(function() {
-        return ~~(Math.random() * 36) * 5;
+        return ~~(Math.random() * 5) * 30 - 75;
     })
     .font("Impact")
     .fontSize(function(d) {
