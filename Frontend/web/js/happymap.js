@@ -70,11 +70,23 @@ $(function () {
                 year: year
             });
         }
-		/* hardcoded sweden
-		data = [
-			{name: "Sweden", code3 : "SWE", value : 0.1, year : 2012}
-		];*/
-
+		// get data with ajax and add it to map
+		$.ajax({
+			url: "/api/world/total",
+			data: {},
+			type: "GET",
+			dataType: "json",
+			success: function(returnData) {
+				d = translateToMap(returnData);
+				for(i in d) {
+					var val = parseFloat(d[i].value);
+					d[i].value = val == 0 ? 0.00001 : val;
+				}
+				mapChart.series[0].setData(d, true);
+			},
+			error: function( xhr, status, errorThrown ) {},
+			complete: function( xhr, status ) {}
+		});
         // Add lower case codes to the data set for inclusion in the tooltip.pointFormat
         var mapData = Highcharts.geojson(Highcharts.maps['custom/world']);
         $.each(mapData, function () {
@@ -101,7 +113,7 @@ $(function () {
                 $('#info .subheader').html('<h4>Historical population</h4><small><em>Shift + Click on map to compare countries</em></small>')
 
                 if (!countryChart) {
-                    countryChart = $('#country-chart').highcharts({
+                    countryChart = $('#container').highcharts({
                         chart: {
                             height: 250,
                             spacingLeft: 0
@@ -135,7 +147,7 @@ $(function () {
                                     enabled: false
                                 },
                                 threshold: 0,
-                                pointStart: 1 /*parseInt(categories[0])*/,
+                                pointStart: 0 /*parseInt(categories[0])*/,
                             }
                         }
                     }).highcharts();
@@ -182,11 +194,11 @@ $(function () {
         mapChart = $('#container').highcharts('Map', {
 
             title : {
-                text : 'Population history by country'
+                text : 'Brand opinion of the searches for this user'
             },
 
             subtitle: {
-                text: 'Source: <a href="http://data.worldbank.org/indicator/SP.POP.TOTL/countries/1W?display=default">The World Bank</a>'
+                text: ''
             },
 
             mapNavigation: {
@@ -199,8 +211,8 @@ $(function () {
             colorAxis: {
                 type: 'logarithmic',
                 endOnTick: false,
-                startOnTick: false,
-                min: 50000
+                startOnTick: true,
+                min: 0.00001
             },
 
             tooltip: {
@@ -210,9 +222,9 @@ $(function () {
             series : [{
                 data : data,
                 mapData: mapData,
-                joinBy: ['iso-a3', 'code3'],
-                name: 'Brand opinion',
-                allowPointSelect: true,
+                joinBy: ['iso-a2', 'code3'],
+                name: 'Brand opinion of the searches for this user',
+                allowPointSelect: false,
                 cursor: 'pointer',
                 states: {
                     select: {
@@ -225,6 +237,6 @@ $(function () {
         }).highcharts();
 
         // Pre-select a country
-        mapChart.get('us').select();
+        //mapChart.get('us').select();
     });
 });

@@ -38,7 +38,7 @@ function translateToMap(jsonPlaces) {
 	}
 	//console.log(JSON.stringify(jsonCountryOutput))
 	
-	return JSON.stringify(jsonCountryOutput);
+	return jsonCountryOutput;
 }
 function readJson(){
 	var obj = JSON.parse(text)
