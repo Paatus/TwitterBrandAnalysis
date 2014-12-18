@@ -44,16 +44,16 @@ $(function () {
             });
             countries[row[1]] = {
                 name: row[0],
-                code3: row[1],
+                code: row[1],
                 data: data
             };
         });
         // For each country, use the latest value for current population
         var data = [];
-		for (var code3 in countries) {
+		for (var code in countries) {
             var value = null,
                 year,
-                itemData = countries[code3].data,
+                itemData = countries[code].data,
                 i = itemData.length;
 
             while (i--) {
@@ -64,8 +64,8 @@ $(function () {
                 }
             }
             data.push({
-                name: countries[code3].name,
-                code3: code3,
+                name: countries[code].name,
+                code: code,
                 value: value,
                 year: year
             });
@@ -82,7 +82,8 @@ $(function () {
 					var val = parseFloat(d[i].value);
 					d[i].value = (val == 0 ? 0.00001 : val);
 				}
-				mapChart.series[0].setData(d, true);
+				mapChart.series[0].setData(d, false);
+				mapChart.redraw();
 			},
 			error: function( xhr, status, errorThrown ) {},
 			complete: function( xhr, status ) {}
@@ -156,18 +157,18 @@ $(function () {
                 $.each(points, function (i) {
                     // Update
                     if (countryChart.series[i]) {
-                        /*$.each(countries[this.code3].data, function (pointI, value) {
+                        /*$.each(countries[this.code].data, function (pointI, value) {
                             countryChart.series[i].points[pointI].update(value, false);
                         });*/
                         countryChart.series[i].update({
                             name: this.name,
-                            data: countries[this.code3].data,
+                            data: countries[this.code].data,
                             type: points.length > 1 ? 'line' : 'area'
                         }, false);
                     } else {
                         countryChart.addSeries({
                             name: this.name,
-                            data: countries[this.code3].data,
+                            data: countries[this.code].data,
                             type: points.length > 1 ? 'line' : 'area'
                         }, false);
                     }
@@ -222,7 +223,7 @@ $(function () {
             series : [{
                 data : data,
                 mapData: mapData,
-                joinBy: ['iso-a2', 'code3'],
+                joinBy: ['iso-a2', 'code'],
                 name: 'Brand opinion of the searches for this user',
                 allowPointSelect: false,
                 cursor: 'pointer',
