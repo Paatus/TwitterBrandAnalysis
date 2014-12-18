@@ -80,7 +80,7 @@ $(function () {
 				d = translateToMap(returnData);
 				for(i in d) {
 					var val = parseFloat(d[i].value);
-					d[i].value = val == 0 ? 0.00001 : val;
+					d[i].value = (val == 0 ? 0.00001 : val);
 				}
 				mapChart.series[0].setData(d, true);
 			},
