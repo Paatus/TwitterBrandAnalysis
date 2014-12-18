@@ -279,7 +279,7 @@ get_amount_timespan_view('GET', Req, [Keyword, Start, End]) when Start > End and
             Info = backend_mapred_count:mapred(Pid, Keys),
             backend_db:close_link(Pid),
             Enc = mochijson2:encoder([{utf8,true}]),
-            Req:ok({"application/json",?API_HEADER, [Enc({struct,[{unicode:characters_to_binary(binary_to_list(A)),integer_to_binary(B)} || {A,B} <- Info]})]});
+            Req:ok({"application/json",?API_HEADER, [Enc({struct,[{unicode:characters_to_binary(atom_to_list(A)),integer_to_binary(B)} || {A,B} <- Info]})]});
         _ ->
             backend_utils:api_error_response(Req,
                                              backend_utils:json_error("Unknown error"), ?API_HEADER_CACHE)
