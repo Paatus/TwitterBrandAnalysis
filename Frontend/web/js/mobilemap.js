@@ -65,6 +65,7 @@ $(function() {
 			error: function( xhr, status, errorThrown ) {},
 			complete: function( xhr, status ) {}
 		});
+		data = [];
         // Add lower case codes to the data set for inclusion in the tooltip.pointFormat
         var mapData = Highcharts.geojson(Highcharts.maps['custom/world']);
         $.each(mapData, function() {
