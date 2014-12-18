@@ -48,33 +48,23 @@ $(function() {
                 data: data
             };
         });
-        // For each country, use the latest value for current population
-        var data = [];
-		for (var code3 in countries) {
-            var value = null,
-                year,
-                itemData = countries[code3].data,
-                i = itemData.length;
-
-            while (i--) {
-                if (typeof itemData[i] === 'number') {
-                    value = itemData[i];
-                    year = categories[i];
-                    break;
-                }
-            }
-            data.push({
-                name: countries[code3].name,
-                code3: code3,
-                value: Math.random(),
-                year: year
-            });
-        }
-		/* hardcoded sweden
-		data = [
-			{name: "Sweden", code3 : "SWE", value : 0.1, year : 2012}
-		];*/
-
+		// get data and att it to the map
+		$.ajax({
+			url: "/api/world/total",
+			data: {},
+			type: "GET",
+			dataType: "json",
+			success: function(returnData) {
+				d = translateToMap(returnData);
+				for(i in d) {
+					var val = parseFloat(d[i].value);
+					d[i].value = val == 0 ? 0.00001 : val;
+				}
+				mapChart.series[0].setData(d, true);
+			},
+			error: function( xhr, status, errorThrown ) {},
+			complete: function( xhr, status ) {}
+		});
         // Add lower case codes to the data set for inclusion in the tooltip.pointFormat
         var mapData = Highcharts.geojson(Highcharts.maps['custom/world']);
         $.each(mapData, function() {
@@ -210,7 +200,7 @@ $(function() {
                 mapData: mapData,
                 joinBy: ['iso-a3', 'code3'],
                 name: 'Brand opinion',
-                allowPointSelect: true,
+                allowPointSelect: false,
                 cursor: 'pointer',
                 states: {
                     select: {
