@@ -48,25 +48,25 @@ fgood = open("goodPart0.txt", "r")
 goodlist = readtweetfile(fgood, 1)
 fgood.close()
 pos_tweets = removelinebreaks(goodlist)
-print(i)
+
 
 
 fbad = open("badPart0.txt", "r")
 badlist = readtweetfile(fbad, 0)
 fbad.close()
 neg_tweets = removelinebreaks(badlist)
-print(i)
 
 
 
-tgood = open("goodPart1.txt", "r")
+
+tgood = open("goodPart2.txt", "r")
 tgoodlist = readtweetfile(tgood, 1)
 tgood.close()
 testpos_tweets = removelinebreaks(tgoodlist)
 
 
 
-tbad = open("badPart1.txt", "r")
+tbad = open("badPart2.txt", "r")
 tbadlist = readtweetfile(tbad, 0)
 tbad.close()
 testneg_tweets = removelinebreaks(tbadlist)
