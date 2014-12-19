@@ -29,21 +29,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true">
-            <TextView
-                android:id="@+id/settings_btn"
-                android:text="Settings"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="25sp"
-                android:padding="16sp"
-                android:textColor="@android:color/black"
-                android:background="?android:attr/activatedBackgroundIndicator"/>
-            <TextView
+            <Button
                 android:id="@+id/logout_btn"
                 android:text="Log out"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/settings_btn"
                 android:textSize="25sp"
                 android:padding="16sp"
                 android:textColor="@android:color/black"

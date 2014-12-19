@@ -3,6 +3,6 @@
     <array name="List_items">
         <item>Home</item>
         <item>Brand opinion per country</item>
-        <item>Brand opinion over time</item>
+        <item>Wordcloud</item>
     </array>
 </resources>

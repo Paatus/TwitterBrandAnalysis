@@ -75,17 +75,6 @@
             android:textAllCaps="false"
             android:textColor="@color/Hex"
             android:background="@color/Evening_cloud"/>
-        <Button
-            android:id="@+id/sign_up_button"
-            android:text="Sign up"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/login_button"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="5dp"
-            android:textAllCaps="false"
-            android:textColor="@color/Hex"
-            android:background="@color/Evening_cloud"/>
     </RelativeLayout>
 
     </LinearLayout>

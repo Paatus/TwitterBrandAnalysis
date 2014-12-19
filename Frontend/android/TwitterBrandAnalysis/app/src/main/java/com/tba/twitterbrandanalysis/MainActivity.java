@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -13,10 +14,23 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 public class MainActivity extends Activity {
 
+    private String cookie_string;
     private String[] items;
     private DrawerLayout drawerLayout = null;
     private ListView drawerList = null;
@@ -36,6 +50,8 @@ public class MainActivity extends Activity {
     }
 
     private void init() {
+        Bundle extras = this.getIntent().getExtras();
+        cookie_string = extras.getString("cookie_string");
         ActionBar ab = MainActivity.this.getActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
         ab.setHomeButtonEnabled(true);
@@ -48,33 +64,43 @@ public class MainActivity extends Activity {
         drawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                lastPressed = position;
-                d_log("item at position " + position + " was clicked");
-                if (drawerList != null) {
-                    drawerList.setItemChecked(position, true);
-                    FragmentTransaction frag = getFragmentManager().beginTransaction();
-                    switch(position) {
-                        case 0:
-                            // default, go home
-                            frag.replace(R.id.container, new MainFragment());
-                            break;
-                        case 1:
-                            // Brand opinion per country
-                            frag.replace(R.id.container, new BarChartFragment());
-                            break;
-                        case 2:
-                            // Brand opinion over time
-                            frag.replace(R.id.container, new LineChartFragment());
-                        default:
-                            break;
-                    }
-                    frag.commit();
+            lastPressed = position;
+            if (drawerList != null) {
+                drawerList.setItemChecked(position, true);
+                FragmentTransaction frag = getFragmentManager().beginTransaction();
+                switch(position) {
+                    case 0:
+                        // default, go home
+                        frag.replace(R.id.container, new MainFragment());
+                        break;
+                    case 1:
+                        // Brand opinion per country
+                        BarChartFragment barfrag = new BarChartFragment();
+                        barfrag.setFragment(cookie_string);
+                        frag.replace(R.id.container, barfrag);
+                        break;
+                    case 2:
+                        // Brand opinion over time
+                        // implement when wordcloud is done in web UI
+                        //frag.replace(R.id.container, new LineChartFragment());
+                    default:
+                        break;
                 }
-                if (drawerLayout != null) {
-                   drawerLayout.closeDrawers();
-                }
+                frag.commit();
+            }
+            if (drawerLayout != null) {
+               drawerLayout.closeDrawers();
+            }
             }
         });
+        Button butt = (Button) findViewById(R.id.logout_btn);
+        butt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new LogoutTask().execute();
+            }
+        });
+
         drawerList.setItemChecked(lastPressed, true);
         drawerToggle = new ActionBarDrawerToggle(
                 this,
@@ -96,10 +122,6 @@ public class MainActivity extends Activity {
 
         };
         drawerLayout.setDrawerListener(drawerToggle);
-    }
-
-    private void d_log(String msg) {
-        Log.d(getString(R.string.app_name) + " DEBUG ", msg);
     }
 
     @Override
@@ -134,4 +156,18 @@ public class MainActivity extends Activity {
         return true;
     }
 
+    private class LogoutTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                HttpClient client = new DefaultHttpClient();
+                HttpGet post = new HttpGet("http://dev.kento.se:8080/api/logout");
+                post.addHeader("Cookie", cookie_string);
+                client.execute(post);
+                MainActivity.this.finish();
+            } catch(Exception e) {}
+            return null;
+        }
+    }
 }
