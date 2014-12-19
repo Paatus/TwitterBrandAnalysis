@@ -12,26 +12,39 @@ function translateToMap(jsonPlaces) {
 				//console.log(city);
 		//loop through countries
 		for(var country in jsonPlaceToCountry){
-				//console.log(city +" in " + country + "?");
-				//console.log(jsonPlaceToCountry[country]);
-				//Loop through places/cities in each country
-				for(var cityIndex in jsonPlaceToCountry[country]){
-					if (city == jsonPlaceToCountry[country][cityIndex]){
-						//console.log("matched "+ city + country);
-						//console.log("-----" + jsonPlaces[city][0]);
-						avgValue = jsonPlaces[city][0];
-						
-						//add country code based on country
-						for(c in jsonData){
-							var obj = jsonData[c]
-							if (obj.name == country){
-								countryCode = obj.code;
-							}
+			//console.log(city +" in " + country + "?");
+			//console.log(jsonPlaceToCountry[country]);
+			//Loop through places/cities in each country
+			for(var cityIndex in jsonPlaceToCountry[country]){
+				if (city == jsonPlaceToCountry[country][cityIndex]){
+					//console.log("matched "+ city + country);
+					//console.log("-----" + jsonPlaces[city][0]);
+					avgValue = jsonPlaces[city][0];
+					var amount = jsonPlaces[city][1];
+
+					//add country code based on country
+					for(var c in jsonData){
+						var obj = jsonData[c]
+						if (obj.name == country){
+							countryCode = obj.code;
 						}
-						//build JSON
-						jsonCountryOutput.push({"name": country,"code": countryCode, "value": avgValue});
+					}
+					//build JSON
+					for(var countryObj in jsonCountryOutput) {
+						if(countryObj.name == country) {
+							var new_value = 0;
+							var old_value = countryObj.value;
+							var old_amount = countryObj.amount;
+							var new_amount = old_amount + amount;
+							new_value = (old_value * old_amount + avgValue * amount) / (new_amount);
+							countryObj.amount = new_amount;
+							countryObj.value = new_value;
+						} else {
+							jsonCountryOutput.push({"name": country,"code": countryCode, "value": avgValue, "amount" : amount});
+						}
 					}
 				}
+			}
 			
 		}
 		//console.log(city + jsonPlaces[city]);
