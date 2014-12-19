@@ -44,7 +44,7 @@ function translateToMap(jsonPlaces) {
 							countryObj.value = new_value;
 						}
 					}
-					if(alreadyExists == true){
+					if(!alreadyExists){
 						jsonCountryOutput.push({"name": country,"code": countryCode, "value": avgValue, "amount" : amount});
 					}
 				}
