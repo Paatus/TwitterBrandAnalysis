@@ -6,6 +6,7 @@ function translateToMap(jsonPlaces) {
 	var jsonPlaceToCountry = grabJsonPlaceToCountry();
 	var countryCode;
 	var avgValue;
+	var alreadyExists;
 	
 	//loop through places to test
 	for(var city in jsonPlaces){
@@ -30,18 +31,21 @@ function translateToMap(jsonPlaces) {
 						}
 					}
 					//build JSON
-					for(var countryObj in jsonCountryOutput) {
-						if(countryObj.name == country) {
-							var new_value = 0;
+					alreadyExists = false;
+					for(var countryObj in jsonCountryOutput) {	//check the done output
+						if(countryObj.name == country) {		//if country already exists
+							alreadyExists = true;
+							var new_value = 0;					//avg
 							var old_value = countryObj.value;
 							var old_amount = countryObj.amount;
 							var new_amount = old_amount + amount;
 							new_value = (old_value * old_amount + avgValue * amount) / (new_amount);
 							countryObj.amount = new_amount;
 							countryObj.value = new_value;
-						} else {
-							jsonCountryOutput.push({"name": country,"code": countryCode, "value": avgValue, "amount" : amount});
 						}
+					}
+					if(alreadyExists == true){
+						jsonCountryOutput.push({"name": country,"code": countryCode, "value": avgValue, "amount" : amount});
 					}
 				}
 			}
