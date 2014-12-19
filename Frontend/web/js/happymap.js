@@ -215,8 +215,8 @@ $(function () {
                 startOnTick: true,
                 min: 0,
 				max: 100,
-				minColor: #D99DD7,
-				maxColor: #CCFFFF
+				minColor: '#FF5555',
+				maxColor: '#88FF88'
             },
 
             tooltip: {
