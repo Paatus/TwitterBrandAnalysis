@@ -123,14 +123,24 @@
                                             <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                         </variation>
                                     </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SQ4-Pf-tKf">
+                                        <rect key="frame" x="263" y="158" width="42" height="21"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="centerX" secondItem="Re7-sL-6hr" secondAttribute="centerX" id="Kmh-IX-WTk"/>
                                     <constraint firstItem="Re7-sL-6hr" firstAttribute="height" secondItem="Jxo-l9-SU0" secondAttribute="height" id="O6q-cy-Isy"/>
+                                    <constraint firstAttribute="bottom" secondItem="SQ4-Pf-tKf" secondAttribute="bottom" constant="15" id="Z80-3t-ew2"/>
+                                    <constraint firstItem="Re7-sL-6hr" firstAttribute="leading" secondItem="SQ4-Pf-tKf" secondAttribute="leading" id="aku-fo-LiJ"/>
+                                    <constraint firstAttribute="centerX" secondItem="SQ4-Pf-tKf" secondAttribute="centerX" id="bGW-XD-PMk"/>
                                     <constraint firstItem="Re7-sL-6hr" firstAttribute="top" secondItem="Jxo-l9-SU0" secondAttribute="bottom" constant="10" id="cGt-f7-qBa">
                                         <variation key="heightClass=regular-widthClass=regular" constant="35"/>
                                     </constraint>
+                                    <constraint firstItem="SQ4-Pf-tKf" firstAttribute="top" secondItem="Re7-sL-6hr" secondAttribute="bottom" constant="40" id="eeG-9t-Tou"/>
                                     <constraint firstItem="Re7-sL-6hr" firstAttribute="trailing" secondItem="cId-PJ-TfI" secondAttribute="trailing" id="f2M-Is-suv"/>
                                     <constraint firstAttribute="centerX" secondItem="Jxo-l9-SU0" secondAttribute="centerX" id="gmB-1B-yvK"/>
                                     <constraint firstItem="Jxo-l9-SU0" firstAttribute="top" relation="greaterThanOrEqual" secondItem="71K-sc-6dy" secondAttribute="top" constant="1" id="mCq-fx-v5M"/>
@@ -139,6 +149,7 @@
                                         <variation key="heightClass=regular-widthClass=regular" constant="160"/>
                                     </constraint>
                                     <constraint firstItem="Re7-sL-6hr" firstAttribute="width" secondItem="Jxo-l9-SU0" secondAttribute="width" id="pCQ-pF-doI"/>
+                                    <constraint firstItem="cId-PJ-TfI" firstAttribute="bottom" secondItem="SQ4-Pf-tKf" secondAttribute="bottom" id="pSo-Ea-WRE"/>
                                     <constraint firstAttribute="centerY" secondItem="Re7-sL-6hr" secondAttribute="centerY" id="rHq-UU-oCA"/>
                                     <constraint firstItem="cId-PJ-TfI" firstAttribute="top" secondItem="Re7-sL-6hr" secondAttribute="bottom" constant="10" id="ugJ-Wl-TZo">
                                         <variation key="widthClass=compact" constant="5"/>
@@ -149,6 +160,9 @@
                                 <variation key="default">
                                     <mask key="constraints">
                                         <exclude reference="mCq-fx-v5M"/>
+                                        <exclude reference="aku-fo-LiJ"/>
+                                        <exclude reference="eeG-9t-Tou"/>
+                                        <exclude reference="pSo-Ea-WRE"/>
                                     </mask>
                                 </variation>
                                 <variation key="heightClass=compact">
@@ -169,6 +183,9 @@
                                         <variation key="heightClass=regular-widthClass=regular">
                                             <fontDescription key="fontDescription" type="system" pointSize="45"/>
                                         </variation>
+                                        <connections>
+                                            <segue destination="dha-JM-wwP" kind="modal" identifier="logInSuccess" id="xJG-Bw-ZHK"/>
+                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3xh-AB-sh1">
                                         <rect key="frame" x="0.0" y="124" width="568" height="36"/>
@@ -243,6 +260,7 @@
                         <outlet property="loginButton" destination="Log-eT-vHR" id="bIn-Ai-S9o"/>
                         <outlet property="pwdInput" destination="Re7-sL-6hr" id="cAU-Me-CHU"/>
                         <outlet property="usernameInput" destination="Jxo-l9-SU0" id="1Uk-Hi-prS"/>
+                        <outlet property="wrongPassword" destination="SQ4-Pf-tKf" id="bzy-rY-nKf"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
@@ -346,11 +364,11 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Kfo-yw-lIs">
-                                <rect key="frame" x="16" y="405" width="568" height="195"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Kfo-yw-lIs">
+                                <rect key="frame" x="16" y="445" width="568" height="155"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Oyh-cz-hpE">
-                                        <rect key="frame" x="243" y="74" width="82" height="48"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Oyh-cz-hpE">
+                                        <rect key="frame" x="243" y="54" width="82" height="48"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="30"/>
                                         <state key="normal" title="Log In">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -375,8 +393,8 @@
                                             <segue destination="dyZ-6p-naG" kind="modal" id="9aW-J9-7W8"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="e7V-50-kuf">
-                                        <rect key="frame" x="249" y="147" width="71" height="36"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="e7V-50-kuf">
+                                        <rect key="frame" x="249" y="107" width="71" height="36"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                         <state key="normal" title="Sign Up">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -428,10 +446,9 @@
                                 </variation>
                             </view>
                             <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rTz-PG-rXl">
-                                <rect key="frame" x="16" y="66" width="568" height="320"/>
-                                <color key="backgroundColor" red="1" green="0.6857174278" blue="0.26484809209999999" alpha="1" colorSpace="calibratedRGB"/>
+                                <rect key="frame" x="18" y="66" width="564" height="423"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" secondItem="rTz-PG-rXl" secondAttribute="height" multiplier="16:9" id="KAR-9x-Kkd"/>
+                                    <constraint firstAttribute="width" secondItem="rTz-PG-rXl" secondAttribute="height" multiplier="4:3" id="KAR-9x-Kkd"/>
                                 </constraints>
                             </view>
                         </subviews>

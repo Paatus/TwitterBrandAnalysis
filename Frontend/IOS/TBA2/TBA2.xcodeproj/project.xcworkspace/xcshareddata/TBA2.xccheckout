@@ -10,11 +10,15 @@
 	<dict>
 		<key>38D9009B322140394B9DA7467F68950B56B35FF5</key>
 		<string>https://github.com/daltoniam/SwiftHTTP.git</string>
+		<key>C861FC00CEE0F6A6BE81FCFF6785FAA78C58EBB3</key>
+		<string>https://github.com/SwiftyJSON/SwiftyJSON.git</string>
 	</dict>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>38D9009B322140394B9DA7467F68950B56B35FF5</key>
 		<string>SwiftHTTP/</string>
+		<key>C861FC00CEE0F6A6BE81FCFF6785FAA78C58EBB3</key>
+		<string>SwiftyJSON/</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://github.com/daltoniam/SwiftHTTP.git</string>
@@ -31,6 +35,14 @@
 			<string>38D9009B322140394B9DA7467F68950B56B35FF5</string>
 			<key>IDESourceControlWCCName</key>
 			<string>SwiftHTTP</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>C861FC00CEE0F6A6BE81FCFF6785FAA78C58EBB3</string>
+			<key>IDESourceControlWCCName</key>
+			<string>SwiftyJSON</string>
 		</dict>
 	</array>
 </dict>

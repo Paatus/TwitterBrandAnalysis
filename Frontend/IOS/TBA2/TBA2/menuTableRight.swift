@@ -4,9 +4,17 @@ import UIKit
 
 class menuTableRight: UITableViewController {
     var selectedMenuItem : Int = 0
-    let viewsList = ["World Map", "Trend", "Top 5 Countries", "Word Cloud"]
+    var viewsList = [String]()
+    var con = connection()
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if con.loggedIn == false {
+            self.viewsList = ["log in to view charts ;)"]
+        } else {
+            self.viewsList = ["World Map", "Bar Chart", "Word Cloud"]
+        }
+        
         
         // Customize apperance of table view
         tableView.contentInset = UIEdgeInsetsMake(64.0, 0, 0, 0) //
@@ -34,7 +42,7 @@ class menuTableRight: UITableViewController {
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // Return the number of rows in the section.
-        return 4
+        return self.viewsList.count
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -50,7 +58,7 @@ class menuTableRight: UITableViewController {
             cell!.selectedBackgroundView = selectedBackgroundView
         }
         
-        cell!.textLabel.text = "\(viewsList[indexPath.row])"
+        cell!.textLabel.text = "\(self.viewsList[indexPath.row])"
         
         return cell!
     }
@@ -71,20 +79,23 @@ class menuTableRight: UITableViewController {
         //Present new view controller
         let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main",bundle: nil)
         var destViewController : UIViewController
-        switch (indexPath.row) {
-        case 0:
-            destViewController = mainStoryboard.instantiateViewControllerWithIdentifier("View 4") as UIViewController
-            break
-        case 1:
-            destViewController = mainStoryboard.instantiateViewControllerWithIdentifier("View 2") as UIViewController
-            break
-        case 2:
-            destViewController = mainStoryboard.instantiateViewControllerWithIdentifier("View 3") as UIViewController
-            break
-        default:
-            destViewController = mainStoryboard.instantiateViewControllerWithIdentifier("Log Out") as UIViewController
-            break
+        if self.viewsList.count > 1 {
+            switch (indexPath.row) {
+            case 0:
+                destViewController = mainStoryboard.instantiateViewControllerWithIdentifier("View 2") as UIViewController
+                break
+            case 1:
+                destViewController = mainStoryboard.instantiateViewControllerWithIdentifier("View 3") as UIViewController
+                break
+                
+            default:
+                destViewController = mainStoryboard.instantiateViewControllerWithIdentifier("View 4") as UIViewController
+                break
+            }
+        }else{
+            destViewController = self
         }
         sideMenuController()?.setContentViewController(destViewController)
+
 }
 }

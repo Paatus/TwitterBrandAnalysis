@@ -12,22 +12,48 @@ class ViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet var usernameInput: UITextField!
     @IBOutlet var pwdInput: UITextField!
     @IBOutlet var loginButton: UIButton!
-    var con = connection()
-
+    
+    @IBOutlet var wrongPassword: UILabel!
+    
+    internal var con = connection()
+//public var keywordList = [String]()
+    
     func logInButtonAction(){
+        //con.logOut()
         println("🐱")
-        con.logOut()
-        if (con.logIn(usernameInput.text, password: pwdInput.text) == true){
+        println("\(usernameInput.text)🐵")
+        println("\(pwdInput.text)🐵")
+        con.logIn(usernameInput.text, password: pwdInput.text)
+        //sleep(5)
+        if con.loggedIn == true{
+            let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main",bundle: nil)
+
+            sideMenuController()?.setContentViewController(mainStoryboard.instantiateViewControllerWithIdentifier("View 2") as UIViewController)
+            //performSegueWithIdentifier("logInSuccess", sender: self)
             println("log in boolean works 🐰")
-        }else{
-            println("login boolean doesn't works 🐰")
+            println("\(con.getWords()) 🐷" )
+
+        }else {
+           //
+            self.wrongPassword.text = "OOPS wrong password, please try again"
+            self.wrongPassword.textColor = UIColor.redColor()
+            println("wrong password")
         }
-        con.keywords()
+
+//        con.keywords()
+//        println(strings)
+//        con.parseJSON()
+        
+       // performSegueWithIdentifier("View2", sender: self)
     }
     
     
+    override func shouldPerformSegueWithIdentifier(identifier: String!, sender: AnyObject!) -> Bool {
+        return false
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.wrongPassword.text = ""
         
         //add a login action to the button
         loginButton.addTarget(self, action: "logInButtonAction", forControlEvents: UIControlEvents.TouchUpInside)

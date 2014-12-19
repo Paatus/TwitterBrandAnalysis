@@ -11,7 +11,7 @@ import WebKit
 class firstPage: UIViewController{
     
     var webView: UIWebView!
-   // var con = connection()
+    var con = connection()
 
     @IBOutlet var container: UIView!
     
@@ -28,7 +28,7 @@ class firstPage: UIViewController{
         var xP = container.bounds.minX
         var yP = container.bounds.minY
         
-        frame = CGRect(x: xP, y: yP, width: width-220, height: height)
+        frame = CGRect(x: xP, y: yP, width: width-220, height: height-220)
 
 
 
@@ -44,7 +44,7 @@ class firstPage: UIViewController{
  
     override func viewDidLoad() {
         super.viewDidLoad()
-       
+        con.loggedIn = false
         loadAddressURL()
 
         

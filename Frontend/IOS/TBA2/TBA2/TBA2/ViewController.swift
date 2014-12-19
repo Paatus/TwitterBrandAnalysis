@@ -8,11 +8,40 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UITextFieldDelegate {
+    @IBOutlet var usernameInput: UITextField!
+    @IBOutlet var pwdInput: UITextField!
+    @IBOutlet var loginButton: UIButton!
+    internal var con = connection()
+//public var keywordList = [String]()
+    
+    func logInButtonAction(){
+        //con.logOut()
+        println("🐱")
+        if con.loggedIn == true{
+            println("log in boolean works 🐰")
+
+        }
+        if (con.logIn(usernameInput.text, password: pwdInput.text) == true){
+            println("log in boolean works 🐰")
+        }else{
+            println("login boolean doesn't works 🐰")
+        }
+        con.keywords()
+        println("\(con.getWords()) 🐷" )
+//        println(strings)
+//        con.parseJSON()
+        
+
+    }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        //add a login action to the button
+        loginButton.addTarget(self, action: "logInButtonAction", forControlEvents: UIControlEvents.TouchUpInside)
+
     }
     
     
@@ -20,6 +49,8 @@ class ViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+   
 
     
 }
