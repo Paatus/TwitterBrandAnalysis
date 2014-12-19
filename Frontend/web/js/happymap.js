@@ -79,8 +79,8 @@ $(function () {
 			success: function(returnData) {
 				d = translateToMap(returnData);
 				for(i in d) {
-					var val = parseFloat(d[i].value);
-					d[i].value = (val == 0 ? 0.00001 : val);
+					var val = parseFloat(d[i].value)*100;
+					d[i].value = (val == 0 ? 0.01 : val).toFixed(2);
 				}
 				mapChart.series[0].setData(d, false);
 				mapChart.redraw();
