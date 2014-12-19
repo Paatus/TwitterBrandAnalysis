@@ -210,7 +210,7 @@ $(function () {
             },
 
             colorAxis: {
-                type: 'logarithmic',
+                type: 'linear',
                 endOnTick: false,
                 startOnTick: true,
                 min: 0.00001
