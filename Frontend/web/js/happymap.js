@@ -213,7 +213,10 @@ $(function () {
                 type: 'linear',
                 endOnTick: false,
                 startOnTick: true,
-                min: 0.00001
+                min: 0,
+				max: 100,
+				minColor: #D99DD7,
+				maxColor: #CCFFFF
             },
 
             tooltip: {
