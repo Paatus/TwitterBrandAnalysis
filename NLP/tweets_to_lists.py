@@ -1,5 +1,6 @@
 import re
 import string
+from itertools import chain
 #Function takes a file and a value as an argument.
 #Each line in the file will be added to a list together with the value as a tuple.
 def processTweet(tweet):
@@ -42,43 +43,35 @@ def removelinebreaks(inlist):
 
 #Opens files one at a time and sends them through the readtweetfile function.
 #Also runs the function to remove trailing line breaks.
-fgood = open("good.txt", "r")
+
+fgood = open("goodPart0.txt", "r")
 goodlist = readtweetfile(fgood, 1)
 fgood.close()
 pos_tweets = removelinebreaks(goodlist)
-#print(pos_tweets)
+print(i)
 
 
-fbad = open("bad.txt", "r")
+fbad = open("badPart0.txt", "r")
 badlist = readtweetfile(fbad, 0)
 fbad.close()
 neg_tweets = removelinebreaks(badlist)
-#print(neg_tweets)
+print(i)
 
 
-fneutral = open("neutral.txt", "r")
-neutrallist = readtweetfile(fneutral, 0.5)
-fneutral.close()
-net_tweets = removelinebreaks(neutrallist)
-#print(net_tweets)
 
-tgood = open("testgood.txt", "r")
+tgood = open("goodPart1.txt", "r")
 tgoodlist = readtweetfile(tgood, 1)
 tgood.close()
 testpos_tweets = removelinebreaks(tgoodlist)
-#print(pos_tweets)
 
 
-tbad = open("testbad.txt", "r")
+
+tbad = open("badPart1.txt", "r")
 tbadlist = readtweetfile(tbad, 0)
 tbad.close()
 testneg_tweets = removelinebreaks(tbadlist)
-#print(neg_tweets)
 
 
-tneutral = open("testneutral.txt", "r")
-tneutrallist = readtweetfile(tneutral, 0.5)
-tneutral.close()
-testnet_tweets = removelinebreaks(tneutrallist)
-#print(net_tweets)
+
+
 
