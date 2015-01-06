@@ -40,23 +40,23 @@ $(function() {
     });
 	var chart = $("#container1").highcharts();
     //Get keywords
-	keywords = [];
+	//keywords = [];
 	$.ajax({
 		url: "/api/keywords/get/",
 		success: function(data) {
-			keywords = data.keywords;
+			//keywords = data.keywords;
 			chart.xAxis[0].update({categories: data.keywords})
 			
 			//Get data for each keyword
-			kwdata = {};
-			keywords.forEach(function(kw) {
+			//kwdata = {};
+			data.keywords.forEach(function(kw) {
 				$.ajax({
-					url: "/api/amount/" + kw,
-					success: function(data) {
-						kwdata[kw] = data;
-						chart.series[0].addPoint(parseInt(data.positive));
-						chart.series[1].addPoint(parseInt(data.neutral));
-						chart.series[2].addPoint(parseInt(data.negative));
+					url: "/api/amount/" + kw + "/43200/0",
+					success: function(kwdata) {
+						//kwdata[kw] = data;
+						chart.series[0].addPoint(parseInt(kwdata.positive));
+						chart.series[1].addPoint(parseInt(kwdata.neutral));
+						chart.series[2].addPoint(parseInt(kwdata.negative));
 					}
 				});
 			});
@@ -134,6 +134,8 @@ $(function() {
 });
 
 
+$(function() {
+	
 	var w = 520, //960
 		h = 250, //600
 		minFont = 10,
@@ -197,18 +199,20 @@ $(function() {
 			.attr("transform", "translate(" + [w >> 1, h >> 1] + ")scale(" + scale + ")");
 	}
 	
-	function update(data) {
+	function update(newdata) {
 		layout.spiral("archimedean");
 		words = [];
+		console.log(newdata);
 		fontSize.domain([+newdata[newdata.length - 1].value || 1, +newdata[0].value]);
-		layout.stop().words(data).start();
+		layout.stop().words(newdata).start();
 	}
 	
 	$.ajax({
 		url: "/api/top/keyword/10080/0",
 		success: function(data) {
-			obj = JSON.parse(data);
-			list = [];
+			//obj = JSON.parse(data);
+			var obj = data;
+			var list = [];
 			for(var key in obj) {
 				list.push({word: key, weight: parseInt(obj[key])})
 			}	
@@ -217,10 +221,12 @@ $(function() {
 				b = b.weight;	
 				return a < b ? 1 : (a > b ? -1 : 0);	
 			});	
-			newdata = [];	
-			for(var i = 0; i < 100; i++) {	
+			var newdata = [];
+			
+			for(var i = 0; i < 100 && i < list.length; i++) {
 				newdata.push({key: list[i].word, value: list[i].weight });
 			}
 			update(newdata);
 		}
 	});
+});
