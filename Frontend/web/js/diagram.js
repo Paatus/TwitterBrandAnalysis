@@ -134,121 +134,93 @@ $(function() {
 });
 
 
-$(function() {
+	var w = 520, //960
+		h = 250, //600
+		minFont = 10,
+		maxFont = 50,
+		fill = d3.scale.category20(),
+		words = [],
+		fontSize = d3.scale.log().range([minFont, maxFont]);
+	
+	var layout = d3.layout.cloud()
+		.timeInterval(10)
+		.size([w, h])
+		.fontSize(function(d) { return fontSize(+d.value); })
+		.text(function(d) { return d.key; })
+		.on("end", draw);
+	
+	var svg = d3.select("#container4").append("svg")
+		.attr("width", w)
+		.attr("height", h);
+	
+	var background = svg.append("g"),
+		vis = svg.append("g")
+		.attr("transform", "translate(" + [w >> 1, h >> 1] + ")");
 
-var fill = d3.scale.category20();
-
-
-
-var w = 520,
-    h = 250;
-
-var canvas = d3.select("#container4").append("svg")
-            .attr("width", w)
-            .attr("height", h)
-
-
-var wordArray = ["Hello", "world", "normally", "you", "want", "more", "words",
-        "than", "this","that","Hello", "world", "normally", "you", "want", "more", "words",
-        "than", "this","that","Hello", "world", "normally", "you", "want", "more", "words",
-        "than", "this","that"];
-
-d3.layout.cloud().size([w, h])
-    .words(wordArray.map(function(d) {
-        return {
-            text: d,
-            size:20 + Math.random() * 20
-        };
-    }))
-    .padding(5)
-    .rotate(function() {
-        return ~~(Math.random() * 36) * 5;
-    })
-    .font("Impact")
-    .fontSize(function(d) {
-        return d.size;
-    })
-    .on("end", draw)
-    .start();
-
-function draw(words) {
-    canvas
-
-    .append("g")
-// .attr("width", w)
-// .attr("height", h);
-// .attr("x1",700)
-// .attr("y1",700)
-        .attr("transform","translate(240,130)")
-        // .attr("transform", "translate(" + [w >> 1, h >> 1] + ")")
-        .selectAll("text")
-        .data(words)
-        .enter()
-            .append("text")
-            .style("font-size", function(d) {return d.size + "px";})
-            .style("font-family", "Impact")
-            .style("fill", function(d, i) {return fill(i);})
-            .attr("text-anchor", "middle")
-            .attr("transform", function(d) {return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";})
-            .text(function(d) {return d.text;});
-}
-});
-
-$(function() {
-
-
-var fill = d3.scale.category20();
-
-
-
-var w = 520,
-    h = 250;
-
-var canvas = d3.select(".container41").append("svg")
-            .attr("width", w)
-            .attr("height", h)
-
-
-var wordArray = ["Shan", "Shan", "Shan","Shan", "Shan", "Shan","Shan", "Shan", "Shan","Shan", "Shan", "Shan","Shan", "Shan", "Shan","Shan", "Shan", "Shan"];
-
-d3.layout.cloud().size([w, h])
-    .words(wordArray.map(function(d) {
-        return {
-            text: d,
-            size:20 + Math.random() * 20
-        };
-    }))
-    .padding(5)
-    .rotate(function() {
-        return ~~(Math.random() * 5) * 30 - 75;
-    })
-    .font("Impact")
-    .fontSize(function(d) {
-        return d.size;
-    })
-    .on("end", draw)
-    .start();
-
-function draw(words) {
-    canvas
-
-    .append("g")
-// .attr("width", w)
-// .attr("height", h);
-// .attr("x1",700)
-// .attr("y1",700)
-        .attr("transform","translate(240,130)")
-        // .attr("transform", "translate(" + [w >> 1, h >> 1] + ")")
-        .selectAll("text")
-        .data(words)
-        .enter()
-            .append("text")
-            .style("font-size", function(d) {return d.size + "px";})
-            .style("font-family", "Impact")
-            .style("fill", function(d, i) {return fill(i);})
-            .attr("text-anchor", "middle")
-            .attr("transform", function(d) {return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";})
-            .text(function(d) {return d.text;});
-}
-});
-
+	function draw(data, bounds) {
+		scale = bounds ? Math.min(
+			w / Math.abs(bounds[1].x - w / 2),
+			w / Math.abs(bounds[0].x - w / 2),
+			h / Math.abs(bounds[1].y - h / 2),
+			h / Math.abs(bounds[0].y - h / 2)) / 2 : 1;
+		words = data;
+		var text = vis.selectAll("text")
+			.data(words, function(d) { return d.text.toLowerCase(); });
+		text.transition()
+			.duration(1000)
+			.attr("transform", function(d) { return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")"; })
+			.style("font-size", function(d) { return d.size + "px"; });
+		text.enter().append("text")
+			.attr("text-anchor", "middle")
+			.attr("transform", function(d) { return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")"; })
+			.style("font-size", function(d) { return d.size + "px"; })
+			.style("opacity", 1e-6)
+		.transition()
+			.duration(1000)
+			.style("opacity", 1);
+		text.style("font-family", function(d) { return d.font; })
+			.style("fill", function(d) { return fill(d.text.toLowerCase()); })
+			.text(function(d) { return d.text; });
+		var exitGroup = background.append("g")
+			.attr("transform", vis.attr("transform"));
+		var exitGroupNode = exitGroup.node();
+		text.exit().each(function() {
+		exitGroupNode.appendChild(this);
+		});
+		exitGroup.transition()
+			.duration(1000)
+			.style("opacity", 1e-6)
+			.remove();
+		vis.transition()
+			.delay(1000)
+			.duration(750)
+			.attr("transform", "translate(" + [w >> 1, h >> 1] + ")scale(" + scale + ")");
+	}
+	
+	function update(data) {
+		layout.spiral("archimedean");
+		words = [];
+		fontSize.domain([+newdata[newdata.length - 1].value || 1, +newdata[0].value]);
+		layout.stop().words(data).start();
+	}
+	
+	$.ajax({
+		url: "/api/top/keyword/10080/0",
+		success: function(data) {
+			obj = JSON.parse(data);
+			list = [];
+			for(var key in obj) {
+				list.push({word: key, weight: parseInt(obj[key])})
+			}	
+			list.sort(function(a, b) {	
+				a = a.weight;	
+				b = b.weight;	
+				return a < b ? 1 : (a > b ? -1 : 0);	
+			});	
+			newdata = [];	
+			for(var i = 0; i < 100; i++) {	
+				newdata.push({key: list[i].word, value: list[i].weight });
+			}
+			update(newdata);
+		}
+	});
