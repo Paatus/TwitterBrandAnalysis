@@ -13,16 +13,23 @@ mapred_amount(Keys) ->
 	mapred(
 		Keys,
 		[{map, {modfun, ?MODULE, map_amount}, none, false},
-		{reduce, {modfun, ?MODULE, red_count}, none, true}]
+		{reduce, {modfun, ?MODULE, red_count}, none, false},
+		{reduce, {modfun, ?MODULE, red_sort}, none, true}]
 	).
 
 mapred(Keys, Phases) ->
 	{ok, Pid} = riakio:start_link(),
-	{ok, [{_, R}]} = riakc_pb_socket:mapred(
+	R1 = riakc_pb_socket:mapred(
 		Pid,
 		Keys,
 		Phases
         ),
+	R = case R1 of
+		{ok, [{_, R2}]} ->
+			R2;
+		{_, []} ->
+			[]
+	end,
         riakio:close_link(Pid),
         {ok, R}.
 
