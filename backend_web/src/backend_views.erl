@@ -264,7 +264,7 @@ get_amount_view(_, Req, [Keyword]) ->
     get_amount_timespan_view('GET', Req, [Keyword, 1440, 0]).
 
 get_amount_timespan_view('GET', Req, [Keyword, Start, End]) when is_list(Start) andalso is_list(End) ->
-    get_top_users_timespan_view('GET', Req, [Keyword, list_to_integer(Start), list_to_integer(End)]);
+    get_amount_timespan_view('GET', Req, [Keyword, list_to_integer(Start), list_to_integer(End)]);
 get_amount_timespan_view('GET', Req, [Keyword, Start, End]) when Start > End andalso length(Keyword) > 0 ->
     case backend_user:user_has_keyword(Req, Keyword) of
         {false, _} ->
