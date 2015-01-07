@@ -1,5 +1,5 @@
 $(function() {
-	$('#container1').highcharts({
+    $('#barchart').highcharts({
         chart: {
             type: 'bar'
         },
@@ -7,8 +7,7 @@ $(function() {
             text: 'Brand tweet amounts'
         },
         xAxis: {
-            //categories: ['Shan', 'Oranges', 'Pears', 'Grapes', 'Bananas']
-			categories: []
+            categories: []
         },
         yAxis: {
             min: 0,
@@ -26,47 +25,182 @@ $(function() {
         },
         series: [{
             name: 'Positive',
-			color: '#88FF88',
+            color: '#88FF88',
             data: []
         }, {
             name: 'Neutral',
-			color: '#FFFF55',
+            color: '#FFFF55',
             data: []
         }, {
             name: 'Negative',
-			color: '#FF5555',
+            color: '#FF5555',
             data: []
         }]
     });
-	var chart = $("#container1").highcharts();
-    //Get keywords
-	//keywords = [];
-	$.ajax({
-		url: "/api/keywords/get/",
-		success: function(data) {
-			//keywords = data.keywords;
-			chart.xAxis[0].update({categories: data.keywords})
-			
-			//Get data for each keyword
-			//kwdata = {};
-			data.keywords.forEach(function(kw) {
-				$.ajax({
-					url: "/api/amount/" + kw + "/43200/0",
-					success: function(kwdata) {
-						//kwdata[kw] = data;
-						chart.series[0].addPoint(parseInt(kwdata.positive));
-						chart.series[1].addPoint(parseInt(kwdata.neutral));
-						chart.series[2].addPoint(parseInt(kwdata.negative));
-					}
-				});
-			});
+    
+    $('#linechart').highcharts({
+        chart: {
+            type: 'line'
+        },
+        title: {
+            text: 'Brand opinion over time'
+        },
+        /*subtitle: {
+            text: 'Source: WorldClimate.com'
+        },*/
+        xAxis: {
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        },
+        yAxis: {
+            min: 0,
+            max: 100,
+            title: {
+                text: 'Opinion'
+            }
+        },
+        plotOptions: {
+            line: {
+                dataLabels: {
+                    enabled: true
+                },
+                enableMouseTracking: false
+            }
+        },
+        series: [{
+            name: 'Shan',
+            data: [7.0, 6.9, 9.5, 14.5, 18.4, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
+        }, {
+            name: 'London',
+            data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
+        }]
+    });
+    
+    var barchart = $("#barchart").highcharts();
+    var linechart = $("#linechart").highcharts();
+    $.ajax({
+        url: "/api/keywords/get/",
+        success: function(data) {
+            barchart.xAxis[0].update({categories: data.keywords})
+           
+            data.keywords.forEach(function(kw) {
+                //Populate barchart 
+                $.ajax({
+                    url: "/api/amount/" + kw,
+                    success: function(kwdata) {
+                        barchart.series[0].addPoint(parseInt(kwdata.positive));
+                        barchart.series[1].addPoint(parseInt(kwdata.neutral));
+                        barchart.series[2].addPoint(parseInt(kwdata.negative));
+                    }
+                });
 
-		}
-	});
-	
+                //Populate linechart
+                
+            });
+
+        }
+    });
+    
 });
 
 
+$(function() {
+    
+    var w = 520, //960
+        h = 250, //600
+        minFont = 10,
+        maxFont = 50,
+        fill = d3.scale.category20(),
+        words = [],
+        fontSize = d3.scale.log().range([minFont, maxFont]);
+    
+    var layout = d3.layout.cloud()
+        .timeInterval(10)
+        .size([w, h])
+        .fontSize(function(d) { return fontSize(+d.value); })
+        .text(function(d) { return d.key; })
+        .on("end", draw);
+    
+    var svg = d3.select("#wordcloud").append("svg")
+        .attr("width", w)
+        .attr("height", h);
+    
+    var background = svg.append("g"),
+        vis = svg.append("g")
+        .attr("transform", "translate(" + [w >> 1, h >> 1] + ")");
+
+    function draw(data, bounds) {
+        scale = bounds ? Math.min(
+            w / Math.abs(bounds[1].x - w / 2),
+            w / Math.abs(bounds[0].x - w / 2),
+            h / Math.abs(bounds[1].y - h / 2),
+            h / Math.abs(bounds[0].y - h / 2)) / 2 : 1;
+        words = data;
+        var text = vis.selectAll("text")
+            .data(words, function(d) { return d.text.toLowerCase(); });
+        text.transition()
+            .duration(1000)
+            .attr("transform", function(d) { return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")"; })
+            .style("font-size", function(d) { return d.size + "px"; });
+        text.enter().append("text")
+            .attr("text-anchor", "middle")
+            .attr("transform", function(d) { return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")"; })
+            .style("font-size", function(d) { return d.size + "px"; })
+            .style("opacity", 1e-6)
+        .transition()
+            .duration(1000)
+            .style("opacity", 1);
+        text.style("font-family", function(d) { return d.font; })
+            .style("fill", function(d) { return fill(d.text.toLowerCase()); })
+            .text(function(d) { return d.text; });
+        var exitGroup = background.append("g")
+            .attr("transform", vis.attr("transform"));
+        var exitGroupNode = exitGroup.node();
+        text.exit().each(function() {
+        exitGroupNode.appendChild(this);
+        });
+        exitGroup.transition()
+            .duration(1000)
+            .style("opacity", 1e-6)
+            .remove();
+        vis.transition()
+            .delay(1000)
+            .duration(750)
+            .attr("transform", "translate(" + [w >> 1, h >> 1] + ")scale(" + scale + ")");
+    }
+    
+    function update(newdata) {
+        layout.spiral("archimedean");
+        words = [];
+        console.log(newdata);
+        fontSize.domain([+newdata[newdata.length - 1].value || 1, +newdata[0].value]);
+        layout.stop().words(newdata).start();
+    }
+    
+    $.ajax({
+        url: "/api/top/keyword/10080/0",
+        success: function(data) {
+            //obj = JSON.parse(data);
+            var obj = data;
+            var list = [];
+            for(var key in obj) {
+                list.push({word: key, weight: parseInt(obj[key])})
+            }   
+            list.sort(function(a, b) {  
+                a = a.weight;   
+                b = b.weight;   
+                return a < b ? 1 : (a > b ? -1 : 0);    
+            }); 
+            var newdata = [];
+            
+            for(var i = 0; i < 100 && i < list.length; i++) {
+                newdata.push({key: list[i].word, value: list[i].weight });
+            }
+            update(newdata);
+        }
+    });
+});
+
+/*
 $(function() {
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function(data) {
 
@@ -93,140 +227,5 @@ $(function() {
         });
     });
 });
+*/
 
-
-
-$(function() {
-    $('#container3').highcharts({
-        chart: {
-            type: 'line'
-        },
-        title: {
-            text: 'Compare brand'
-        },
-        subtitle: {
-            text: 'Source: WorldClimate.com'
-        },
-        xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-        },
-        yAxis: {
-            title: {
-                text: 'Temperature (°C)'
-            }
-        },
-        plotOptions: {
-            line: {
-                dataLabels: {
-                    enabled: true
-                },
-                enableMouseTracking: false
-            }
-        },
-        series: [{
-            name: 'Shan',
-            data: [7.0, 6.9, 9.5, 14.5, 18.4, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
-        }, {
-            name: 'London',
-            data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
-        }]
-    });
-});
-
-
-$(function() {
-	
-	var w = 520, //960
-		h = 250, //600
-		minFont = 10,
-		maxFont = 50,
-		fill = d3.scale.category20(),
-		words = [],
-		fontSize = d3.scale.log().range([minFont, maxFont]);
-	
-	var layout = d3.layout.cloud()
-		.timeInterval(10)
-		.size([w, h])
-		.fontSize(function(d) { return fontSize(+d.value); })
-		.text(function(d) { return d.key; })
-		.on("end", draw);
-	
-	var svg = d3.select("#container4").append("svg")
-		.attr("width", w)
-		.attr("height", h);
-	
-	var background = svg.append("g"),
-		vis = svg.append("g")
-		.attr("transform", "translate(" + [w >> 1, h >> 1] + ")");
-
-	function draw(data, bounds) {
-		scale = bounds ? Math.min(
-			w / Math.abs(bounds[1].x - w / 2),
-			w / Math.abs(bounds[0].x - w / 2),
-			h / Math.abs(bounds[1].y - h / 2),
-			h / Math.abs(bounds[0].y - h / 2)) / 2 : 1;
-		words = data;
-		var text = vis.selectAll("text")
-			.data(words, function(d) { return d.text.toLowerCase(); });
-		text.transition()
-			.duration(1000)
-			.attr("transform", function(d) { return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")"; })
-			.style("font-size", function(d) { return d.size + "px"; });
-		text.enter().append("text")
-			.attr("text-anchor", "middle")
-			.attr("transform", function(d) { return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")"; })
-			.style("font-size", function(d) { return d.size + "px"; })
-			.style("opacity", 1e-6)
-		.transition()
-			.duration(1000)
-			.style("opacity", 1);
-		text.style("font-family", function(d) { return d.font; })
-			.style("fill", function(d) { return fill(d.text.toLowerCase()); })
-			.text(function(d) { return d.text; });
-		var exitGroup = background.append("g")
-			.attr("transform", vis.attr("transform"));
-		var exitGroupNode = exitGroup.node();
-		text.exit().each(function() {
-		exitGroupNode.appendChild(this);
-		});
-		exitGroup.transition()
-			.duration(1000)
-			.style("opacity", 1e-6)
-			.remove();
-		vis.transition()
-			.delay(1000)
-			.duration(750)
-			.attr("transform", "translate(" + [w >> 1, h >> 1] + ")scale(" + scale + ")");
-	}
-	
-	function update(newdata) {
-		layout.spiral("archimedean");
-		words = [];
-		console.log(newdata);
-		fontSize.domain([+newdata[newdata.length - 1].value || 1, +newdata[0].value]);
-		layout.stop().words(newdata).start();
-	}
-	
-	$.ajax({
-		url: "/api/top/keyword/10080/0",
-		success: function(data) {
-			//obj = JSON.parse(data);
-			var obj = data;
-			var list = [];
-			for(var key in obj) {
-				list.push({word: key, weight: parseInt(obj[key])})
-			}	
-			list.sort(function(a, b) {	
-				a = a.weight;	
-				b = b.weight;	
-				return a < b ? 1 : (a > b ? -1 : 0);	
-			});	
-			var newdata = [];
-			
-			for(var i = 0; i < 100 && i < list.length; i++) {
-				newdata.push({key: list[i].word, value: list[i].weight });
-			}
-			update(newdata);
-		}
-	});
-});
