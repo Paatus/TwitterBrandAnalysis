@@ -27,35 +27,35 @@ $(function() {
             name: 'Positive',
             color: '#88FF88',
             data: []
-        }, {
+        },/* {
             name: 'Neutral',
             color: '#FFFF55',
             data: []
-        }, {
+        },*/ {
             name: 'Negative',
             color: '#FF5555',
             data: []
         }]
     });
     
-    $('#linechart').highcharts({
+	$('#linechart').highcharts({
         chart: {
             type: 'line'
         },
         title: {
             text: 'Brand opinion over time'
         },
-        /*subtitle: {
-            text: 'Source: WorldClimate.com'
-        },*/
+        subtitle: {
+            text: 'Displayed times are in UTC'
+        },
         xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            categories: []
         },
         yAxis: {
             min: 0,
             max: 100,
             title: {
-                text: 'Opinion'
+                text: 'Opinion (%)'
             }
         },
         plotOptions: {
@@ -65,38 +65,69 @@ $(function() {
                 },
                 enableMouseTracking: false
             }
-        },
-        series: [{
-            name: 'Shan',
-            data: [7.0, 6.9, 9.5, 14.5, 18.4, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
-        }, {
-            name: 'London',
-            data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
-        }]
+        }
     });
-    
+
     var barchart = $("#barchart").highcharts();
     var linechart = $("#linechart").highcharts();
+
+	var date = new Date();
+	var array = [];
+	for(var i = 12; i > 0; i--)
+	{
+		var hour = date.getUTCHours() - i;
+		var hourmax = date.getUTCHours() -i + 1;
+		if(hour < 0)
+		{
+			hour += 24;
+		}
+		if(hourmax < 0)
+		{
+			hourmax += 24;
+		}
+		array.push(hour + ":" + date.getUTCMinutes() + "-" + hourmax + ":" + date.getUTCMinutes());
+	}
+	linechart.xAxis[0].update({categories: array});
+    
     $.ajax({
         url: "/api/keywords/get/",
         success: function(data) {
-            barchart.xAxis[0].update({categories: data.keywords})
-           
             data.keywords.forEach(function(kw) {
-                //Populate barchart 
+				
+				//Populate barchart
                 $.ajax({
                     url: "/api/amount/" + kw,
                     success: function(kwdata) {
+						var newcat =  barchart.xAxis[0].categories;
+						newcat.push(kw);
+						barchart.xAxis[0].update({categories: newcat});
                         barchart.series[0].addPoint(parseInt(kwdata.positive));
-                        barchart.series[1].addPoint(parseInt(kwdata.neutral));
-                        barchart.series[2].addPoint(parseInt(kwdata.negative));
+                        //barchart.series[1].addPoint(parseInt(kwdata.neutral));
+                        barchart.series[1].addPoint(parseInt(kwdata.negative));
                     }
                 });
 
                 //Populate linechart
-                
+                var serie = linechart.addSeries({
+					name: kw,
+					data: []
+				})
+				for(var i = 11; i >= 0; i--) {
+					$.ajax({
+						url: "/api/world/keyword/" + kw + "/" + (i + 1) * 60 + "/" + i * 60,
+						success: function(kwdata) {
+							var value = 0;
+							var count = 0;
+							for (var prop in kwdata) {
+								var a = kwdata[prop];
+								value = (value * count + parseFloat(a[0]) * parseInt(a[1])) / (count + parseInt(a[1]));
+								count += parseInt(a[1]);
+							}
+							serie.addPoint(Math.round(value * 10000) / 100);
+						}
+					});
+				}
             });
-
         }
     });
     
@@ -105,8 +136,8 @@ $(function() {
 
 $(function() {
     
-    var w = 520, //960
-        h = 250, //600
+    var w = $("#wordcloud").width(), //520
+        h = $("#wordcloud").height(), //250
         minFont = 10,
         maxFont = 50,
         fill = d3.scale.category20(),
@@ -171,7 +202,6 @@ $(function() {
     function update(newdata) {
         layout.spiral("archimedean");
         words = [];
-        console.log(newdata);
         fontSize.domain([+newdata[newdata.length - 1].value || 1, +newdata[0].value]);
         layout.stop().words(newdata).start();
     }
