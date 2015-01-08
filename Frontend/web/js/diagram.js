@@ -43,7 +43,7 @@ $(function() {
             type: 'line'
         },
         title: {
-            text: 'Brand opinion over time'
+            text: 'Brand opinion over the last 12 hours'
         },
         subtitle: {
             text: 'Displayed times are in UTC'

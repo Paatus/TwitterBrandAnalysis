@@ -117,7 +117,7 @@ $(function () {
                     countryChart = $('#container').highcharts({
                         chart: {
                             height: 250,
-                            spacingLeft: 0
+                            spacingLeft: 0,
                         },
                         credits: {
                             enabled: false
@@ -237,10 +237,13 @@ $(function () {
                         dashStyle: 'shortdot'
                     }
                 }
-            }]
+            }],
+			chart: {
+				backgroundColor: "#eef4ff"
+			}
         }).highcharts();
 
         // Pre-select a country
-        //mapChart.get('us').select();
+       // mapChart.get('us').select();
     });
 });

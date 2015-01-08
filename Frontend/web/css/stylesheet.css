@@ -339,9 +339,8 @@ img{
     bottom: 1%;
     margin:0;
 }
-#container1, #container2, #container3, #container4,#container4 svg,.container41 {
+#barchart, #container2, #linechart, #wordcloud,#container4 svg,.container41 {
     min-width: 310px;
-    max-width: 800px;
     margin: 0 auto;
     float: left;
     height: 100%;
