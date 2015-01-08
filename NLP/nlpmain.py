@@ -24,7 +24,7 @@ def stopwords(tweet):
     tokens = []
     tweet = word_tokenize(tweet)
     if not stopwords_data:
-        with open("stopwords.p", "rb") as f:
+        with open("NLP/stopwords.p", "rb") as f:
             stopwords_data = pickle.load(f)
     for word in tweet:
         if word not in stopwords_data:
@@ -34,7 +34,7 @@ def stopwords(tweet):
 def extract_features(document):
     global wordlist
     if not wordlist:
-        with open("wordlist.p", "rb") as f:
+        with open("NLP/wordlist.p", "rb") as f:
             wordlist = pickle.load(f)
     document_words = set(document)
     features = {}
@@ -46,9 +46,8 @@ def getWeight(tweet):
     global model
     tweet = tweet.decode('utf-8')
     tweet = processTweet(tweet)
-    print(tweet)
     if not model:
-        with open("model.p", "rb") as f:
+        with open("NLP/model.p", "rb") as f:
             model = pickle.load(f)
     tweet = stopwords(tweet)
     document = tweet
